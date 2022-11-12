@@ -1,0 +1,70 @@
+package com.sparrow.chat.repository.impl;
+
+import com.sparrow.chat.assemble.MessageAssemble;
+import com.sparrow.chat.commons.Chat;
+import com.sparrow.chat.commons.PropertyAccessBuilder;
+import com.sparrow.chat.commons.RedisKey;
+import com.sparrow.chat.protocol.ChatSession;
+import com.sparrow.chat.protocol.MessageDTO;
+import com.sparrow.chat.protocol.MessageReadParam;
+import com.sparrow.chat.protocol.Protocol;
+import com.sparrow.chat.repository.MessageRepository;
+import com.sparrow.support.PlaceHolderParser;
+import com.sparrow.support.PropertyAccessor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
+
+@Component
+public class RedisMessageRepository implements MessageRepository {
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Autowired
+    private MessageAssemble messageAssemble;
+
+    @Override public void saveMessage(Protocol protocol) {
+        MessageDTO message = this.messageAssemble.assembleMessage(protocol);
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorBySessionKey(protocol.getSession());
+        String messageKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
+        redisTemplate.opsForList().rightPush(messageKey, message.json());
+        if (redisTemplate.opsForList().size(messageKey) > Chat.MAX_MSG_OF_SESSION) {
+            redisTemplate.opsForList().leftPop(messageKey);
+        }
+        redisTemplate.expire(messageKey, Chat.MESSAGE_EXPIRE_DAYS, TimeUnit.DAYS);
+    }
+
+    @Override public void read(MessageReadParam messageRead) {
+        ChatSession chatSession = messageRead.getChatType() == Chat.CHAT_TYPE_1_2_1 ?
+            ChatSession.create1To1Session(messageRead.getMe(), Integer.parseInt(messageRead.getTarget())) :
+            ChatSession.createQunSession(messageRead.getMe(), messageRead.getTarget());
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessor(chatSession.getSessionKey(), messageRead.getMe());
+        String messageReadKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
+        redisTemplate.opsForValue().set(messageReadKey, messageRead.getT());
+    }
+
+    @Override public Map<String, Long> getLastRead(Integer me, List<String> sessionKeys) {
+        List<String> messageReadKeys = new ArrayList<>(sessionKeys.size());
+        for (String sessionKey : sessionKeys) {
+            PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessor(sessionKey, me);
+            String messageReadKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
+            messageReadKeys.add(messageReadKey);
+        }
+        List<Long> lastReadTimes = redisTemplate.opsForValue().multiGet(messageReadKeys);
+        Map<String, Long> lastReadTimeMap = new HashMap<>(sessionKeys.size());
+        for (int i = 0; i < sessionKeys.size(); i++) {
+            lastReadTimeMap.put(sessionKeys.get(i), lastReadTimes.get(i));
+        }
+        return lastReadTimeMap;
+    }
+
+    @Override public List<MessageDTO> getMessageBySession(String session) {
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorBySessionKey(session);
+        String messageKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
+        return redisTemplate.opsForList().range(messageKey, 0, Chat.MAX_MSG_OF_SESSION);
+    }
+}
