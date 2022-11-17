@@ -20,6 +20,7 @@ import com.sparrow.chat.core.UserContainer;
 import com.sparrow.chat.protocol.Protocol;
 import com.sparrow.spring.starter.SpringContext;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -67,7 +68,9 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
                     }
                     continue;
                 }
-                channel.writeAndFlush(new BinaryWebSocketFrame(content));
+                ByteBuf byteBuf = ByteBufAllocator.DEFAULT.directBuffer(msg.content().capacity());
+                byteBuf.writeBytes(msg.content());
+                channel.writeAndFlush(new BinaryWebSocketFrame(byteBuf));
             }
         } else if (frame instanceof ContinuationWebSocketFrame) {
             ContinuationWebSocketFrame msg = (ContinuationWebSocketFrame) frame;

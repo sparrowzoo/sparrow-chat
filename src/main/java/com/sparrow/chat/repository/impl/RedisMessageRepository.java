@@ -9,6 +9,8 @@ import com.sparrow.chat.protocol.MessageDTO;
 import com.sparrow.chat.protocol.MessageReadParam;
 import com.sparrow.chat.protocol.Protocol;
 import com.sparrow.chat.repository.MessageRepository;
+import com.sparrow.core.spi.JsonFactory;
+import com.sparrow.json.Json;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import java.util.ArrayList;
@@ -22,10 +24,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RedisMessageRepository implements MessageRepository {
+
     @Autowired
     private RedisTemplate redisTemplate;
     @Autowired
     private MessageAssemble messageAssemble;
+
+    private Json json = JsonFactory.getProvider();
 
     @Override public void saveMessage(Protocol protocol) {
         MessageDTO message = this.messageAssemble.assembleMessage(protocol);
@@ -65,6 +70,11 @@ public class RedisMessageRepository implements MessageRepository {
     @Override public List<MessageDTO> getMessageBySession(String session) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorBySessionKey(session);
         String messageKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
-        return redisTemplate.opsForList().range(messageKey, 0, Chat.MAX_MSG_OF_SESSION);
+        List<String> messages = redisTemplate.opsForList().range(messageKey, 0, Chat.MAX_MSG_OF_SESSION);
+        List<MessageDTO> messageDtos = new ArrayList<>(messages.size());
+        for (String message : messages) {
+            messageDtos.add(this.json.parse(message, MessageDTO.class));
+        }
+        return messageDtos;
     }
 }

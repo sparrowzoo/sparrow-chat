@@ -4,9 +4,12 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Insert title here</title>
-    <script type="text/javascript" src="SparrowChat.js"></script>
+    <script language="javascript" type="text/javascript"
+            src="http://r.sparrowzoo.net/scripts/sparrow.js?v=1.0"></script>
+    <script type="text/javascript" src="http://r.sparrowzoo.net/scripts/SparrowChat.js"></script>
     <script type="text/javascript">
         var ws = null;
+
         function initSocket() {
             //sec-websocket-protocol
             //https://www.cnblogs.com/huic/p/15878201.html
@@ -19,7 +22,7 @@
                 console.log("open");
             }
             ws.onmessage = function (e) {
-                new SparrowProtocol(e.data);
+                var protocol = new SparrowProtocol(e.data);
             }
             ws.onclose = function (e) {
                 //当客户端收到服务端发送的关闭连接请求时，触发onclose事件
@@ -54,9 +57,38 @@
             }
             fileReader.readAsArrayBuffer(file);
         }
+
+        function fetchUserContact() {
+            var userId = document.getElementById("userId").value;
+            var actionUrl = "http://127.0.0.1:2222/contacts";
+            var data = "token=" + userId;
+            $.ajax.json(actionUrl, data, function (result) {
+                var quns = result.data.quns;
+                var users = result.data.users;
+                var qunHtml = [];
+                var userHtml = [];
+                //qunHtml+="<li>"+quns[0].qunName+"</li>";
+
+                for (var i = 0; i < users.length; i++) {
+                    userHtml += "<li><img width='16px' height='16px' src='http://r.sparrowzoo.net/images/user.png'/>" + users[i].userName + "," + users[i].userId + "</li>"
+                }
+                document.getElementById("ulQun").innerHTML = qunHtml.join("");
+                document.getElementById("ulFriends").innerHTML = userHtml.join("");
+            });
+        }
+
+        function fetchSession() {
+            var userId = document.getElementById("userId").value;
+            var actionUrl = "http://127.0.0.1:2222/sessions";
+            var data = "token=" + userId;
+            $.ajax.json(actionUrl, data, function (result) {
+                console.log(result.data);
+            });
+        }
     </script>
 </head>
 <body>
+
 
 <textarea id="txtMessage" rows="" cols="">
 hello msg
@@ -64,23 +96,33 @@ hello msg
 
 
 user ID:<input type="text" value="100" id="userId"/><br/>
+
+<input type="button" value="fetchContact" id="btnFetchUserContact" onclick="fetchUserContact()"/>
 targetUserID ID:<input type="text" value="101" id="targetUserId"/><br/>
 
 <input type="button" value="initSocket" onclick="initSocket();">
-
-
 <img id="img" src="" alt="">
-
-
 <input type="file" value="send message" onchange="sendPicture(this)">
+<input type="button" value="send message" onclick="sendMessage()"/>
+<input type="button" value="fetchSession" onclick="fetchSession()"/>
 
-
-<input type="button" value="send message" onclick="sendMessage()">
 </br>
 
-https://www.javascripture.com/DataView<br/>
-https://websockets.spec.whatwg.org<br/>
-https://zhuanlan.zhihu.com/p/97768916<br/>
-https://zhuanlan.zhihu.com/p/407711596 <br/>
-https://developer.mozilla.org/en-US/about
+<div>
+    <ul id="ulSession">
+
+    </ul>
+</div>
+
+<div>
+    <ul id="ulQun">
+
+    </ul>
+</div>
+<div>
+    <ul id="ulFriends">
+
+    </ul>
+</div>
+
 </body>

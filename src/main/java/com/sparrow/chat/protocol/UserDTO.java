@@ -1,6 +1,8 @@
 package com.sparrow.chat.protocol;
 
-public class UserDTO {
+import com.sparrow.protocol.POJO;
+
+public class UserDTO implements POJO {
     private String nationality;
     private String flagUrl;
     private String unit;

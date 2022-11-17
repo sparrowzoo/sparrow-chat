@@ -7,9 +7,13 @@ import com.sparrow.chat.protocol.QunDTO;
 import com.sparrow.chat.protocol.UserDTO;
 import com.sparrow.chat.repository.ContactsRepository;
 import com.sparrow.chat.repository.QunRepository;
+import com.sparrow.core.spi.JsonFactory;
+import com.sparrow.json.Json;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
+import com.sparrow.utility.CollectionsUtility;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,10 +30,12 @@ public class RedisContactsRepository implements ContactsRepository {
     @Autowired
     private QunRepository qunRepository;
 
+    private Json json = JsonFactory.getProvider();
+
     @Override public List<QunDTO> getQunsByUserId(Integer userId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, Chat.CHAT_TYPE_1_2_N);
-        String user12nContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
-        List<String> qunIds = this.redisTemplate.opsForList().range(user12nContactKey, 0, Integer.MAX_VALUE);
+        String userQunKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
+        List<String> qunIds = this.redisTemplate.opsForList().range(userQunKey, 0, Integer.MAX_VALUE);
         List<String> qunKeys = new ArrayList<>(qunIds.size());
         Map<String, List<Integer>> qunMembersMap = new HashMap<>(qunIds.size());
         for (String qunId : qunIds) {
@@ -39,11 +45,14 @@ public class RedisContactsRepository implements ContactsRepository {
             List<Integer> usersOfQun = this.qunRepository.getUserIdList(qunId);
             qunMembersMap.put(qunId, usersOfQun);
         }
-        List<QunDTO> qunDtos = this.redisTemplate.opsForValue().multiGet(qunKeys);
-        for (QunDTO qun : qunDtos) {
-            List<Integer> userIds = qunMembersMap.get(qun.getQunId());
+        List<String> quns = this.redisTemplate.opsForValue().multiGet(qunKeys);
+        List<QunDTO> qunDtos = new ArrayList<>(quns.size());
+        for (String qun : quns) {
+            QunDTO qunDto = this.json.parse(qun, QunDTO.class);
+            List<Integer> userIds = qunMembersMap.get(qunDto.getQunId());
             List<UserDTO> userDtos = this.getUsersByIds(userIds);
-            qun.setMembers(userDtos);
+            qunDto.setMembers(userDtos);
+            qunDtos.add(qunDto);
         }
         return qunDtos;
     }
@@ -52,9 +61,13 @@ public class RedisContactsRepository implements ContactsRepository {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, Chat.CHAT_TYPE_1_2_1);
         String user121ContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         //好友列表
-        List<Integer> userIds = this.redisTemplate.opsForList().range(user121ContactKey, 0, Integer.MAX_VALUE);
-        if (userIds == null) {
-            return new ArrayList<>();
+        List<String> originUserIds = this.redisTemplate.opsForList().range(user121ContactKey, 0, Integer.MAX_VALUE);
+        if (CollectionsUtility.isNullOrEmpty(originUserIds)) {
+            return Collections.emptyList();
+        }
+        List<Integer> userIds=new ArrayList<>(originUserIds.size());
+        for(String originUserId:originUserIds){
+            userIds.add(Integer.parseInt(originUserId));
         }
         return getUsersByIds(userIds);
     }
@@ -67,6 +80,14 @@ public class RedisContactsRepository implements ContactsRepository {
             userKeys.add(userKey);
         }
         //好友列表
-        return this.redisTemplate.opsForValue().multiGet(userKeys);
+        List<String> users = this.redisTemplate.opsForValue().multiGet(userKeys);
+        if (CollectionsUtility.isNullOrEmpty(users)) {
+            return Collections.emptyList();
+        }
+        List<UserDTO> userDtos = new ArrayList<>(users.size());
+        for (String user : users) {
+            userDtos.add(this.json.parse(user, UserDTO.class));
+        }
+        return userDtos;
     }
 }

@@ -2,7 +2,7 @@ package com.sparrow.chat.protocol;
 
 import java.util.List;
 
-public class SessionDTO {
+public class SessionDTO{
     private ChatSession chatSession;
     private List<MessageDTO> messages;
     private Long lastReadTime;

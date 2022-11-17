@@ -5,6 +5,9 @@ import com.sparrow.chat.commons.RedisKey;
 import com.sparrow.chat.repository.QunRepository;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
+import com.sparrow.utility.CollectionsUtility;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,8 +20,16 @@ public class RedisQunRepository implements QunRepository {
     private RedisTemplate redisTemplate;
 
     @Override public List<Integer> getUserIdList(String qunId) {
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorBySessionKey(qunId);
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorByQunId(qunId);
         String userOfQunKey = PlaceHolderParser.parse(RedisKey.USER_ID_OF_QUN, propertyAccessor);
-        return this.redisTemplate.opsForList().range(userOfQunKey, 0, Integer.MAX_VALUE);
+        List<String> originUserIds = this.redisTemplate.opsForList().range(userOfQunKey, 0, Integer.MAX_VALUE);
+        if (CollectionsUtility.isNullOrEmpty(originUserIds)) {
+            return Collections.emptyList();
+        }
+        List<Integer> userIds = new ArrayList<>(originUserIds.size());
+        for (String userId : originUserIds) {
+            userIds.add(Integer.parseInt(userId));
+        }
+        return userIds;
     }
 }

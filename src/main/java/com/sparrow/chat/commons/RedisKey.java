@@ -14,27 +14,27 @@ public class RedisKey {
     /**
      * 是否已读
      */
-    public static final String USER_SESSION_READ = "user.read:{user_id}:{sessionKey}";
+    public static final String USER_SESSION_READ = "user.read:{userId}:{sessionKey}";
 
     /**
      * 群内用户
      */
-    public static final String USER_ID_OF_QUN = "user.qun:{qun_id}";
+    public static final String USER_ID_OF_QUN = "user.qun:{qunId}";
 
     /**
      * 通讯录
      */
-    public static final String USER_CONTACTS = "contacts:{user_id}:{chat_type}";
+    public static final String USER_CONTACTS = "contacts:{chatType}:{userId}";
 
     /**
      * 用户信息
      */
-    public static final String USER = "user:{user_id}";
+    public static final String USER = "user:{userId}";
 
     /**
      * 群信息F
      */
-    public static final String QUN = "qun:{qun_id}";
+    public static final String QUN = "qun:{qunId}";
 
 
 }

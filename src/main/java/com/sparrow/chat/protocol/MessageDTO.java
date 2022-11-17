@@ -68,10 +68,9 @@ public class MessageDTO {
     public String json() {
         return "{" +
             "'messageType':" + messageType +
-            "'chatType':" + charType +
-            "'session':" + session +
-            ", 'fromUserId'=" + fromUserId +
-            ", 'targetUserId'=" + targetUserId +
+            ", 'chatType':" + charType +
+            ", 'fromUserId':" + fromUserId +
+            ", 'targetUserId':" + targetUserId +
             ", 'session':'" + session + '\'' +
             ", 'content':'" + content + '\'' +
             ", 'sendTime':" + sendTime +

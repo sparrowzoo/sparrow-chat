@@ -1,8 +1,9 @@
 package com.sparrow.chat.protocol;
 
+import com.sparrow.protocol.POJO;
 import java.util.List;
 
-public class QunDTO {
+public class QunDTO implements POJO {
     private String qunId;
     private String qunName;
     private String nationality;
