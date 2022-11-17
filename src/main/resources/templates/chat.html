@@ -7,6 +7,8 @@
     <script language="javascript" type="text/javascript"
             src="http://r.sparrowzoo.net/scripts/sparrow.js?v=1.0"></script>
     <script type="text/javascript" src="http://r.sparrowzoo.net/scripts/SparrowChat.js"></script>
+    <script language="JavaScript" type="text/javascript" src="http://r.sparrowzoo.net/scripts/base64.js"></script>
+
     <script type="text/javascript">
         var ws = null;
 
@@ -22,7 +24,29 @@
                 console.log("open");
             }
             ws.onmessage = function (e) {
-                var protocol = new SparrowProtocol(e.data);
+                new SparrowProtocol(e.data,function (protocol){
+                    console.log(protocol);
+                    var divDialog=document.getElementById("divDialog");
+
+                    divDialog.innerHTML+="<br/>来自:"+protocol.fromUserId+",发送时间："+new Date();
+                    if(protocol.msgType===0) {
+                        //文本
+                        divDialog.innerHTML +=protocol.msg;
+                    }
+                    else
+                    {
+                        //图
+                        // divDialog.innerHTML +="<br/><img/>";
+                        var img= document.createElement("img");
+                        img.src=protocol.url;
+                        divDialog.appendChild(img);
+                        // img.src = url;
+                        // img.onload = function () {
+                        //     // 释放一个之前通过调用 URL.createObjectURL创建的 URL 对象
+                        //     window.URL.revokeObjectURL(url);
+                        // }
+                    }
+                });
             }
             ws.onclose = function (e) {
                 //当客户端收到服务端发送的关闭连接请求时，触发onclose事件
@@ -40,12 +64,24 @@
             var targetUserId = document.getElementById("targetUserId").value;//Math.floor(Math.random() * 100);
             //concatenate(charType,msgType,current_user_id,session_key,msg)
             msg = msg.toArray().toUint8Array();
+
+            var divDialog=document.getElementById("divDialog");
+
+            divDialog.innerHTML+="<br/>来自:"+userId+",发送时间："+new Date();
+                //文本
+            divDialog.innerHTML +=msg;
+
+
             ws.send(new SparrowProtocol(CHAT_TYPE_1_2_1, TEXT_MESSAGE, userId, targetUserId, msg).toBytes()); //将消息发送到服务端
         }
 
         function sendPicture(src) {
             const file = src.files[0];
             const fileReader = new FileReader();
+            var img= document.createElement("img");
+            img.src="blob:http://127.0.0.1:2222/a80f036f-10ad-41c6-9a07-f9ccbb942470";
+            divDialog.appendChild(img);
+
             fileReader.onload = function () {
                 const result = fileReader.result;
                 console.log(result);
@@ -79,10 +115,38 @@
 
         function fetchSession() {
             var userId = document.getElementById("userId").value;
+            var divDialog=document.getElementById("divDialog");
             var actionUrl = "http://127.0.0.1:2222/sessions";
             var data = "token=" + userId;
             $.ajax.json(actionUrl, data, function (result) {
-                console.log(result.data);
+                var sessionList=result.data;
+                for(var i=0;i<sessionList.length;i++){
+                   var chatSession=sessionList[i].chatSession;
+                         if(chatSession.chatType===0) {
+                             divDialog.innerHTML +="一对一聊天";
+                             divDialog.innerHTML += "<br/>" + chatSession.me + chatSession.target;
+                         }
+                         else {
+                             divDialog.innerHTML +="群聊";
+                             divDialog.innerHTML += "<br/>" + chatSession.sessionKey;
+
+                         }
+                           var messages=sessionList[i].messages;
+                           if(messages!=null&&messages.length>0){
+                                for(var j=0;j<messages.length;j++){
+                                    divDialog.innerHTML+="<br/>来自:"+messages[j].fromUserId+",发送时间："+messages[j].sendTime;
+                                    if(messages[j].messageType===0) {
+                                        //文本
+                                        divDialog.innerHTML +=BASE64.bytesToString(BASE64.decodeBase64(messages[j].content));
+                                    }
+                                    else
+                                    {
+                                        //图
+                                        divDialog.innerHTML +="<br/><img src = 'data:image/jpeg;base64,"+messages[j].content+"'/>";
+                                    }
+                                }
+                           }
+                }
             });
         }
     </script>
@@ -123,6 +187,10 @@ targetUserID ID:<input type="text" value="101" id="targetUserId"/><br/>
     <ul id="ulFriends">
 
     </ul>
+</div>
+
+<div id="divDialog">
+
 </div>
 
 </body>
