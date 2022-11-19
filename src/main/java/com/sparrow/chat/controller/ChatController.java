@@ -32,6 +32,7 @@ public class ChatController {
         return true;
     }
 
+//    @CrossOrigin(origins = {"*"})
     @PostMapping("/contacts")
     public ContactsDTO getContactsList(String token) {
         int userId = Integer.parseInt(token);
