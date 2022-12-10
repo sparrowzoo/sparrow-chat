@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class InitUser {
     private static String qunId = "qun-id-1";
 
-    private static int userId = 10;
+    private static int userId = 9;
 
     @Autowired
     private RedisTemplate redisTemplate;
