@@ -32,7 +32,7 @@ public class InitQun {
     }
 
     public void initQun() {
-        PropertyAccessor qunPropertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorByQunId(qunId);
+        PropertyAccessor qunPropertyAccessor = PropertyAccessBuilder.buildByQunId(qunId);
         String qunKey = PlaceHolderParser.parse(RedisKey.QUN, qunPropertyAccessor);
 
         QunDTO qunDto = new QunDTO();
@@ -46,7 +46,7 @@ public class InitQun {
         qunDto.setUnitIcon("unit icon");
         redisTemplate.opsForValue().set(qunKey, this.json.toString(qunDto));
 
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorByQunId(qunId);
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByQunId(qunId);
         String userOfQunKey = PlaceHolderParser.parse(RedisKey.USER_ID_OF_QUN, propertyAccessor);
 
         for (int i = 0; i < 10; i++) {

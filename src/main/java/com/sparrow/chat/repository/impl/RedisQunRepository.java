@@ -20,7 +20,7 @@ public class RedisQunRepository implements QunRepository {
     private RedisTemplate redisTemplate;
 
     @Override public List<Integer> getUserIdList(String qunId) {
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorByQunId(qunId);
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByQunId(qunId);
         String userOfQunKey = PlaceHolderParser.parse(RedisKey.USER_ID_OF_QUN, propertyAccessor);
         List<String> originUserIds = this.redisTemplate.opsForList().range(userOfQunKey, 0, Integer.MAX_VALUE);
         if (CollectionsUtility.isNullOrEmpty(originUserIds)) {

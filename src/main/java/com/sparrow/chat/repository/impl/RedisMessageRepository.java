@@ -32,9 +32,27 @@ public class RedisMessageRepository implements MessageRepository {
 
     private Json json = JsonFactory.getProvider();
 
+    @Override public String saveImageContent(Protocol protocol) {
+        if (Chat.IMAGE_MESSAGE != protocol.getMessageType()) {
+            return null;
+        }
+
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildMsgId(protocol.getFromUserId(), System.currentTimeMillis());
+        String messageIdKey = PlaceHolderParser.parse(RedisKey.IMAGE_ID_KEY, propertyAccessor);
+        redisTemplate.opsForValue().set(messageIdKey, protocol.getContent());
+        //转换成 msg id
+        protocol.setContent(messageIdKey);
+        return messageIdKey;
+    }
+
+    @Override public String getImageContent(String imageId) {
+        return (String) redisTemplate.opsForValue().get(imageId);
+    }
+
     @Override public void saveMessage(Protocol protocol) {
+        this.saveImageContent(protocol);
         MessageDTO message = this.messageAssemble.assembleMessage(protocol);
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorBySessionKey(protocol.getSession());
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(protocol.getSession());
         String messageKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
         redisTemplate.opsForList().rightPush(messageKey, message.json());
         if (redisTemplate.opsForList().size(messageKey) > Chat.MAX_MSG_OF_SESSION) {
@@ -47,7 +65,7 @@ public class RedisMessageRepository implements MessageRepository {
         ChatSession chatSession = messageRead.getChatType() == Chat.CHAT_TYPE_1_2_1 ?
             ChatSession.create1To1Session(messageRead.getMe(), Integer.parseInt(messageRead.getTarget())) :
             ChatSession.createQunSession(messageRead.getMe(), messageRead.getTarget());
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessor(chatSession.getSessionKey(), messageRead.getMe());
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserId(chatSession.getSessionKey(), messageRead.getMe());
         String messageReadKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
         redisTemplate.opsForValue().set(messageReadKey, messageRead.getT());
     }
@@ -55,7 +73,7 @@ public class RedisMessageRepository implements MessageRepository {
     @Override public Map<String, Long> getLastRead(Integer me, List<String> sessionKeys) {
         List<String> messageReadKeys = new ArrayList<>(sessionKeys.size());
         for (String sessionKey : sessionKeys) {
-            PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessor(sessionKey, me);
+            PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserId(sessionKey, me);
             String messageReadKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
             messageReadKeys.add(messageReadKey);
         }
@@ -68,7 +86,7 @@ public class RedisMessageRepository implements MessageRepository {
     }
 
     @Override public List<MessageDTO> getMessageBySession(String session) {
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorBySessionKey(session);
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(session);
         String messageKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
         List<String> messages = redisTemplate.opsForList().range(messageKey, 0, Chat.MAX_MSG_OF_SESSION);
         List<MessageDTO> messageDtos = new ArrayList<>(messages.size());

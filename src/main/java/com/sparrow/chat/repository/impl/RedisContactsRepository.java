@@ -39,7 +39,7 @@ public class RedisContactsRepository implements ContactsRepository {
         List<String> qunKeys = new ArrayList<>(qunIds.size());
         Map<String, List<Integer>> qunMembersMap = new HashMap<>(qunIds.size());
         for (String qunId : qunIds) {
-            PropertyAccessor qunPropertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorByQunId(qunId);
+            PropertyAccessor qunPropertyAccessor = PropertyAccessBuilder.buildByQunId(qunId);
             String qunKey = PlaceHolderParser.parse(RedisKey.QUN, qunPropertyAccessor);
             qunKeys.add(qunKey);
             List<Integer> usersOfQun = this.qunRepository.getUserIdList(qunId);
@@ -75,7 +75,7 @@ public class RedisContactsRepository implements ContactsRepository {
     @Override public List<UserDTO> getUsersByIds(List<Integer> userIds) {
         List<String> userKeys = new ArrayList<>(userIds.size());
         for (Integer userId : userIds) {
-            PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorByUserId(userId);
+            PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(userId);
             String userKey = PlaceHolderParser.parse(RedisKey.USER, propertyAccessor);
             userKeys.add(userKey);
         }

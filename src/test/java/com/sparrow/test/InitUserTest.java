@@ -43,7 +43,7 @@ public class InitUserTest {
         for (int i = 0; i < userCount; i++) {
             int userId = i;
             userIds.add(userId);
-            PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorByUserId(userId);
+            PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(userId);
             String userKey = PlaceHolderParser.parse(RedisKey.USER, propertyAccessor);
             UserDTO user = new UserDTO();
             user.setAvatar("http://r.sparrowzoo.net/images/login.png");

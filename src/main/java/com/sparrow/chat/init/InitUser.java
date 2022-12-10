@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class InitUser {
     private static String qunId = "qun-id-1";
 
-    private static int userId = 100;
+    private static int userId = 10;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -35,7 +35,7 @@ public class InitUser {
         for (int i = 0; i < userCount; i++) {
             int userId = i;
             userIds.add(userId);
-            PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildChatPropertyAccessorByUserId(userId);
+            PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(userId);
             String userKey = PlaceHolderParser.parse(RedisKey.USER, propertyAccessor);
             UserDTO user = new UserDTO();
             user.setAvatar("http://r.sparrowzoo.net/images/login.png");
