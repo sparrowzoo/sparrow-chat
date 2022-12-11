@@ -9,8 +9,6 @@ import java.util.Map;
 public interface MessageRepository {
     String saveImageContent(Protocol content);
 
-    String getImageContent(String imageId);
-
     void saveMessage(Protocol message);
 
     void read(MessageReadParam messageRead);

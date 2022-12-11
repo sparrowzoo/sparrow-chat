@@ -1,18 +1,16 @@
 package com.sparrow.chat.protocol;
 
 public class MessageReadParam {
-
-    private Integer me;
+    private Integer userId;
     private Integer chatType;
-    private String target;
-    private Long t;
+    private String sessionKey;
 
-    public Integer getMe() {
-        return me;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setMe(Integer me) {
-        this.me = me;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public Integer getChatType() {
@@ -23,19 +21,11 @@ public class MessageReadParam {
         this.chatType = chatType;
     }
 
-    public String getTarget() {
-        return target;
+    public String getSessionKey() {
+        return sessionKey;
     }
 
-    public void setTarget(String target) {
-        this.target = target;
-    }
-
-    public Long getT() {
-        return t;
-    }
-
-    public void setT(Long t) {
-        this.t = t;
+    public void setSessionKey(String sessionKey) {
+        this.sessionKey = sessionKey;
     }
 }

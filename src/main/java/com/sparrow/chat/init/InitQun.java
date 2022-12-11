@@ -15,29 +15,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class InitQun {
 
-    private static String qunId = "qun-id-1";
-
-    private static int userId = 100;
-
     @Autowired
     private RedisTemplate redisTemplate;
 
     private Json json = JsonFactory.getProvider();
 
 
-    public void buildQunOfContact() {
+    public void buildQunOfContact(Integer userId,String qunId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, Chat.CHAT_TYPE_1_2_N);
         String userQunKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         redisTemplate.opsForList().rightPush(userQunKey, qunId);
     }
 
-    public void initQun() {
+    public void initQun(String qunId) {
         PropertyAccessor qunPropertyAccessor = PropertyAccessBuilder.buildByQunId(qunId);
         String qunKey = PlaceHolderParser.parse(RedisKey.QUN, qunPropertyAccessor);
 
         QunDTO qunDto = new QunDTO();
         qunDto.setQunId(qunId);
-        qunDto.setQunName("**聊天室");
+        qunDto.setQunName("聊天室"+qunId);
         qunDto.setNationality("england");
         qunDto.setUnit("school");
         qunDto.setFlagUrl("http://www.baidu.com");
@@ -49,7 +45,7 @@ public class InitQun {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByQunId(qunId);
         String userOfQunKey = PlaceHolderParser.parse(RedisKey.USER_ID_OF_QUN, propertyAccessor);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             redisTemplate.opsForList().rightPush(userOfQunKey, i + "");
         }
     }

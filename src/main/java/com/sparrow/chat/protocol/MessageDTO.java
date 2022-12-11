@@ -2,7 +2,7 @@ package com.sparrow.chat.protocol;
 
 public class MessageDTO {
     private int messageType;
-    private int charType;
+    private int chatType;
     private int fromUserId;
     private int targetUserId;
     private String session;
@@ -17,12 +17,12 @@ public class MessageDTO {
         this.messageType = messageType;
     }
 
-    public int getCharType() {
-        return charType;
+    public int getChatType() {
+        return chatType;
     }
 
-    public void setCharType(int charType) {
-        this.charType = charType;
+    public void setChatType(int chatType) {
+        this.chatType = chatType;
     }
 
     public int getFromUserId() {
@@ -68,7 +68,7 @@ public class MessageDTO {
     public String json() {
         return "{" +
             "'messageType':" + messageType +
-            ", 'chatType':" + charType +
+            ", 'chatType':" + chatType +
             ", 'fromUserId':" + fromUserId +
             ", 'targetUserId':" + targetUserId +
             ", 'session':'" + session + '\'' +

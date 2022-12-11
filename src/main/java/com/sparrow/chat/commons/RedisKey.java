@@ -6,8 +6,6 @@ public class RedisKey {
      */
     public static final String MESSAGE_KEY = "msg:{sessionKey}";
 
-    public static final String IMAGE_ID_KEY = "msg_img_id:{userId}:{time}";
-
     /**
      * 用户的会话 redis list
      */
@@ -34,9 +32,8 @@ public class RedisKey {
     public static final String USER = "user:{userId}";
 
     /**
-     * 群信息F
+     * 群信息
      */
     public static final String QUN = "qun:{qunId}";
-
 
 }

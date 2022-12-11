@@ -17,9 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class InitUser {
-    private static String qunId = "qun-id-1";
-
-    private static int userId = 9;
+    int userCount = 100;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -30,7 +28,6 @@ public class InitUser {
     private Json json = JsonFactory.getProvider();
 
     public void initUser() {
-        int userCount = 100;
         List<Integer> userIds = new ArrayList<>(userCount);
         for (int i = 0; i < userCount; i++) {
             int userId = i;
@@ -52,10 +49,13 @@ public class InitUser {
         List<UserDTO> users = contactsRepository.getUsersByIds(userIds);
     }
 
-    public void initFriends() {
+    public void initFriends(Integer userId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, Chat.CHAT_TYPE_1_2_1);
         String user121ContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
+            if (i == userId) {
+                continue;
+            }
             this.redisTemplate.opsForList().rightPush(user121ContactKey, i + "");
         }
     }

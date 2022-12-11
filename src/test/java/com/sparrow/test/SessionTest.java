@@ -1,10 +1,12 @@
 package com.sparrow.test;
 
+import com.alibaba.fastjson.JSON;
 import com.sparrow.chat.boot.Application;
 import com.sparrow.chat.commons.Chat;
 import com.sparrow.chat.commons.PropertyAccessBuilder;
 import com.sparrow.chat.commons.RedisKey;
 import com.sparrow.chat.protocol.ChatSession;
+import com.sparrow.chat.protocol.MessageReadParam;
 import com.sparrow.chat.repository.SessionRepository;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
@@ -37,5 +39,14 @@ public class SessionTest {
     public void getSessions() {
         List<ChatSession> sessions = this.sessionRepository.getSessions(100);
         Assert.assertEquals(sessions.size(), 1);
+    }
+
+    @Test
+    public void readSession() {
+        MessageReadParam messageReadParam = new MessageReadParam();
+        messageReadParam.setUserId(1);
+        messageReadParam.setChatType((int) Chat.CHAT_TYPE_1_2_1);
+        messageReadParam.setSessionKey("1_2");
+        System.out.println(JSON.toJSONString(messageReadParam));
     }
 }

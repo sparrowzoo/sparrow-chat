@@ -2,6 +2,7 @@ package com.sparrow.chat.repository.impl;
 
 import com.sparrow.chat.assemble.MessageAssemble;
 import com.sparrow.chat.commons.Chat;
+import com.sparrow.chat.commons.ConfigKey;
 import com.sparrow.chat.commons.PropertyAccessBuilder;
 import com.sparrow.chat.commons.RedisKey;
 import com.sparrow.chat.protocol.ChatSession;
@@ -11,9 +12,14 @@ import com.sparrow.chat.protocol.Protocol;
 import com.sparrow.chat.repository.MessageRepository;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.json.Json;
+import com.sparrow.protocol.constant.Extension;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
+import com.sparrow.utility.ConfigUtility;
+import com.sparrow.utility.FileUtility;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,21 +38,36 @@ public class RedisMessageRepository implements MessageRepository {
 
     private Json json = JsonFactory.getProvider();
 
+    private String generateImageId(Integer userId) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        String rootPhysicalPath = ConfigUtility.getValue(ConfigKey.IMAGE_PHYSICAL_ROOT_PATH);
+        String physicalUrl = rootPhysicalPath +
+            File.separator +
+            year + File.separator +
+            month + File.separator +
+            day + File.separator +
+            userId + File.separator +
+            calendar.getTimeInMillis() + Extension.JPG;
+        return physicalUrl;
+    }
+
     @Override public String saveImageContent(Protocol protocol) {
         if (Chat.IMAGE_MESSAGE != protocol.getMessageType()) {
             return null;
         }
+        String physicalUrl = this.generateImageId(protocol.getFromUserId());
+        FileUtility.getInstance().generateImage(protocol.getContent(), physicalUrl);
+        String rootPhysicalPath = ConfigUtility.getValue(ConfigKey.IMAGE_PHYSICAL_ROOT_PATH);
+        String rootWebPath = ConfigUtility.getValue(ConfigKey.IMAGE_WEB_ROOT_PATH);
 
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildMsgId(protocol.getFromUserId(), System.currentTimeMillis());
-        String messageIdKey = PlaceHolderParser.parse(RedisKey.IMAGE_ID_KEY, propertyAccessor);
-        redisTemplate.opsForValue().set(messageIdKey, protocol.getContent());
+        String webUrl = physicalUrl.replace(rootPhysicalPath, rootWebPath);
         //转换成 msg id
-        protocol.setContent(messageIdKey);
-        return messageIdKey;
-    }
-
-    @Override public String getImageContent(String imageId) {
-        return (String) redisTemplate.opsForValue().get(imageId);
+        protocol.setContent(webUrl);
+        return webUrl;
     }
 
     @Override public void saveMessage(Protocol protocol) {
@@ -62,25 +83,25 @@ public class RedisMessageRepository implements MessageRepository {
     }
 
     @Override public void read(MessageReadParam messageRead) {
-        ChatSession chatSession = messageRead.getChatType() == Chat.CHAT_TYPE_1_2_1 ?
-            ChatSession.create1To1Session(messageRead.getMe(), Integer.parseInt(messageRead.getTarget())) :
-            ChatSession.createQunSession(messageRead.getMe(), messageRead.getTarget());
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserId(chatSession.getSessionKey(), messageRead.getMe());
-        String messageReadKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
-        redisTemplate.opsForValue().set(messageReadKey, messageRead.getT());
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserId(messageRead.getSessionKey(), messageRead.getUserId());
+        String sessionReadKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_READ, propertyAccessor);
+        redisTemplate.opsForValue().set(sessionReadKey, System.currentTimeMillis() + "");
     }
 
     @Override public Map<String, Long> getLastRead(Integer me, List<String> sessionKeys) {
         List<String> messageReadKeys = new ArrayList<>(sessionKeys.size());
         for (String sessionKey : sessionKeys) {
             PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserId(sessionKey, me);
-            String messageReadKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
+            String messageReadKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_READ, propertyAccessor);
             messageReadKeys.add(messageReadKey);
         }
-        List<Long> lastReadTimes = redisTemplate.opsForValue().multiGet(messageReadKeys);
+        List<String> lastReadTimes = redisTemplate.opsForValue().multiGet(messageReadKeys);
         Map<String, Long> lastReadTimeMap = new HashMap<>(sessionKeys.size());
         for (int i = 0; i < sessionKeys.size(); i++) {
-            lastReadTimeMap.put(sessionKeys.get(i), lastReadTimes.get(i));
+            String lastReadTime = lastReadTimes.get(i);
+            if (lastReadTime != null) {
+                lastReadTimeMap.put(sessionKeys.get(i), Long.parseLong(lastReadTime));
+            }
         }
         return lastReadTimeMap;
     }

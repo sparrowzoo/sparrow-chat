@@ -42,7 +42,7 @@ public class ChatService {
         this.sessionRepository.saveSession(chatSession);
     }
 
-    void read(MessageReadParam messageRead) {
+    public void read(MessageReadParam messageRead) {
         this.messageRepository.read(messageRead);
     }
 

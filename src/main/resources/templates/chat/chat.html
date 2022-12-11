@@ -11,7 +11,6 @@
 
     <script type="text/javascript">
         var ws = null;
-
         function initSocket() {
             //sec-websocket-protocol
             //https://www.cnblogs.com/huic/p/15878201.html
@@ -78,8 +77,10 @@
         function sendPicture(src) {
             const file = src.files[0];
             const fileReader = new FileReader();
-            var img= document.createElement("img");
-            img.src="blob:http://127.0.0.1:2222/a80f036f-10ad-41c6-9a07-f9ccbb942470";
+
+            var img = new Image();
+            var url = window.URL.createObjectURL(file); // 得到bolb对象路径，可当成普通的文件路径一样使用，赋值给src;
+            img.src = url;
             divDialog.appendChild(img);
 
             fileReader.onload = function () {
@@ -106,7 +107,7 @@
                 //qunHtml+="<li>"+quns[0].qunName+"</li>";
 
                 for (var i = 0; i < users.length; i++) {
-                    userHtml += "<li><img width='16px' height='16px' src='http://r.sparrowzoo.net/images/user.png'/>" + users[i].userName + "," + users[i].userId + "</li>"
+                    userHtml += "<li><img width='16px' height='16px' src='http://r.sparrowzoo.net/images/user.png'/>" + users[i].userName + ",id=:" + users[i].userId + "</li>"
                 }
                 document.getElementById("ulQun").innerHTML = qunHtml.join("");
                 document.getElementById("ulFriends").innerHTML = userHtml.join("");
@@ -124,7 +125,7 @@
                    var chatSession=sessionList[i].chatSession;
                          if(chatSession.chatType===0) {
                              divDialog.innerHTML +="一对一聊天";
-                             divDialog.innerHTML += "<br/>" + chatSession.me + chatSession.target;
+                             divDialog.innerHTML += "<br/>" + chatSession.sessionKey;
                          }
                          else {
                              divDialog.innerHTML +="群聊";
@@ -141,8 +142,15 @@
                                     }
                                     else
                                     {
+                                        var img= document.createElement("img");
+                                        img.src=messages[j].content;
+
+                                        divDialog.appendChild(img);
+                                        // $.ajax.get("http://chat.sparrowzoo.com/chat/get-image/"+messages[j].content,function (data){
+                                        //     img.src='data:image/jpeg;base64,'+data
+                                        // });
                                         //图
-                                        divDialog.innerHTML +="<br/><img src = 'data:image/jpeg;base64,"+messages[j].content+"'/>";
+                                       // divDialog.innerHTML +="<br/><img src = 'data:image/jpeg;base64,"+messages[j].content+"'/>";
                                     }
                                 }
                            }
@@ -152,17 +160,15 @@
     </script>
 </head>
 <body>
-
-
 <textarea id="txtMessage" rows="" cols="">
 hello msg
 </textarea>
 
 
-user ID:<input type="text" value="100" id="userId"/><br/>
+user ID:<input type="text" value="1" id="userId"/><br/>
 
 <input type="button" value="fetchContact" id="btnFetchUserContact" onclick="fetchUserContact()"/>
-targetUserID ID:<input type="text" value="101" id="targetUserId"/><br/>
+targetUserID ID:<input type="text" value="2" id="targetUserId"/><br/>
 
 <input type="button" value="initSocket" onclick="initSocket();">
 <img id="img" src="" alt="">

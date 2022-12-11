@@ -57,7 +57,9 @@ public class RedisSessionRepository implements SessionRepository {
         Set<String> charSessions = this.redisTemplate.opsForZSet().range(userSessionKey, 0, Chat.MAX_SESSION_OF_USER);
         List<ChatSession> chatSessionList = new ArrayList<>(charSessions.size());
         for (String session : charSessions) {
-            chatSessionList.add(this.json.parse(session, ChatSession.class));
+            ChatSession chatSession = this.json.parse(session, ChatSession.class);
+            chatSession.setMe(userId);
+            chatSessionList.add(chatSession);
         }
         return chatSessionList;
     }

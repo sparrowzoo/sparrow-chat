@@ -18,6 +18,7 @@ package com.sparrow.chat.service;
 import com.sparrow.chat.commons.Chat;
 import com.sparrow.chat.core.UserContainer;
 import com.sparrow.chat.protocol.Protocol;
+import com.sparrow.core.spi.ApplicationContext;
 import com.sparrow.spring.starter.SpringContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -41,7 +42,6 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketFrameHandler.class);
 
-    private static ChatService chatService = SpringContext.getContext().getBean("chatService", ChatService.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
@@ -57,6 +57,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             BinaryWebSocketFrame msg = (BinaryWebSocketFrame) frame;
             ByteBuf content = msg.content();
             Protocol protocol = new Protocol(content);
+            ChatService chatService = ApplicationContext.getContainer().getBean("chatService");
             chatService.saveMessage(protocol);
             List<Channel> channels = UserContainer.getContainer().getChannels(protocol);
             for (Channel channel : channels) {

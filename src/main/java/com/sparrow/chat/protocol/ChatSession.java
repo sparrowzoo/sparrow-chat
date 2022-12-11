@@ -1,19 +1,23 @@
 package com.sparrow.chat.protocol;
 
 import com.sparrow.chat.commons.Chat;
+import com.sparrow.utility.StringUtility;
 import java.util.Arrays;
 
 public class ChatSession {
     public ChatSession() {
     }
 
-
-    public static ChatSession create1To1Session(int me,int target){
-        return new ChatSession(Chat.CHAT_TYPE_1_2_1,me,target,null);
+    public static ChatSession create1To1Session(int me, String sessionKey) {
+        return new ChatSession(Chat.CHAT_TYPE_1_2_1, me, null, sessionKey);
+    }
+    
+    public static ChatSession create1To1Session(int me, int target) {
+        return new ChatSession(Chat.CHAT_TYPE_1_2_1, me, target, null);
     }
 
-    public static ChatSession createQunSession(int me,String sessionKey){
-        return new ChatSession(Chat.CHAT_TYPE_1_2_N,me,null,sessionKey);
+    public static ChatSession createQunSession(int me, String sessionKey) {
+        return new ChatSession(Chat.CHAT_TYPE_1_2_N, me, null, sessionKey);
     }
 
     private ChatSession(int chatType, int me, Integer target, String sessionKey) {
@@ -41,6 +45,25 @@ public class ChatSession {
     }
 
     public Integer getTarget() {
+        if (target != null) {
+            return target;
+        }
+        if (chatType != Chat.CHAT_TYPE_1_2_1) {
+            return Chat.USER_NOT_FOUND;
+        }
+        if (StringUtility.isNullOrEmpty(this.sessionKey)) {
+            return Chat.USER_NOT_FOUND;
+        }
+        String[] sessionPair = this.sessionKey.split("_");
+        if (sessionPair.length <= 1) {
+            return Chat.USER_NOT_FOUND;
+        }
+
+        if (Integer.parseInt(sessionPair[0]) == this.me) {
+            this.target = Integer.parseInt(sessionPair[1]);
+        } else {
+            this.target = Integer.parseInt(sessionPair[0]);
+        }
         return target;
     }
 
@@ -71,8 +94,6 @@ public class ChatSession {
     public String json() {
         return "{" +
             "'chatType':" + chatType +
-            ", 'me':" + me +
-            ", 'target':" + target +
             ", 'sessionKey':'" + sessionKey + '\'' +
             '}';
     }

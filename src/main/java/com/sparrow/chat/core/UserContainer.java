@@ -37,6 +37,10 @@ public class UserContainer {
     }
 
     public void online(Channel channel, String userId) {
+        Channel oldChannel = channelMap.get(userId);
+        if (oldChannel != null) {
+            oldChannel.close();
+        }
         channelMap.put(userId, channel);
         channel.attr(USER_ID_KEY).set(userId);
     }
