@@ -36,6 +36,9 @@ public class RedisSessionRepository implements SessionRepository {
         }
         List<Integer> userIdList = this.qunRepository.getUserIdList(session.getSessionKey());
         for (Integer userId : userIdList) {
+            if (userId.equals(session.getMe())) {
+                continue;
+            }
             addNewSessionForUserId(session, userId);
         }
     }

@@ -68,6 +68,9 @@ public class UserContainer {
         List<Integer> userIds = qunRepository.getUserIdList(sessionKey);
         List<Channel> channels = new ArrayList<Channel>();
         for (Integer userId : userIds) {
+            if (userId.equals(protocol.getFromUserId())) {
+                continue;
+            }
             Channel channel = this.getChannelByUserId(userId + "");
             if (channel != null) {
                 channels.add(channel);
