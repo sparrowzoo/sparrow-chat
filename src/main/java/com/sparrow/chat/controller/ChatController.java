@@ -29,7 +29,7 @@ public class ChatController {
     public Boolean initChatTest() {
         this.initUser.initUser();
         for (int i = 0; i < 100; i++) {
-            String qunId = "qun-" + i;
+            String qunId = "qun-0";
             this.initQun.initQun(qunId);
             this.initUser.initFriends(i);
             this.initQun.buildQunOfContact(i, qunId);
