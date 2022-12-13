@@ -28,9 +28,11 @@ public class ChatController {
     @GetMapping("init")
     public Boolean initChatTest() {
         this.initUser.initUser();
+        String qunId = "qun-0";
+        this.initQun.initQun(qunId);
+
         for (int i = 0; i < 100; i++) {
-            String qunId = "qun-0";
-            this.initQun.initQun(qunId);
+
             this.initUser.initFriends(i);
             this.initQun.buildQunOfContact(i, qunId);
         }
