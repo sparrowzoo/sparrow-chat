@@ -11,6 +11,7 @@
 
     <script type="text/javascript">
         var ws = null;
+
         function initSocket() {
             //sec-websocket-protocol
             //https://www.cnblogs.com/huic/p/15878201.html
@@ -23,21 +24,19 @@
                 console.log("open");
             }
             ws.onmessage = function (e) {
-                new SparrowProtocol(e.data,function (protocol){
+                new SparrowProtocol(e.data, function (protocol) {
                     console.log(protocol);
-                    var divDialog=document.getElementById("divDialog");
+                    var divDialog = document.getElementById("divDialog");
 
-                    divDialog.innerHTML+="<br/>来自:"+protocol.fromUserId+",发送时间："+new Date();
-                    if(protocol.msgType===0) {
+                    divDialog.innerHTML += "<br/>来自:" + protocol.fromUserId + ",发送时间：" + new Date();
+                    if (protocol.msgType === 0) {
                         //文本
-                        divDialog.innerHTML +=protocol.msg;
-                    }
-                    else
-                    {
+                        divDialog.innerHTML += protocol.msg;
+                    } else {
                         //图
                         // divDialog.innerHTML +="<br/><img/>";
-                        var img= document.createElement("img");
-                        img.src=protocol.url;
+                        var img = document.createElement("img");
+                        img.src = protocol.url;
                         divDialog.appendChild(img);
                         // img.src = url;
                         // img.onload = function () {
@@ -64,14 +63,17 @@
             //concatenate(charType,msgType,current_user_id,session_key,msg)
             msg = msg.toArray().toUint8Array();
 
-            var divDialog=document.getElementById("divDialog");
+            var divDialog = document.getElementById("divDialog");
 
-            divDialog.innerHTML+="<br/>来自:"+userId+",发送时间："+new Date();
-                //文本
-            divDialog.innerHTML +=msg;
-
-
-            ws.send(new SparrowProtocol(CHAT_TYPE_1_2_1, TEXT_MESSAGE, userId, targetUserId, msg).toBytes()); //将消息发送到服务端
+            divDialog.innerHTML += "<br/>来自:" + userId + ",发送时间：" + new Date();
+            //文本
+            divDialog.innerHTML += msg;
+            if (document.getElementById("chkIs121").checked) {
+                ws.send(new SparrowProtocol(CHAT_TYPE_1_2_1, TEXT_MESSAGE, userId, targetUserId, msg).toBytes()); //将消息发送到服务端
+            } else {
+                var sessionKey = document.getElementById("qunId").value;
+                ws.send(new SparrowProtocol(CHAT_TYPE_1_2_N, TEXT_MESSAGE, userId, sessionKey, msg).toBytes()); //将消息发送到服务端
+            }
         }
 
         function sendPicture(src) {
@@ -90,7 +92,12 @@
                 msg = new Uint8Array(result)
                 var userId = document.getElementById("userId").value;//Math.floor(Math.random() * 100);
                 var targetUserId = document.getElementById("targetUserId").value;//Math.floor(Math.random() * 100);
-                ws.send(new SparrowProtocol(CHAT_TYPE_1_2_1, IMAGE_MESSAGE, userId, targetUserId, msg).toBytes()); //将消息发送到服务端
+                if (document.getElementById("chkIs121").checked) {
+                    ws.send(new SparrowProtocol(CHAT_TYPE_1_2_1, IMAGE_MESSAGE, userId, targetUserId, msg).toBytes()); //将消息发送到服务端
+                } else {
+                    var sessionKey = document.getElementById("qunId").value;
+                    ws.send(new SparrowProtocol(CHAT_TYPE_1_2_N, IMAGE_MESSAGE, userId, sessionKey, msg).toBytes()); //将消息发送到服务端
+                }
             }
             fileReader.readAsArrayBuffer(file);
         }
@@ -116,50 +123,50 @@
 
         function fetchSession() {
             var userId = document.getElementById("userId").value;
-            var divDialog=document.getElementById("divDialog");
+            var divDialog = document.getElementById("divDialog");
             var actionUrl = "http://chat.sparrowzoo.com/chat/sessions";
             var data = "token=" + userId;
             $.ajax.json(actionUrl, data, function (result) {
-                var sessionList=result.data;
-                for(var i=0;i<sessionList.length;i++){
-                   var chatSession=sessionList[i].chatSession;
-                         if(chatSession.chatType===0) {
-                             divDialog.innerHTML +="一对一聊天";
-                             divDialog.innerHTML += "<br/>" + chatSession.sessionKey;
-                         }
-                         else {
-                             divDialog.innerHTML +="群聊";
-                             divDialog.innerHTML += "<br/>" + chatSession.sessionKey;
+                var sessionList = result.data;
+                for (var i = 0; i < sessionList.length; i++) {
+                    var chatSession = sessionList[i].chatSession;
+                    if (chatSession.chatType === 0) {
+                        divDialog.innerHTML += "一对一聊天";
+                        divDialog.innerHTML += "<br/>" + chatSession.sessionKey;
+                    } else {
+                        divDialog.innerHTML += "群聊";
+                        divDialog.innerHTML += "<br/>" + chatSession.sessionKey;
 
-                         }
-                           var messages=sessionList[i].messages;
-                           if(messages!=null&&messages.length>0){
-                                for(var j=0;j<messages.length;j++){
-                                    divDialog.innerHTML+="<br/>来自:"+messages[j].fromUserId+",发送时间："+messages[j].sendTime;
-                                    if(messages[j].messageType===0) {
-                                        //文本
-                                        divDialog.innerHTML +=BASE64.bytesToString(BASE64.decodeBase64(messages[j].content));
-                                    }
-                                    else
-                                    {
-                                        var img= document.createElement("img");
-                                        img.src=messages[j].content;
+                    }
+                    var messages = sessionList[i].messages;
+                    if (messages != null && messages.length > 0) {
+                        for (var j = 0; j < messages.length; j++) {
+                            divDialog.innerHTML += "<br/>来自:" + messages[j].fromUserId + ",发送时间：" + messages[j].sendTime;
+                            if (messages[j].messageType === 0) {
+                                //文本
+                                divDialog.innerHTML += BASE64.bytesToString(BASE64.decodeBase64(messages[j].content));
+                            } else {
+                                var img = document.createElement("img");
+                                img.src = messages[j].content;
 
-                                        divDialog.appendChild(img);
-                                        // $.ajax.get("http://chat.sparrowzoo.com/chat/get-image/"+messages[j].content,function (data){
-                                        //     img.src='data:image/jpeg;base64,'+data
-                                        // });
-                                        //图
-                                       // divDialog.innerHTML +="<br/><img src = 'data:image/jpeg;base64,"+messages[j].content+"'/>";
-                                    }
-                                }
-                           }
+                                divDialog.appendChild(img);
+                                // $.ajax.get("http://chat.sparrowzoo.com/chat/get-image/"+messages[j].content,function (data){
+                                //     img.src='data:image/jpeg;base64,'+data
+                                // });
+                                //图
+                                // divDialog.innerHTML +="<br/><img src = 'data:image/jpeg;base64,"+messages[j].content+"'/>";
+                            }
+                        }
+                    }
                 }
             });
         }
     </script>
 </head>
 <body>
+
+是否121:<input type="checkbox" value="1" id="chkIs121"/><br/>
+
 <textarea id="txtMessage" rows="" cols="">
 hello msg
 </textarea>
@@ -168,7 +175,10 @@ hello msg
 user ID:<input type="text" value="1" id="userId"/><br/>
 
 <input type="button" value="fetchContact" id="btnFetchUserContact" onclick="fetchUserContact()"/>
+
 targetUserID ID:<input type="text" value="2" id="targetUserId"/><br/>
+qun ID:<input type="text" value="qun-0" id="qunId"/><br/>
+
 
 <input type="button" value="initSocket" onclick="initSocket();">
 <img id="img" src="" alt="">
