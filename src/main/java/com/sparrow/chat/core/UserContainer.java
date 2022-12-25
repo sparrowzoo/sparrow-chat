@@ -73,7 +73,7 @@ public class UserContainer {
             }
             Channel channel = this.getChannelByUserId(userId + "");
             if (channel != null) {
-                logger.info("session-key {},user-id {},channel {}",protocol.getSession(),userId,channel);
+                logger.info("fetch user channel,session-key {},user-id {},channel {}", protocol.getSession(), userId, channel);
                 channels.add(channel);
                 continue;
             }

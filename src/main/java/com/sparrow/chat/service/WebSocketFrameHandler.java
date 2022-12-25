@@ -69,7 +69,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
                     }
                     continue;
                 }
-                logger.info("channel {}",channel);
+                logger.info("write channel {}",channel);
                 ByteBuf byteBuf = ByteBufAllocator.DEFAULT.directBuffer(msg.content().capacity());
                 byteBuf.writeBytes(msg.content());
                 channel.writeAndFlush(new BinaryWebSocketFrame(byteBuf));
