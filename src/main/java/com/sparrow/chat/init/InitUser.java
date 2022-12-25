@@ -35,7 +35,7 @@ public class InitUser {
             PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(userId);
             String userKey = PlaceHolderParser.parse(RedisKey.USER, propertyAccessor);
             UserDTO user = new UserDTO();
-            user.setAvatar("http://r.sparrowzoo.net/images/login.png");
+            user.setAvatar("http://r.sparrowzoo.net/images/user.png");
             user.setUserId(userId);
             user.setFlagUrl("http://r.flag.png");
             user.setNationality("china");

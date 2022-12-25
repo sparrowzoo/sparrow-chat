@@ -47,8 +47,9 @@ public class ChatController {
     }
 
     @PostMapping("/session/read")
-    public void readSession(@RequestBody MessageReadParam messageRead) {
+    public Boolean readSession(@RequestBody MessageReadParam messageRead) {
         chatService.read(messageRead);
+        return true;
     }
 
     @PostMapping("/sessions")
