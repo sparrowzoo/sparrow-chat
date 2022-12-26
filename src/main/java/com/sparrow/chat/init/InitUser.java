@@ -37,7 +37,7 @@ public class InitUser {
             UserDTO user = new UserDTO();
             user.setAvatar("http://r.sparrowzoo.net/images/user.png");
             user.setUserId(userId);
-            user.setFlagUrl("http://r.flag.png");
+            user.setFlagUrl("http://r.sparrowzoo.net/images/flag.jpg");
             user.setNationality("china");
             user.setUserName("zhangsan" + userId);
             user.setUnit("school");
