@@ -70,17 +70,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             ChatService chatService = ApplicationContext.getContainer().getBean("chatService");
             chatService.saveMessage(protocol);
             List<Channel> channels = UserContainer.getContainer().getChannels(protocol);
-            for (Channel channel : channels) {
-                if (channel == null || !channel.isOpen() || !channel.isActive()) {
-                    if (protocol.getCharType() == Chat.CHAT_TYPE_1_2_1) {
-                        ByteBuf offline = Unpooled.directBuffer(1);
-                        offline.writeByte(0);
-                        ctx.channel().writeAndFlush(new BinaryWebSocketFrame(offline));
-                    }
-                    continue;
-                }
-            }
-            this.writeAndFlush(msg, channels);
+            this.writeAndFlush(ctx,protocol.getCharType(),msg, channels);
         } else if (frame instanceof ContinuationWebSocketFrame) {
             ContinuationWebSocketFrame msg = (ContinuationWebSocketFrame) frame;
             System.out.println(
@@ -105,13 +95,21 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         }
     }
 
-    private void writeAndFlush(BinaryWebSocketFrame msg, List<Channel> channels) throws InterruptedException {
+    private void writeAndFlush(ChannelHandlerContext ctx,Integer chatType, BinaryWebSocketFrame msg, List<Channel> channels) throws InterruptedException {
 //分组发送 或者自定义发送 release 会报错
 //        ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 //        channelGroup.addAll(channels);
 //        channelGroup.writeAndFlush(msg);
 
         for (Channel channel : channels) {
+            if (channel == null || !channel.isOpen() || !channel.isActive()) {
+                if (chatType == Chat.CHAT_TYPE_1_2_1) {
+                    ByteBuf offline = Unpooled.directBuffer(1);
+                    offline.writeByte(0);
+                    ctx.channel().writeAndFlush(new BinaryWebSocketFrame(offline));
+                }
+                continue;
+            }
             BinaryWebSocketFrame unsafe = this.unsafeDuplicate(msg);
             //对比使用 bad case
             //BinaryWebSocketFrame safe=(BinaryWebSocketFrame) safeDuplicate(msg);

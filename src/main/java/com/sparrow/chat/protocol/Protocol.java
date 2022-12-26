@@ -16,7 +16,7 @@ public class Protocol {
     private String session;
     private int contentLength;
     private String content;
-    private Long sendTime = System.currentTimeMillis();
+    private final Long sendTime;
 
     public Protocol(ByteBuf content) {
         this.charType = content.readByte();
@@ -35,6 +35,10 @@ public class Protocol {
         byte[] contentBytes = new byte[contentLength];
         content.readBytes(contentBytes);
         this.content = Base64.encodeBytes(contentBytes);
+        //剩余字节为发送时间字符串的时间戮
+        byte[] sendTimeBytes = new byte[content.readableBytes()];
+        content.readBytes(sendTimeBytes);
+        this.sendTime = Long.parseLong(new String(sendTimeBytes));
         content.resetReaderIndex();
     }
 
