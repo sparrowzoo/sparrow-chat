@@ -16,7 +16,7 @@ public class MessageAssemble {
         message.setSession(protocol.getSession());
         message.setFromUserId(protocol.getFromUserId());
         message.setTargetUserId(protocol.getTargetUserId());
-        message.setSendTime(protocol.getSendTime());
+        message.setServerTime(protocol.getServerTime());
         message.setClientSendTime(protocol.getClientSendTime());
         return message;
     }

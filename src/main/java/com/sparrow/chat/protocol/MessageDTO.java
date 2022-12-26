@@ -7,7 +7,7 @@ public class MessageDTO {
     private int targetUserId;
     private String session;
     private String content;
-    private Long sendTime;
+    private Long serverTime;
     private Long clientSendTime;
 
     public int getMessageType() {
@@ -58,12 +58,12 @@ public class MessageDTO {
         this.content = content;
     }
 
-    public Long getSendTime() {
-        return sendTime;
+    public Long getServerTime() {
+        return serverTime;
     }
 
-    public void setSendTime(Long sendTime) {
-        this.sendTime = sendTime;
+    public void setServerTime(Long serverTime) {
+        this.serverTime = serverTime;
     }
 
     public Long getClientSendTime() {
@@ -82,7 +82,7 @@ public class MessageDTO {
             ", 'targetUserId':" + targetUserId +
             ", 'session':'" + session + '\'' +
             ", 'content':'" + content + '\'' +
-            ", 'sendTime':" + sendTime +
+            ", 'sendTime':" + serverTime +
             ", 'clientSendTime':" + clientSendTime +
             '}';
     }

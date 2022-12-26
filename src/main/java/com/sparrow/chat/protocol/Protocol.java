@@ -2,7 +2,6 @@ package com.sparrow.chat.protocol;
 
 import com.sparrow.cryptogram.Base64;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
 
 import static com.sparrow.chat.commons.Chat.CHAT_TYPE_1_2_1;
 import static com.sparrow.chat.commons.Chat.TEXT_MESSAGE;
@@ -17,7 +16,7 @@ public class Protocol {
     private int contentLength;
     private String content;
     private final Long clientSendTime;
-    private Long sendTime=System.currentTimeMillis();
+    private Long serverTime =System.currentTimeMillis();
 
     public Protocol(ByteBuf content) {
         this.charType = content.readByte();
@@ -103,8 +102,8 @@ public class Protocol {
         return fromUserId;
     }
 
-    public Long getSendTime() {
-        return sendTime;
+    public Long getServerTime() {
+        return serverTime;
     }
 
     public Long getClientSendTime() {
