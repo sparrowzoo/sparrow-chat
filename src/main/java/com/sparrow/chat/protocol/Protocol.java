@@ -17,6 +17,7 @@ public class Protocol {
     private int contentLength;
     private String content;
     private final Long sendTime;
+    private Long serverSendTime = System.currentTimeMillis();
 
     public Protocol(ByteBuf content) {
         this.charType = content.readByte();
@@ -106,4 +107,7 @@ public class Protocol {
         return sendTime;
     }
 
+    public Long getServerSendTime() {
+        return serverSendTime;
+    }
 }
