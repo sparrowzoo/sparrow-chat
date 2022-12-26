@@ -82,7 +82,7 @@ public class MessageDTO {
             ", 'targetUserId':" + targetUserId +
             ", 'session':'" + session + '\'' +
             ", 'content':'" + content + '\'' +
-            ", 'sendTime':" + serverTime +
+            ", 'serverTime':" + serverTime +
             ", 'clientSendTime':" + clientSendTime +
             '}';
     }
