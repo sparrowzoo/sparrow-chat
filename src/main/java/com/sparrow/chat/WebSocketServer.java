@@ -77,6 +77,7 @@ public final class WebSocketServer {
              .handler(new LoggingHandler(LogLevel.INFO))
              .childHandler(new WebSocketServerInitializer(sslCtx));
 
+            //[id: 0x5c38d987, L:/0:0:0:0:0:0:0:0:8080]
             Channel ch = b.bind(PORT).sync().channel();
             System.out.println("Open your web browser and navigate to " +
                     (SSL? "https" : "http") + "://127.0.0.1:" + PORT + '/');

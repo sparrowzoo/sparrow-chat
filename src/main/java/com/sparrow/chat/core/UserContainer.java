@@ -4,8 +4,11 @@ import com.sparrow.chat.protocol.Protocol;
 import com.sparrow.chat.repository.QunRepository;
 import com.sparrow.spring.starter.SpringContext;
 import io.netty.channel.Channel;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
+import io.netty.util.concurrent.GlobalEventExecutor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +69,7 @@ public class UserContainer {
         QunRepository qunRepository = SpringContext.getContext().getBean(QunRepository.class);
         String sessionKey = protocol.getSession();
         List<Integer> userIds = qunRepository.getUserIdList(sessionKey);
-        List<Channel> channels = new ArrayList<Channel>();
+        List<Channel> channels=new ArrayList<>(userIds.size());
         for (Integer userId : userIds) {
             if (userId.equals(protocol.getFromUserId())) {
                 continue;
@@ -77,7 +80,7 @@ public class UserContainer {
                 channels.add(channel);
                 continue;
             }
-            logger.warn("user [{}] is offline ", userId);
+            //logger.warn("user [{}] is offline ", userId);
         }
         return channels;
     }
