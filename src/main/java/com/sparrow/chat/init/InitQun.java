@@ -36,10 +36,10 @@ public class InitQun {
         qunDto.setQunName("聊天室"+qunId);
         qunDto.setNationality("england");
         qunDto.setUnit("school");
-        qunDto.setFlagUrl("http://www.baidu.com");
+        qunDto.setFlagUrl("http://r.sparrowzoo.net/images/flag.jpg");
         qunDto.setAnnouncement("Announcement");
         qunDto.setUnitType("school-type");
-        qunDto.setUnitIcon("unit icon");
+        qunDto.setUnitIcon("http://r.sparrowzoo.net/images/unit_icon.jpg");
         redisTemplate.opsForValue().set(qunKey, this.json.toString(qunDto));
 
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByQunId(qunId);
