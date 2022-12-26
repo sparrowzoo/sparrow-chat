@@ -8,6 +8,7 @@ public class MessageDTO {
     private String session;
     private String content;
     private Long sendTime;
+    private Long clientSendTime;
 
     public int getMessageType() {
         return messageType;
@@ -65,6 +66,14 @@ public class MessageDTO {
         this.sendTime = sendTime;
     }
 
+    public Long getClientSendTime() {
+        return clientSendTime;
+    }
+
+    public void setClientSendTime(Long clientSendTime) {
+        this.clientSendTime = clientSendTime;
+    }
+
     public String json() {
         return "{" +
             "'messageType':" + messageType +
@@ -74,6 +83,7 @@ public class MessageDTO {
             ", 'session':'" + session + '\'' +
             ", 'content':'" + content + '\'' +
             ", 'sendTime':" + sendTime +
+            ", 'clientSendTime':" + clientSendTime +
             '}';
     }
 }

@@ -16,8 +16,8 @@ public class Protocol {
     private String session;
     private int contentLength;
     private String content;
-    private final Long sendTime;
-    private Long serverSendTime = System.currentTimeMillis();
+    private final Long clientSendTime;
+    private Long sendTime=System.currentTimeMillis();
 
     public Protocol(ByteBuf content) {
         this.charType = content.readByte();
@@ -39,7 +39,7 @@ public class Protocol {
         //剩余字节为发送时间字符串的时间戮
         byte[] sendTimeBytes = new byte[content.readableBytes()];
         content.readBytes(sendTimeBytes);
-        this.sendTime = Long.parseLong(new String(sendTimeBytes));
+        this.clientSendTime = Long.parseLong(new String(sendTimeBytes));
         content.resetReaderIndex();
     }
 
@@ -107,7 +107,7 @@ public class Protocol {
         return sendTime;
     }
 
-    public Long getServerSendTime() {
-        return serverSendTime;
+    public Long getClientSendTime() {
+        return clientSendTime;
     }
 }
