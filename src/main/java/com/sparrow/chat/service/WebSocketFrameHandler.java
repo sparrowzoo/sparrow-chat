@@ -116,7 +116,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             //对比使用 bad case
             //BinaryWebSocketFrame safe=(BinaryWebSocketFrame) safeDuplicate(msg);
             logger.info("write channel {}", channel);
-            ChannelPromise promise = channel.voidPromise();
+            ChannelPromise promise = channel.newPromise();
             promise.addListener(new LoggingListener());
             channel.writeAndFlush(unsafe, promise);
         }
