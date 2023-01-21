@@ -7,6 +7,8 @@ import static com.sparrow.chat.commons.Chat.CHAT_TYPE_1_2_1;
 import static com.sparrow.chat.commons.Chat.TEXT_MESSAGE;
 
 public class Protocol {
+    public Protocol() {
+    }
     private byte messageType;
     private byte charType;
     private int sessionLength;
@@ -15,8 +17,9 @@ public class Protocol {
     private String session;
     private int contentLength;
     private String content;
-    private final Long clientSendTime;
+    private Long clientSendTime;
     private Long serverTime =System.currentTimeMillis();
+
 
     public Protocol(ByteBuf content) {
         this.charType = content.readByte();
@@ -108,5 +111,21 @@ public class Protocol {
 
     public Long getClientSendTime() {
         return clientSendTime;
+    }
+
+    public void setClientSendTime(Long clientSendTime) {
+        this.clientSendTime = clientSendTime;
+    }
+
+    public void setFromUserId(int fromUserId) {
+        this.fromUserId = fromUserId;
+    }
+
+    public void setTargetUserId(int targetUserId) {
+        this.targetUserId = targetUserId;
+    }
+
+    public void setServerTime(Long serverTime) {
+        this.serverTime = serverTime;
     }
 }

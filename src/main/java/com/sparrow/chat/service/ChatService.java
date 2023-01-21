@@ -1,8 +1,11 @@
 package com.sparrow.chat.service;
 
 import com.sparrow.chat.commons.Chat;
+import com.sparrow.chat.core.UserContainer;
+import com.sparrow.chat.protocol.CancelProtocol;
 import com.sparrow.chat.protocol.ChatSession;
 import com.sparrow.chat.protocol.ContactsDTO;
+import com.sparrow.chat.protocol.MessageCancelParam;
 import com.sparrow.chat.protocol.MessageDTO;
 import com.sparrow.chat.protocol.MessageReadParam;
 import com.sparrow.chat.protocol.Protocol;
@@ -12,6 +15,9 @@ import com.sparrow.chat.protocol.UserDTO;
 import com.sparrow.chat.repository.ContactsRepository;
 import com.sparrow.chat.repository.MessageRepository;
 import com.sparrow.chat.repository.SessionRepository;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelPromise;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +50,26 @@ public class ChatService {
 
     public void read(MessageReadParam messageRead) {
         this.messageRepository.read(messageRead);
+    }
+
+    public void cancel(MessageCancelParam messageCancel) {
+        CancelProtocol cancelProtocol = new CancelProtocol(messageCancel.getSessionKey(), messageCancel.getClientSendTime());
+        //将会话的消息移除
+        this.messageRepository.cancel(messageCancel);
+        List<Channel> channels;
+        if (Chat.CHAT_TYPE_1_2_1 == messageCancel.getChatType()) {
+            ChatSession chatSession = ChatSession.create1To1Session(messageCancel.getFromUserId(), messageCancel.getSessionKey());
+            channels = UserContainer.getContainer().getChannels(chatSession);
+        } else {
+            ChatSession chatSession = ChatSession.createQunSession(messageCancel.getFromUserId(), messageCancel.getSessionKey());
+            channels = UserContainer.getContainer().getChannels(chatSession);
+        }
+        for (Channel channel : channels) {
+            if (channel == null || !channel.isOpen() || !channel.isActive()) {
+                continue;
+            }
+            channel.writeAndFlush(new BinaryWebSocketFrame(cancelProtocol.toBytes()));
+        }
     }
 
     public List<SessionDTO> fetchSessions(Integer userId) {

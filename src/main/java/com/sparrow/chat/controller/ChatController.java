@@ -3,6 +3,7 @@ package com.sparrow.chat.controller;
 import com.sparrow.chat.init.InitQun;
 import com.sparrow.chat.init.InitUser;
 import com.sparrow.chat.protocol.ContactsDTO;
+import com.sparrow.chat.protocol.MessageCancelParam;
 import com.sparrow.chat.protocol.MessageReadParam;
 import com.sparrow.chat.protocol.SessionDTO;
 import com.sparrow.chat.repository.MessageRepository;
@@ -55,5 +56,11 @@ public class ChatController {
     @PostMapping("/sessions")
     public List<SessionDTO> getSessions(Integer token) {
         return chatService.fetchSessions(token);
+    }
+
+    @PostMapping("/cancel")
+    public Boolean cancel(@RequestBody MessageCancelParam messageCancel) {
+        chatService.cancel(messageCancel);
+        return true;
     }
 }

@@ -69,7 +69,8 @@
             //文本
             divDialog.innerHTML += msg;
             if (document.getElementById("chkIs121").checked) {
-                ws.send(new SparrowProtocol(CHAT_TYPE_1_2_1, TEXT_MESSAGE, userId, targetUserId, msg).toBytes()); //将消息发送到服务端
+                ws.send("ping");
+                //ws.send(new SparrowProtocol(CHAT_TYPE_1_2_1, TEXT_MESSAGE, userId, targetUserId, msg).toBytes()); //将消息发送到服务端
             } else {
                 var sessionKey = document.getElementById("qunId").value;
                 ws.send(new SparrowProtocol(CHAT_TYPE_1_2_N, TEXT_MESSAGE, userId, sessionKey, msg).toBytes()); //将消息发送到服务端
@@ -161,6 +162,24 @@
                 }
             });
         }
+
+
+         function cancelMsg() {
+            var msgId = document.getElementById("txtMsgId").value;
+            var userId = document.getElementById("userId").value;
+            var is121=1;
+            // private Integer fromUserId;
+            // private Long clientSendTime;
+            // private String sessionKey;
+            // private Integer chatType;
+            var data={"fromUserId":userId,"clientSendTime":msgId,"sessionKey":"qun-0","chatType":1}
+
+            var actionUrl = "http://chat.sparrowzoo.com/chat/cancel";
+            $.ajax.json(actionUrl, data, function (result) {
+               alert(result);
+            });
+        }
+
     </script>
 </head>
 <body>
@@ -186,6 +205,11 @@ qun ID:<input type="text" value="qun-0" id="qunId"/><br/>
 <input type="button" value="send message" onclick="sendMessage()"/>
 <input type="button" value="fetchSession" onclick="fetchSession()"/>
 
+<br/>
+msg ID:<input type="text" id="txtMsgId"/>
+
+
+<input type="button" value="取消消息" onclick="cancelMsg();"/>
 </br>
 
 <div>

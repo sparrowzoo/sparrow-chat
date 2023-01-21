@@ -69,6 +69,8 @@ public class RedisContactsRepository implements ContactsRepository {
         for(String originUserId:originUserIds){
             userIds.add(Integer.parseInt(originUserId));
         }
+        //通讯录加自己
+        userIds.add(userId);
         return getUsersByIds(userIds);
     }
 

@@ -25,22 +25,22 @@ public class MessageRepositoryTest {
 
     @Test
     public void getMsgBySession() {
-        List<MessageDTO> messages = this.messageRepository.getMessageBySession("100_101");
+        List<MessageDTO> messages = this.messageRepository.getMessageBySession("qun");
         Assert.assertEquals(messages.size(), 1);
     }
 
     @Test
     public void testMessage() {
-        ByteBuf buf = new PooledByteBufAllocator().buffer();
-        buf.writeByte(Chat.CHAT_TYPE_1_2_1);
-        buf.writeByte(Chat.TEXT_MESSAGE);
-        buf.writeInt(100);
-        buf.writeInt(101);
-        String msg = "hello zhangsan";
-        byte[] bytes = msg.getBytes(StandardCharsets.UTF_8);
-        buf.writeInt(bytes.length);
-        buf.writeBytes(bytes);
-        Protocol protocol = new Protocol(buf);
-        this.messageRepository.saveMessage(protocol);
+        for (int i = 0; i < 100; i++) {
+            Protocol protocol = new Protocol();
+            protocol.setClientSendTime(System.currentTimeMillis());
+            protocol.setMessageType(Chat.CHAT_TYPE_1_2_1);
+            protocol.setContent("hello" + i);
+            protocol.setFromUserId(i);
+            protocol.setTargetUserId(4);
+            protocol.setSession("qun-0");
+            protocol.setServerTime(System.currentTimeMillis());
+            this.messageRepository.saveMessage(protocol);
+        }
     }
 }

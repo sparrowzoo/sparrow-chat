@@ -1,5 +1,7 @@
 package com.sparrow.chat.protocol;
 
+import com.sparrow.chat.commons.MessageKey;
+
 public class MessageDTO {
     private int messageType;
     private int chatType;
@@ -9,6 +11,10 @@ public class MessageDTO {
     private String content;
     private Long serverTime;
     private Long clientSendTime;
+
+    public String getKey(){
+        return new MessageKey(this.fromUserId,this.clientSendTime).key();
+    }
 
     public int getMessageType() {
         return messageType;

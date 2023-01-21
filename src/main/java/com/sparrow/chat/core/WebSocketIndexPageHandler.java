@@ -15,7 +15,6 @@
  */
 package com.sparrow.chat.core;
 
-import com.sparrow.chat.core.WebSocketServerIndexPage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;

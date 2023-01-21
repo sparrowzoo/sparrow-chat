@@ -17,6 +17,7 @@ package com.sparrow.chat.service;
 
 import com.sparrow.chat.commons.Chat;
 import com.sparrow.chat.core.UserContainer;
+import com.sparrow.chat.protocol.ChatSession;
 import com.sparrow.chat.protocol.Protocol;
 import com.sparrow.core.spi.ApplicationContext;
 import io.netty.buffer.ByteBuf;
@@ -33,10 +34,12 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.ContinuationWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -55,22 +58,26 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
-        // ping and pong frames already handled
+        // ping and pong frames already handled js 不支持PingFrame 需要手动处理
         if (frame instanceof TextWebSocketFrame) {
             // Send the uppercase string back.
-            String request = ((TextWebSocketFrame) frame).text();
-            System.out.println(request.length());
-            System.out.println("received " + request);
-            logger.info("{} received {}", ctx.channel(), request);
-            ctx.channel().writeAndFlush(new TextWebSocketFrame(request.toUpperCase(Locale.US)));
+            String content = ((TextWebSocketFrame) frame).text();
+            if ("ping".equalsIgnoreCase(content)) {
+                frame.retain();
+                ctx.channel().writeAndFlush(new TextWebSocketFrame("PONG"));
+            }
         } else if (frame instanceof BinaryWebSocketFrame) {
             BinaryWebSocketFrame msg = (BinaryWebSocketFrame) frame;
             ByteBuf content = msg.content();
             Protocol protocol = new Protocol(content);
             ChatService chatService = ApplicationContext.getContainer().getBean("chatService");
             chatService.saveMessage(protocol);
-            List<Channel> channels = UserContainer.getContainer().getChannels(protocol);
-            this.writeAndFlush(ctx,protocol.getCharType(),msg, channels);
+            ChatSession chatSession = protocol.getCharType() == Chat.CHAT_TYPE_1_2_1 ?
+                ChatSession.create1To1Session(protocol.getFromUserId(), protocol.getSession()) :
+                ChatSession.createQunSession(protocol.getFromUserId(), protocol.getSession());
+
+            List<Channel> channels = UserContainer.getContainer().getChannels(chatSession);
+            this.writeAndFlush(ctx, protocol.getCharType(), msg, channels);
         } else if (frame instanceof ContinuationWebSocketFrame) {
             ContinuationWebSocketFrame msg = (ContinuationWebSocketFrame) frame;
             System.out.println(
@@ -95,7 +102,8 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         }
     }
 
-    private void writeAndFlush(ChannelHandlerContext ctx,Integer chatType, BinaryWebSocketFrame msg, List<Channel> channels) throws InterruptedException {
+    private void writeAndFlush(ChannelHandlerContext ctx, Integer chatType, BinaryWebSocketFrame msg,
+        List<Channel> channels) throws InterruptedException {
 //分组发送 或者自定义发送 release 会报错
 //        ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 //        channelGroup.addAll(channels);

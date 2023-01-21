@@ -1,5 +1,6 @@
 package com.sparrow.chat.core;
 
+import com.sparrow.chat.protocol.ChatSession;
 import com.sparrow.chat.protocol.Protocol;
 import com.sparrow.chat.repository.QunRepository;
 import com.sparrow.spring.starter.SpringContext;
@@ -61,22 +62,22 @@ public class UserContainer {
         return channelMap.remove(userId.get());
     }
 
-    public List<Channel> getChannels(Protocol protocol) {
-        if (protocol.isOne2One()) {
-            Channel targetChannel = this.getChannelByUserId(protocol.getTargetUserId() + "");
+    public List<Channel> getChannels(ChatSession chatSession) {
+        if (chatSession.isOne2One()) {
+            Channel targetChannel = this.getChannelByUserId(chatSession.getTarget()+"");
             return Collections.singletonList(targetChannel);
         }
         QunRepository qunRepository = SpringContext.getContext().getBean(QunRepository.class);
-        String sessionKey = protocol.getSession();
+        String sessionKey = chatSession.getSessionKey();
         List<Integer> userIds = qunRepository.getUserIdList(sessionKey);
         List<Channel> channels=new ArrayList<>(userIds.size());
         for (Integer userId : userIds) {
-            if (userId.equals(protocol.getFromUserId())) {
+            if (userId.equals(chatSession.getMe())) {
                 continue;
             }
             Channel channel = this.getChannelByUserId(userId + "");
             if (channel != null) {
-                logger.info("fetch user channel,session-key {},user-id {},channel {}", protocol.getSession(), userId, channel);
+                logger.info("fetch user channel,session-key {},user-id {},channel {}", chatSession.getSessionKey(), userId, channel);
                 channels.add(channel);
                 continue;
             }

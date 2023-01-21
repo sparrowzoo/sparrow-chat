@@ -3,9 +3,10 @@ package com.sparrow.chat.repository.impl;
 import com.sparrow.chat.assemble.MessageAssemble;
 import com.sparrow.chat.commons.Chat;
 import com.sparrow.chat.commons.ConfigKey;
+import com.sparrow.chat.commons.MessageKey;
 import com.sparrow.chat.commons.PropertyAccessBuilder;
 import com.sparrow.chat.commons.RedisKey;
-import com.sparrow.chat.protocol.ChatSession;
+import com.sparrow.chat.protocol.MessageCancelParam;
 import com.sparrow.chat.protocol.MessageDTO;
 import com.sparrow.chat.protocol.MessageReadParam;
 import com.sparrow.chat.protocol.Protocol;
@@ -15,11 +16,13 @@ import com.sparrow.json.Json;
 import com.sparrow.protocol.constant.Extension;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
+import com.sparrow.utility.CollectionsUtility;
 import com.sparrow.utility.ConfigUtility;
 import com.sparrow.utility.FileUtility;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +58,14 @@ public class RedisMessageRepository implements MessageRepository {
         return physicalUrl;
     }
 
+    @Override public void cancel(MessageCancelParam messageCancel) {
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(messageCancel.getSessionKey());
+        String redisKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
+        String msgKey = new MessageKey(messageCancel.getFromUserId(), messageCancel.getClientSendTime()).key();
+        redisTemplate.opsForHash().delete(redisKey, msgKey);
+        redisTemplate.opsForList().remove("l" + redisKey, 1, msgKey);
+    }
+
     @Override public String saveImageContent(Protocol protocol) {
         if (Chat.IMAGE_MESSAGE != protocol.getMessageType()) {
             return null;
@@ -70,14 +81,27 @@ public class RedisMessageRepository implements MessageRepository {
         return webUrl;
     }
 
+    public List<MessageDTO> getMessages(String messageKey) {
+        Map<String, String> messages = redisTemplate.opsForHash().entries(messageKey);
+        List<MessageDTO> messageList = new ArrayList<>(messages.size());
+        for (String key : messages.keySet()) {
+            messageList.add(this.json.parse(messages.get(key), MessageDTO.class));
+        }
+        messageList.sort(Comparator.comparing(MessageDTO::getServerTime));
+        return messageList;
+    }
+
     @Override public void saveMessage(Protocol protocol) {
         this.saveImageContent(protocol);
         MessageDTO message = this.messageAssemble.assembleMessage(protocol);
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(protocol.getSession());
         String messageKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
-        redisTemplate.opsForList().rightPush(messageKey, message.json());
-        if (redisTemplate.opsForList().size(messageKey) > Chat.MAX_MSG_OF_SESSION) {
-            redisTemplate.opsForList().leftPop(messageKey);
+        String lkey = "l" + messageKey;
+        redisTemplate.opsForList().rightPush(lkey, message.getKey());
+        redisTemplate.opsForHash().put(messageKey, message.getKey(), message.json());
+        if (redisTemplate.opsForHash().size(messageKey) > Chat.MAX_MSG_OF_SESSION) {
+            String firstKey = (String) redisTemplate.opsForList().leftPop(lkey);
+            redisTemplate.opsForHash().delete(messageKey, firstKey);
         }
         redisTemplate.expire(messageKey, Chat.MESSAGE_EXPIRE_DAYS, TimeUnit.DAYS);
     }
@@ -109,11 +133,6 @@ public class RedisMessageRepository implements MessageRepository {
     @Override public List<MessageDTO> getMessageBySession(String session) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(session);
         String messageKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
-        List<String> messages = redisTemplate.opsForList().range(messageKey, 0, Chat.MAX_MSG_OF_SESSION);
-        List<MessageDTO> messageDtos = new ArrayList<>(messages.size());
-        for (String message : messages) {
-            messageDtos.add(this.json.parse(message, MessageDTO.class));
-        }
-        return messageDtos;
+        return this.getMessages(messageKey);
     }
 }

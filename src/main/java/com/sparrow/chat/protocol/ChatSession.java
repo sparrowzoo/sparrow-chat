@@ -3,6 +3,7 @@ package com.sparrow.chat.protocol;
 import com.sparrow.chat.commons.Chat;
 import com.sparrow.utility.StringUtility;
 import java.util.Arrays;
+import javax.print.DocFlavor;
 
 public class ChatSession {
     public ChatSession() {
@@ -96,6 +97,10 @@ public class ChatSession {
             "'chatType':" + chatType +
             ", 'sessionKey':'" + sessionKey + '\'' +
             '}';
+    }
+
+    public boolean isOne2One(){
+        return this.chatType==Chat.CHAT_TYPE_1_2_1;
     }
 
     private String generateKey() {

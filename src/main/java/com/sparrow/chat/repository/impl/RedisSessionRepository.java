@@ -44,9 +44,8 @@ public class RedisSessionRepository implements SessionRepository {
     }
 
     private void addNewSessionForUserId(ChatSession session, Integer userId) {
-        String userSessionKey;
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(userId);
-        userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
+        String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
         this.redisTemplate.opsForZSet().add(userSessionKey, session.json(), System.currentTimeMillis());
         if (this.redisTemplate.opsForZSet().size(userSessionKey) > Chat.MAX_SESSION_OF_USER) {
             this.redisTemplate.opsForZSet().removeRange(userSessionKey, 0, 0);
