@@ -24,6 +24,10 @@
                 console.log("open");
             }
             ws.onmessage = function (e) {
+                if(e.data=='PONG'){
+                    console.log(e.data);
+                    return;
+                }
                 new SparrowProtocol(e.data, function (protocol) {
                     console.log(protocol);
                     var divDialog = document.getElementById("divDialog");
@@ -56,6 +60,10 @@
             }
         }
 
+        function ping() {
+            ws.send("ping");
+        }
+
         function sendMessage() {
             msg = document.getElementById("txtMessage").value;
             var userId = document.getElementById("userId").value;//Math.floor(Math.random() * 100);
@@ -69,8 +77,7 @@
             //文本
             divDialog.innerHTML += msg;
             if (document.getElementById("chkIs121").checked) {
-                ws.send("ping");
-                //ws.send(new SparrowProtocol(CHAT_TYPE_1_2_1, TEXT_MESSAGE, userId, targetUserId, msg).toBytes()); //将消息发送到服务端
+                ws.send(new SparrowProtocol(CHAT_TYPE_1_2_1, TEXT_MESSAGE, userId, targetUserId, msg).toBytes()); //将消息发送到服务端
             } else {
                 var sessionKey = document.getElementById("qunId").value;
                 ws.send(new SparrowProtocol(CHAT_TYPE_1_2_N, TEXT_MESSAGE, userId, sessionKey, msg).toBytes()); //将消息发送到服务端
@@ -180,6 +187,7 @@
             });
         }
 
+
     </script>
 </head>
 <body>
@@ -203,15 +211,12 @@ qun ID:<input type="text" value="qun-0" id="qunId"/><br/>
 <img id="img" src="" alt="">
 <input type="file" value="send message" onchange="sendPicture(this)">
 <input type="button" value="send message" onclick="sendMessage()"/>
+<input type="button" value="PING" onclick="ping()"/>
 <input type="button" value="fetchSession" onclick="fetchSession()"/>
-
 <br/>
 msg ID:<input type="text" id="txtMsgId"/>
-
-
 <input type="button" value="取消消息" onclick="cancelMsg();"/>
 </br>
-
 <div>
     <ul id="ulSession">
 
