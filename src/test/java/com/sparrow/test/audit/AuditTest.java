@@ -1,6 +1,7 @@
 package com.sparrow.test.audit;
 
 import com.sparrow.chat.dao.AuditDAO;
+import com.sparrow.chat.enums.AuditStatus;
 import com.sparrow.chat.enums.BusinessType;
 import com.sparrow.chat.po.Audit;
 import com.sparrow.spring.starter.test.TestWithoutBootstrap;
@@ -37,7 +38,7 @@ public class AuditTest {
         audit.setAuditUserId(2L);
         audit.setApplyReason("你好，我是你的同学");
         audit.setAuditReason("不好意思， 不认识");
-        audit.setStatus(2);
+        audit.setStatus(AuditStatus.AUDITING);
         audit.setAuditTime(System.currentTimeMillis());
         audit.setCreateTime(System.currentTimeMillis());
         this.auditDao.insert(audit);
