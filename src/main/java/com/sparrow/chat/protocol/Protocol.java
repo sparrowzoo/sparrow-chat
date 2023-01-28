@@ -14,7 +14,7 @@ public class Protocol {
     private int sessionLength;
     private int fromUserId;
     private int targetUserId;
-    private String session;
+    private ChatSession chatSession;
     private int contentLength;
     private String content;
     private Long clientSendTime;
@@ -27,12 +27,13 @@ public class Protocol {
         this.fromUserId = content.readInt();
         if (this.charType == CHAT_TYPE_1_2_1) {
             this.targetUserId = content.readInt();
-            this.session = ChatSession.create1To1Session(this.fromUserId, this.targetUserId).getSessionKey();
+            this.chatSession = ChatSession.create1To1Session(this.fromUserId, this.targetUserId);
         } else {
             this.sessionLength = content.readInt();
             byte[] sessionBytes = new byte[sessionLength];
             content.readBytes(sessionBytes);
-            this.session = new String(sessionBytes);
+            String sessionKey=new String(sessionBytes);
+            this.chatSession = ChatSession.createQunSession(this.fromUserId,sessionKey);
         }
         this.contentLength = content.readInt();
         byte[] contentBytes = new byte[contentLength];
@@ -61,12 +62,12 @@ public class Protocol {
         this.sessionLength = sessionLength;
     }
 
-    public String getSession() {
-        return session;
+    public ChatSession getChatSession() {
+        return chatSession;
     }
 
-    public void setSession(String session) {
-        this.session = session;
+    public void setChatSession(ChatSession chatSession) {
+        this.chatSession = chatSession;
     }
 
     public int getContentLength() {

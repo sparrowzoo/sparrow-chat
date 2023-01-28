@@ -2,6 +2,7 @@ package com.sparrow.test;
 
 import com.sparrow.chat.boot.Application;
 import com.sparrow.chat.commons.Chat;
+import com.sparrow.chat.protocol.ChatSession;
 import com.sparrow.chat.protocol.MessageDTO;
 import com.sparrow.chat.protocol.Protocol;
 import com.sparrow.chat.repository.MessageRepository;
@@ -38,7 +39,7 @@ public class MessageRepositoryTest {
             protocol.setContent("hello" + i);
             protocol.setFromUserId(i);
             protocol.setTargetUserId(4);
-            protocol.setSession("qun-0");
+            protocol.setChatSession(ChatSession.createQunSession(i,"qun-0"));
             protocol.setServerTime(System.currentTimeMillis());
             this.messageRepository.saveMessage(protocol);
         }

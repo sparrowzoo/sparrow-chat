@@ -6,9 +6,10 @@ import com.sparrow.chat.protocol.ContactsDTO;
 import com.sparrow.chat.protocol.MessageCancelParam;
 import com.sparrow.chat.protocol.MessageReadParam;
 import com.sparrow.chat.protocol.SessionDTO;
-import com.sparrow.chat.repository.MessageRepository;
 import com.sparrow.chat.service.ChatService;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/chat")
 public class ChatController {
+    private static Logger logger = LoggerFactory.getLogger(ChatController.class);
     @Autowired
     private ChatService chatService;
     @Autowired
@@ -60,7 +62,12 @@ public class ChatController {
 
     @PostMapping("/cancel")
     public Boolean cancel(@RequestBody MessageCancelParam messageCancel) {
-        chatService.cancel(messageCancel);
+        try {
+            chatService.cancel(messageCancel);
+        } catch (Exception e) {
+            logger.error("cancel error", e);
+            return false;
+        }
         return true;
     }
 }

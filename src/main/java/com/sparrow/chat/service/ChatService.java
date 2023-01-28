@@ -15,6 +15,7 @@ import com.sparrow.chat.protocol.UserDTO;
 import com.sparrow.chat.repository.ContactsRepository;
 import com.sparrow.chat.repository.MessageRepository;
 import com.sparrow.chat.repository.SessionRepository;
+import com.sparrow.protocol.BusinessException;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
@@ -42,17 +43,14 @@ public class ChatService {
     void saveMessage(Protocol protocol) {
         //将消息保存至session 每个消息只存留一份，只保留最近100条
         this.messageRepository.saveMessage(protocol);
-        ChatSession chatSession = protocol.getCharType() == Chat.CHAT_TYPE_1_2_1 ?
-            ChatSession.create1To1Session(protocol.getFromUserId(), protocol.getTargetUserId()) :
-            ChatSession.createQunSession(protocol.getFromUserId(), protocol.getSession());
-        this.sessionRepository.saveSession(chatSession);
+        this.sessionRepository.saveSession(protocol.getChatSession());
     }
 
     public void read(MessageReadParam messageRead) {
         this.messageRepository.read(messageRead);
     }
 
-    public void cancel(MessageCancelParam messageCancel) {
+    public void cancel(MessageCancelParam messageCancel) throws BusinessException {
         CancelProtocol cancelProtocol = new CancelProtocol(messageCancel.getSessionKey(), messageCancel.getClientSendTime());
         //将会话的消息移除
         this.messageRepository.cancel(messageCancel);

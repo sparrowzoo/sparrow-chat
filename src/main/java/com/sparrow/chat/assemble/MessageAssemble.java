@@ -13,7 +13,7 @@ public class MessageAssemble {
         message.setChatType(protocol.getCharType());
 
         message.setContent(protocol.getContent());
-        message.setSession(protocol.getSession());
+        message.setSession(protocol.getChatSession().getSessionKey());
         message.setFromUserId(protocol.getFromUserId());
         message.setTargetUserId(protocol.getTargetUserId());
         message.setServerTime(protocol.getServerTime());

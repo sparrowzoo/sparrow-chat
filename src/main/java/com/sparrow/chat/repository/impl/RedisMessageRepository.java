@@ -13,7 +13,9 @@ import com.sparrow.chat.protocol.Protocol;
 import com.sparrow.chat.repository.MessageRepository;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.json.Json;
+import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.constant.Extension;
+import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import com.sparrow.utility.CollectionsUtility;
@@ -58,10 +60,18 @@ public class RedisMessageRepository implements MessageRepository {
         return physicalUrl;
     }
 
-    @Override public void cancel(MessageCancelParam messageCancel) {
+    @Override public void cancel(MessageCancelParam messageCancel) throws BusinessException {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(messageCancel.getSessionKey());
         String redisKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
         String msgKey = new MessageKey(messageCancel.getFromUserId(), messageCancel.getClientSendTime()).key();
+        String msg = (String) redisTemplate.opsForHash().get(redisKey, msgKey);
+        MessageDTO message = this.json.parse(msg, MessageDTO.class);
+        if (message == null) {
+            throw new BusinessException(SparrowError.GLOBAL_REQUEST_ID_NOT_EXIST);
+        }
+        if (message.getFromUserId() != messageCancel.getFromUserId()) {
+            throw new BusinessException(SparrowError.GLOBAL_PARAMETER_IS_ILLEGAL);
+        }
         redisTemplate.opsForHash().delete(redisKey, msgKey);
         redisTemplate.opsForList().remove("l" + redisKey, 1, msgKey);
     }
@@ -94,7 +104,7 @@ public class RedisMessageRepository implements MessageRepository {
     @Override public void saveMessage(Protocol protocol) {
         this.saveImageContent(protocol);
         MessageDTO message = this.messageAssemble.assembleMessage(protocol);
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(protocol.getSession());
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(protocol.getChatSession().getSessionKey());
         String messageKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
         String lkey = "l" + messageKey;
         redisTemplate.opsForList().rightPush(lkey, message.getKey());

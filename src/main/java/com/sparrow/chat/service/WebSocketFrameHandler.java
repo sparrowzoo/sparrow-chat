@@ -72,11 +72,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             Protocol protocol = new Protocol(content);
             ChatService chatService = ApplicationContext.getContainer().getBean("chatService");
             chatService.saveMessage(protocol);
-            ChatSession chatSession = protocol.getCharType() == Chat.CHAT_TYPE_1_2_1 ?
-                ChatSession.create1To1Session(protocol.getFromUserId(), protocol.getSession()) :
-                ChatSession.createQunSession(protocol.getFromUserId(), protocol.getSession());
-
-            List<Channel> channels = UserContainer.getContainer().getChannels(chatSession);
+            List<Channel> channels = UserContainer.getContainer().getChannels(protocol.getChatSession());
             this.writeAndFlush(ctx, protocol.getCharType(), msg, channels);
         } else if (frame instanceof ContinuationWebSocketFrame) {
             ContinuationWebSocketFrame msg = (ContinuationWebSocketFrame) frame;

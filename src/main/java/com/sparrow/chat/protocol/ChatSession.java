@@ -3,7 +3,6 @@ package com.sparrow.chat.protocol;
 import com.sparrow.chat.commons.Chat;
 import com.sparrow.utility.StringUtility;
 import java.util.Arrays;
-import javax.print.DocFlavor;
 
 public class ChatSession {
     public ChatSession() {
@@ -12,7 +11,7 @@ public class ChatSession {
     public static ChatSession create1To1Session(int me, String sessionKey) {
         return new ChatSession(Chat.CHAT_TYPE_1_2_1, me, null, sessionKey);
     }
-    
+
     public static ChatSession create1To1Session(int me, int target) {
         return new ChatSession(Chat.CHAT_TYPE_1_2_1, me, target, null);
     }
@@ -25,10 +24,12 @@ public class ChatSession {
         this.chatType = chatType;
         this.target = target;
         this.me = me;
+        if (sessionKey != null) {
+            this.sessionKey = sessionKey;
+            return;
+        }
         if (chatType == Chat.CHAT_TYPE_1_2_1) {
             this.sessionKey = this.generateKey();
-        } else {
-            this.sessionKey = sessionKey;
         }
     }
 
@@ -99,8 +100,8 @@ public class ChatSession {
             '}';
     }
 
-    public boolean isOne2One(){
-        return this.chatType==Chat.CHAT_TYPE_1_2_1;
+    public boolean isOne2One() {
+        return this.chatType == Chat.CHAT_TYPE_1_2_1;
     }
 
     private String generateKey() {
