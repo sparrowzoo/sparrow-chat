@@ -1,4 +1,4 @@
-package com.sparrow.chat.repository.impl;
+package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.assemble.MessageAssemble;
 import com.sparrow.chat.commons.Chat;
@@ -18,7 +18,6 @@ import com.sparrow.protocol.constant.Extension;
 import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
-import com.sparrow.utility.CollectionsUtility;
 import com.sparrow.utility.ConfigUtility;
 import com.sparrow.utility.FileUtility;
 import java.io.File;

@@ -17,7 +17,7 @@ public class FriendAuditParam implements Param {
     /**
      * 审核的状态
      */
-    private Boolean status;
+    private Boolean agree;
 
     public Long getAuditId() {
         return auditId;
@@ -27,12 +27,12 @@ public class FriendAuditParam implements Param {
         this.auditId = auditId;
     }
 
-    public Boolean getStatus() {
-        return status;
+    public Boolean getAgree() {
+        return agree;
     }
 
-    public void setStatus(Boolean status) {
-        this.status = status;
+    public void setAgree(Boolean agree) {
+        this.agree = agree;
     }
 
     public String getReason() {

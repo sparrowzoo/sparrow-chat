@@ -7,9 +7,7 @@ public class Chat {
     public static final byte CHAT_TYPE_1_2_1 = 0;
     public static final byte CHAT_TYPE_1_2_N = 1;
     public static final byte CHAT_TYPE_CANCEL = 2;
-
     public static final int MAX_SESSION_OF_USER = 100;
     public static final int MAX_MSG_OF_SESSION = 30;
-
     public static final int MESSAGE_EXPIRE_DAYS = 30;
 }

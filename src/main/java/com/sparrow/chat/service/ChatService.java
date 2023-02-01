@@ -12,12 +12,11 @@ import com.sparrow.chat.protocol.Protocol;
 import com.sparrow.chat.protocol.QunDTO;
 import com.sparrow.chat.protocol.SessionDTO;
 import com.sparrow.chat.protocol.UserDTO;
-import com.sparrow.chat.repository.ContactsRepository;
+import com.sparrow.chat.repository.ContactRepository;
 import com.sparrow.chat.repository.MessageRepository;
 import com.sparrow.chat.repository.SessionRepository;
 import com.sparrow.protocol.BusinessException;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +31,7 @@ public class ChatService {
     @Autowired
     private SessionRepository sessionRepository;
     @Autowired
-    private ContactsRepository contactsRepository;
+    private ContactRepository contactsRepository;
 
     public ContactsDTO getContacts(Integer userId) {
         List<QunDTO> quns = this.contactsRepository.getQunsByUserId(userId);

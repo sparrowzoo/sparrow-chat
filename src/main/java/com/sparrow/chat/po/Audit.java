@@ -95,7 +95,7 @@ public class Audit implements POJO {
     }
 
     @MethodOrder(order = 6)
-    @Column(name = "apply_reason", columnDefinition = "varchar(256)  DEFAULT '' COMMENT '申请理由'", nullable = false)
+    @Column(name = "apply_reason", columnDefinition = "varchar(256)  DEFAULT '' COMMENT '申请理由'", nullable = false,updatable = false)
     public String getApplyReason() {
         return applyReason;
     }
@@ -118,8 +118,7 @@ public class Audit implements POJO {
     @Column(
         name = "status",
         columnDefinition = "tinyint(1)  DEFAULT 0 COMMENT '审核状态'",
-        nullable = false,
-        updatable = false
+        nullable = false
     )
     public AuditStatus getStatus() {
         return status;
@@ -133,8 +132,7 @@ public class Audit implements POJO {
     @Column(
         name = "audit_time",
         columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '审核时间'",
-        nullable = false,
-        updatable = false
+        nullable = false
     )
     public Long getAuditTime() {
         return auditTime;

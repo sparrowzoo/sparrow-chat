@@ -5,7 +5,7 @@ import com.sparrow.chat.commons.Chat;
 import com.sparrow.chat.commons.PropertyAccessBuilder;
 import com.sparrow.chat.commons.RedisKey;
 import com.sparrow.chat.protocol.UserDTO;
-import com.sparrow.chat.repository.ContactsRepository;
+import com.sparrow.chat.repository.ContactRepository;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.json.Json;
 import com.sparrow.support.PlaceHolderParser;
@@ -32,7 +32,7 @@ public class InitUserTest {
     private RedisTemplate redisTemplate;
 
     @Autowired
-    private ContactsRepository contactsRepository;
+    private ContactRepository contactsRepository;
 
     private Json json = JsonFactory.getProvider();
 

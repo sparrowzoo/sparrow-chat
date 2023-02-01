@@ -1,4 +1,4 @@
-package com.sparrow.chat.repository.impl;
+package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.commons.Chat;
 import com.sparrow.chat.commons.PropertyAccessBuilder;

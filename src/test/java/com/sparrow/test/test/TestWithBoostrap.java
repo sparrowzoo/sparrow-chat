@@ -3,6 +3,7 @@ package com.sparrow.test.test;
 import com.sparrow.chat.boot.Application;
 import com.sparrow.chat.dao.QunDAO;
 import com.sparrow.spring.starter.test.SparrowTestExecutionListener;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,5 +29,6 @@ public class TestWithBoostrap {
     @Test
     public void testSpring() {
         System.out.println(qunDAO);
+        Assert.assertEquals(1,2);
     }
 }

@@ -1,11 +1,11 @@
-package com.sparrow.chat.repository.impl;
+package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.commons.Chat;
 import com.sparrow.chat.commons.PropertyAccessBuilder;
 import com.sparrow.chat.commons.RedisKey;
 import com.sparrow.chat.protocol.QunDTO;
 import com.sparrow.chat.protocol.UserDTO;
-import com.sparrow.chat.repository.ContactsRepository;
+import com.sparrow.chat.repository.ContactRepository;
 import com.sparrow.chat.repository.QunRepository;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.json.Json;
@@ -22,7 +22,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RedisContactsRepository implements ContactsRepository {
+public class RedisContactsRepository implements ContactRepository {
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -57,6 +57,12 @@ public class RedisContactsRepository implements ContactsRepository {
         return qunDtos;
     }
 
+    public void clearContactCache(Integer userId) {
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, Chat.CHAT_TYPE_1_2_1);
+        String user121ContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
+        this.redisTemplate.delete(user121ContactKey);
+    }
+
     @Override public List<UserDTO> getFriendsByUserId(Integer userId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, Chat.CHAT_TYPE_1_2_1);
         String user121ContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
@@ -65,8 +71,8 @@ public class RedisContactsRepository implements ContactsRepository {
         if (CollectionsUtility.isNullOrEmpty(originUserIds)) {
             return Collections.emptyList();
         }
-        List<Integer> userIds=new ArrayList<>(originUserIds.size());
-        for(String originUserId:originUserIds){
+        List<Integer> userIds = new ArrayList<>(originUserIds.size());
+        for (String originUserId : originUserIds) {
             userIds.add(Integer.parseInt(originUserId));
         }
         //通讯录加自己

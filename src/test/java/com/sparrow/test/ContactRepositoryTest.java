@@ -1,10 +1,9 @@
 package com.sparrow.test;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.sparrow.chat.boot.Application;
 import com.sparrow.chat.protocol.QunDTO;
 import com.sparrow.chat.protocol.UserDTO;
-import com.sparrow.chat.repository.ContactsRepository;
+import com.sparrow.chat.repository.ContactRepository;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class ContactRepositoryTest {
 
     @Autowired
-    private ContactsRepository contactsRepository;
+    private ContactRepository contactsRepository;
 
     @Test
     public void getContact() {

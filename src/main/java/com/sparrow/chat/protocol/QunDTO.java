@@ -1,9 +1,10 @@
 package com.sparrow.chat.protocol;
 
+import com.sparrow.protocol.DTO;
 import com.sparrow.protocol.POJO;
 import java.util.List;
 
-public class QunDTO implements POJO {
+public class QunDTO implements DTO {
     private String qunId;
     private String qunName;
     private String nationality;
@@ -12,6 +13,7 @@ public class QunDTO implements POJO {
     private String unitType;
     private String unitIcon;
     private String announcement;
+    private Integer createUserId;
     private List<UserDTO> members;
 
     public String getQunId() {
@@ -84,5 +86,13 @@ public class QunDTO implements POJO {
 
     public void setMembers(List<UserDTO> members) {
         this.members = members;
+    }
+
+    public Integer getCreateUserId() {
+        return createUserId;
+    }
+
+    public void setCreateUserId(Integer createUserId) {
+        this.createUserId = createUserId;
     }
 }
