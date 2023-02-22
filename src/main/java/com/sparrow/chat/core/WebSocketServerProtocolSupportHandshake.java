@@ -1,16 +1,26 @@
 package com.sparrow.chat.core;
 
+import com.sparrow.core.spi.JsonFactory;
+import com.sparrow.enums.HttpMethod;
+import com.sparrow.json.Json;
+import com.sparrow.protocol.BusinessException;
+import com.sparrow.protocol.constant.SparrowError;
+import com.sparrow.utility.HttpClient;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleStateEvent;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProtocolHandler {
 
     // js 不支持ping pong 帧
     // https://stackoverflow.com/questions/10585355/sending-websocket-ping-pong-frame-from-browser
+
     /**
      * FIN: 1 bit，表示该帧是否为消息的最后一帧。1-是，0-否。
      * <p>
@@ -44,13 +54,29 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
         super(websocketPath, "*", true, maxLength);
     }
 
+    public Integer parseUserId(String token) throws BusinessException {
+        Map<String, String> header = new HashMap<>();
+        header.put("X-Sugar-Token", token);
+        String result = HttpClient.request(HttpMethod.GET, "http://studyapi.zhilongsoft.com/app/authMember/info"
+            , "", null, header, false);
+        Json json = JsonFactory.getProvider();
+        Map<String, Object> map = json.parse(result);
+        Integer code = (Integer) map.get("code");
+        if (code.equals(200)) {
+            Map<String, Object> userMap = (Map<String, Object>) map.get("data");
+            Map<String, Object> userProperty = (Map<String, Object>) userMap.get("member");
+            return (Integer) userProperty.get("id");
+        }
+        throw new BusinessException(SparrowError.USER_NOT_LOGIN);
+    }
+
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof HandshakeComplete) {
             HandshakeComplete serverHandshakeComplete = (HandshakeComplete) evt;
-            String userId = serverHandshakeComplete.requestHeaders().get("sec-websocket-protocol");
-            System.out.println(serverHandshakeComplete.requestHeaders().get("sec-websocket-protocol"));
-            UserContainer.getContainer().online(ctx.channel(), userId);
+            String token = serverHandshakeComplete.requestHeaders().get("sec-websocket-protocol");
+            Integer userId = this.parseUserId(token);
+            UserContainer.getContainer().online(ctx.channel(), userId + "");
         } else {
             if (evt instanceof IdleStateEvent) {
                 UserContainer.getContainer().offline(ctx.channel());

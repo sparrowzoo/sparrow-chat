@@ -13,12 +13,15 @@ import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import com.sparrow.utility.CollectionsUtility;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -57,30 +60,33 @@ public class RedisContactsRepository implements ContactRepository {
         return qunDtos;
     }
 
-    public void clearContactCache(Integer userId) {
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, Chat.CHAT_TYPE_1_2_1);
-        String user121ContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
-        this.redisTemplate.delete(user121ContactKey);
-    }
-
     @Override public List<UserDTO> getFriendsByUserId(Integer userId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, Chat.CHAT_TYPE_1_2_1);
         String user121ContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         //好友列表
-        List<String> originUserIds = this.redisTemplate.opsForList().range(user121ContactKey, 0, Integer.MAX_VALUE);
-        if (CollectionsUtility.isNullOrEmpty(originUserIds)) {
+        Set<ZSetOperations.TypedTuple<String>> users = this.redisTemplate.opsForZSet().rangeWithScores(user121ContactKey, 0, -1);
+        if (CollectionsUtility.isNullOrEmpty(users)) {
             return Collections.emptyList();
         }
-        List<Integer> userIds = new ArrayList<>(originUserIds.size());
-        for (String originUserId : originUserIds) {
-            userIds.add(Integer.parseInt(originUserId));
+        Map<Integer, Long> friendIdAddTimeMap = new HashMap<>(users.size());
+        for (ZSetOperations.TypedTuple<String> friend : users) {
+            if (friend.getValue() == null) {
+                continue;
+            }
+            long addTime = friend.getScore() == null ? 0 : friend.getScore().longValue();
+            friendIdAddTimeMap.put(Integer.valueOf(friend.getValue()), addTime);
         }
         //通讯录加自己
-        userIds.add(userId);
-        return getUsersByIds(userIds);
+        friendIdAddTimeMap.put(userId, 0L);
+        List<UserDTO> userDtos = getUsersByIds(friendIdAddTimeMap.keySet());
+        for (UserDTO userDto : userDtos) {
+            userDto.setAddTime(friendIdAddTimeMap.get(userDto.getUserId()));
+        }
+        Collections.sort(userDtos);
+        return userDtos;
     }
 
-    @Override public List<UserDTO> getUsersByIds(List<Integer> userIds) {
+    @Override public List<UserDTO> getUsersByIds(Collection<Integer> userIds) {
         List<String> userKeys = new ArrayList<>(userIds.size());
         for (Integer userId : userIds) {
             PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(userId);
@@ -97,5 +103,11 @@ public class RedisContactsRepository implements ContactRepository {
             userDtos.add(this.json.parse(user, UserDTO.class));
         }
         return userDtos;
+    }
+
+    @Override public void addFriend(Integer userId, Integer friendId) {
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, Chat.CHAT_TYPE_1_2_1);
+        String user121ContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
+        this.redisTemplate.opsForZSet().add(user121ContactKey, friendId, System.currentTimeMillis());
     }
 }

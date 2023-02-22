@@ -30,6 +30,8 @@ public class InitQunTest {
     private Json json = JsonFactory.getProvider();
 
 
+
+
     @Test
     public void buildQunOfContact() {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, Chat.CHAT_TYPE_1_2_N);

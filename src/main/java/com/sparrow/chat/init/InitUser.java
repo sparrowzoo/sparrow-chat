@@ -46,7 +46,7 @@ public class InitUser {
             redisTemplate.opsForValue().set(userKey, this.json.toString(user));
         }
 
-        List<UserDTO> users = contactsRepository.getUsersByIds(userIds);
+        contactsRepository.getUsersByIds(userIds);
     }
 
     public void initFriends(Integer userId) {
@@ -56,7 +56,7 @@ public class InitUser {
             if (i == userId) {
                 continue;
             }
-            this.redisTemplate.opsForList().rightPush(user121ContactKey, i + "");
+            this.redisTemplate.opsForZSet().add(user121ContactKey, i + "",System.currentTimeMillis());
         }
     }
 }

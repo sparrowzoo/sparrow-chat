@@ -38,25 +38,35 @@ public class AuditRepositoryImpl implements AuditRepository {
         return this.auditDao.insert(audit);
     }
 
+    /**
+     * 好友审核的消息消费
+     *
+     * @param audit
+     */
+    private void auditFriendConsumer(Audit audit) {
+        //更新双方联系人缓存
+        //清空能保证一致
+        //todo 保证幂等
+        this.contactRepository.addFriend(audit.getUserId().intValue(), audit.getBusinessId().intValue());
+        this.contactRepository.addFriend(audit.getBusinessId().intValue(), audit.getUserId().intValue());
+    }
+
     @Override public Integer auditFriend(Audit audit, FriendAuditParam friendAuditParam) {
         audit.setStatus(friendAuditParam.getAgree() ? AuditStatus.PASS : AuditStatus.REJECT);
         audit.setAuditReason(friendAuditParam.getReason());
         //todo 应该加分布式事务 rocket mq 解耦 后续迭代
+        //todo send mq 分布式事务 半消息 half message
         //更新审核状态
-        Integer count = this.auditDao.update(audit);
+        Integer updateRecordCount = this.auditDao.update(audit);
         //添加当前联系人
         Contact currentContact = this.contactConverter.toCurrentContact(audit);
         this.contactDao.insert(currentContact);
-
         //添加对方联系人
         Contact friendContact = this.contactConverter.toFriendContact(audit);
         this.contactDao.insert(friendContact);
 
-        //更新双方联系人缓存
-        //清空能保证一致
-        this.contactRepository.clearContactCache(audit.getUserId().intValue());
-        this.contactRepository.clearContactCache(audit.getBusinessId().intValue());
-        return count;
+        this.auditFriendConsumer(audit);
+        return updateRecordCount;
     }
 
     public Audit getAudit(Long auditId) {

@@ -2,9 +2,9 @@ package com.sparrow.chat.infrastructure.converter;
 
 import com.sparrow.chat.po.Audit;
 import com.sparrow.chat.po.Contact;
-import java.util.ArrayList;
-import java.util.List;
+import javax.inject.Named;
 
+@Named
 public class ContactConverter {
     public Contact toCurrentContact(Audit audit) {
         Contact currentUser = new Contact();

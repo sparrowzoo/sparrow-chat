@@ -15,7 +15,10 @@
         function initSocket() {
             //sec-websocket-protocol
             //https://www.cnblogs.com/huic/p/15878201.html
-            var userId = document.getElementById("userId").value;//Math.floor(Math.random() * 100);
+            var token=document.getElementById("txtToken").value;
+            if(token==""){
+                token ='eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl9tZW1iZXJfa2V5IjoiNmJkNTlhMmQtM2M0Yi00MmExLTk2OTUtODMzOWU3YzIxMDM2In0.6PIbxQsJFGklxRvnKYqzbHhNyrVWajCzQd8uN_w5vAGc1OOi8oCSCaIKboTBGdb-iK6bfNTxMIy9ZP9465o0_A'; //document.getElementById("userId").value;//Math.floor(Math.random() * 100);
+            }
             console.log("current user" + userId)
             ws = new WebSocket("ws://chat.sparrowzoo.com/websocket", [userId]);
             //申请一个WebSocket对象，参数是服务端地址，同http协议使用http://开头一样，WebSocket协议的url使用ws://开头，另外安全的WebSocket协议使用wss://开头
@@ -76,11 +79,12 @@
             divDialog.innerHTML += "<br/>来自:" + userId + ",发送时间：" + new Date();
             //文本
             divDialog.innerHTML += msg;
+            time=new Date().getTime();
             if (document.getElementById("chkIs121").checked) {
-                ws.send(new SparrowProtocol(CHAT_TYPE_1_2_1, TEXT_MESSAGE, userId, targetUserId, msg).toBytes()); //将消息发送到服务端
+                ws.send(new SparrowProtocol(CHAT_TYPE_1_2_1, TEXT_MESSAGE, userId, targetUserId, msg,time).toBytes()); //将消息发送到服务端
             } else {
                 var sessionKey = document.getElementById("qunId").value;
-                ws.send(new SparrowProtocol(CHAT_TYPE_1_2_N, TEXT_MESSAGE, userId, sessionKey, msg).toBytes()); //将消息发送到服务端
+                ws.send(new SparrowProtocol(CHAT_TYPE_1_2_N, TEXT_MESSAGE, userId, sessionKey, msg,time).toBytes()); //将消息发送到服务端
             }
         }
 
@@ -101,10 +105,10 @@
                 var userId = document.getElementById("userId").value;//Math.floor(Math.random() * 100);
                 var targetUserId = document.getElementById("targetUserId").value;//Math.floor(Math.random() * 100);
                 if (document.getElementById("chkIs121").checked) {
-                    ws.send(new SparrowProtocol(CHAT_TYPE_1_2_1, IMAGE_MESSAGE, userId, targetUserId, msg).toBytes()); //将消息发送到服务端
+                    ws.send(new SparrowProtocol(CHAT_TYPE_1_2_1, IMAGE_MESSAGE, userId, targetUserId, msg,new Date().getTime()).toBytes()); //将消息发送到服务端
                 } else {
                     var sessionKey = document.getElementById("qunId").value;
-                    ws.send(new SparrowProtocol(CHAT_TYPE_1_2_N, IMAGE_MESSAGE, userId, sessionKey, msg).toBytes()); //将消息发送到服务端
+                    ws.send(new SparrowProtocol(CHAT_TYPE_1_2_N, IMAGE_MESSAGE, userId, sessionKey, msg,new Date().getTime()).toBytes()); //将消息发送到服务端
                 }
             }
             fileReader.readAsArrayBuffer(file);
@@ -191,6 +195,8 @@
     </script>
 </head>
 <body>
+
+token <input type="text" id="txtToken" value=""/>
 
 是否121:<input type="checkbox" value="1" id="chkIs121"/><br/>
 

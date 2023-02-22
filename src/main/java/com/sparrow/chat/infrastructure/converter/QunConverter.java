@@ -2,7 +2,9 @@ package com.sparrow.chat.infrastructure.converter;
 
 import com.sparrow.chat.po.Qun;
 import com.sparrow.chat.protocol.QunDTO;
+import javax.inject.Named;
 
+@Named
 public class QunConverter {
     public QunDTO po2dto(Qun qun) {
         QunDTO qunDto = new QunDTO();

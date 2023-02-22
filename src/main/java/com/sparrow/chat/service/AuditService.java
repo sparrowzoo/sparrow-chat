@@ -68,7 +68,6 @@ public class AuditService {
         LoginUser loginUser = ThreadContext.getLoginToken();
         Asserts.isTrue(loginUser == null || User.VISITOR_ID.equals(loginUser.getUserId()), SparrowError.USER_NOT_LOGIN);
         Asserts.isTrue(friendApplyParam.getFriendId() == null, ChatError.APPLY_FRIEND_IS_NULL);
-
         return this.auditRepository.applyFriend(loginUser.getUserId(), friendApplyParam);
     }
 

@@ -2,7 +2,7 @@ package com.sparrow.chat.protocol;
 
 import com.sparrow.protocol.POJO;
 
-public class UserDTO implements POJO {
+public class UserDTO implements POJO,Comparable<UserDTO>{
     private String nationality;
     private String flagUrl;
     private String unit;
@@ -11,6 +11,7 @@ public class UserDTO implements POJO {
     private Integer userId;
     private String userName;
     private String avatar;
+    private Long addTime;
 
     public String getNationality() {
         return nationality;
@@ -74,5 +75,17 @@ public class UserDTO implements POJO {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public Long getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(Long addTime) {
+        this.addTime = addTime;
+    }
+
+    @Override public int compareTo(UserDTO o) {
+        return this.userName.compareTo(o.getUserName());
     }
 }

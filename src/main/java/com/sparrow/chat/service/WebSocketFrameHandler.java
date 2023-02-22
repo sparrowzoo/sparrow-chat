@@ -76,9 +76,6 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             this.writeAndFlush(ctx, protocol.getCharType(), msg, channels);
         } else if (frame instanceof ContinuationWebSocketFrame) {
             ContinuationWebSocketFrame msg = (ContinuationWebSocketFrame) frame;
-            System.out.println(
-                "IsFinal" + msg.isFinalFragment() + " length" + msg.content()
-                    .capacity());
         }
     }
 

@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -25,6 +26,14 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 public class TestWithBoostrap {
     @Autowired
     private QunDAO qunDAO;
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Test
+    public void testJson(){
+        this.redisTemplate.opsForValue().set("a","test remote redis");
+        System.out.println(this.redisTemplate.opsForValue().get("a"));
+    }
 
     @Test
     public void testSpring() {
