@@ -4,6 +4,7 @@ import com.sparrow.chat.boot.Application;
 import com.sparrow.chat.protocol.QunDTO;
 import com.sparrow.chat.protocol.UserDTO;
 import com.sparrow.chat.repository.ContactRepository;
+import com.sparrow.spring.starter.test.TestWithoutBootstrap;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
+@TestWithoutBootstrap
 public class ContactRepositoryTest {
 
     @Autowired

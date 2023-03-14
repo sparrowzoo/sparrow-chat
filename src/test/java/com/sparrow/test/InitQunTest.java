@@ -7,6 +7,7 @@ import com.sparrow.chat.commons.RedisKey;
 import com.sparrow.chat.protocol.QunDTO;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.json.Json;
+import com.sparrow.spring.starter.test.TestWithoutBootstrap;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import org.junit.Test;
@@ -17,7 +18,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
+@TestWithoutBootstrap
 public class InitQunTest {
 
     private static String qunId = "qun-id-1";

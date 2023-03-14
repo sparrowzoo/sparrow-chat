@@ -3,14 +3,41 @@ package com.sparrow.chat.protocol;
 import com.sparrow.protocol.POJO;
 
 public class UserDTO implements POJO,Comparable<UserDTO>{
+    /**
+     * 国籍
+     */
     private String nationality;
+    /**
+     * 国旗url
+     */
     private String flagUrl;
+    /**
+     * 所在单位
+     */
     private String unit;
+    /**
+     * 单位类型
+     */
     private String unitType;
+    /**
+     * 单位icon
+     */
     private String unitIcon;
+    /**
+     * 用户id
+     */
     private Integer userId;
+    /**
+     * 用户名
+     */
     private String userName;
+    /**
+     * 头象
+     */
     private String avatar;
+    /**
+     * 加入时间
+     */
     private Long addTime;
 
     public String getNationality() {
