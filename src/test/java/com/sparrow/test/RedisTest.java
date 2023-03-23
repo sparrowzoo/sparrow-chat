@@ -42,7 +42,7 @@ public class RedisTest {
 
     @Test
     public void testContact() {
-        List<UserDTO> users = redisContactsRepository.getFriendsByUserId(1);
-        List<QunDTO> quns = redisContactsRepository.getQunsByUserId(1);
+        //List<UserDTO> users = redisContactsRepository.getFriendsByUserId(6);
+        List<QunDTO> quns = redisContactsRepository.getQunsByUserId(6);
     }
 }

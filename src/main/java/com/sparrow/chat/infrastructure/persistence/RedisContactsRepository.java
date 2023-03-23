@@ -12,6 +12,7 @@ import com.sparrow.json.Json;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import com.sparrow.utility.CollectionsUtility;
+import com.sparrow.utility.StringUtility;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -27,6 +30,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisContactsRepository implements ContactRepository {
 
+    private static Logger logger= LoggerFactory.getLogger(RedisContactsRepository.class);
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -51,6 +55,10 @@ public class RedisContactsRepository implements ContactRepository {
         List<String> quns = this.redisTemplate.opsForValue().multiGet(qunKeys);
         List<QunDTO> qunDtos = new ArrayList<>(quns.size());
         for (String qun : quns) {
+            if(StringUtility.isNullOrEmpty(qun)){
+                logger.error("qun");
+                continue;
+            }
             QunDTO qunDto = this.json.parse(qun, QunDTO.class);
             List<Integer> userIds = qunMembersMap.get(qunDto.getQunId());
             List<UserDTO> userDtos = this.getUsersByIds(userIds);
@@ -91,7 +99,7 @@ public class RedisContactsRepository implements ContactRepository {
         for (Integer userId : userIds) {
             PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(userId);
             String userKey = PlaceHolderParser.parse(RedisKey.USER, propertyAccessor);
-            userKeys.add(userKey);
+            userKeys.add(userKey)   ;
         }
         //好友列表
         List<String> users = this.redisTemplate.opsForValue().multiGet(userKeys);

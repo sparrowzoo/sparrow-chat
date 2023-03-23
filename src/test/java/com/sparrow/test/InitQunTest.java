@@ -1,6 +1,5 @@
 package com.sparrow.test;
 
-import com.sparrow.chat.boot.Application;
 import com.sparrow.chat.commons.Chat;
 import com.sparrow.chat.commons.PropertyAccessBuilder;
 import com.sparrow.chat.commons.RedisKey;
@@ -13,7 +12,6 @@ import com.sparrow.support.PropertyAccessor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 

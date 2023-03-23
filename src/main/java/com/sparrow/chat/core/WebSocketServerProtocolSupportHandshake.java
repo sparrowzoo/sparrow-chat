@@ -76,6 +76,7 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
             HandshakeComplete serverHandshakeComplete = (HandshakeComplete) evt;
             String token = serverHandshakeComplete.requestHeaders().get("sec-websocket-protocol");
             Integer userId = this.parseUserId(token);
+            ctx.channel().writeAndFlush("USER:" + userId);
             UserContainer.getContainer().online(ctx.channel(), userId + "");
         } else {
             if (evt instanceof IdleStateEvent) {
