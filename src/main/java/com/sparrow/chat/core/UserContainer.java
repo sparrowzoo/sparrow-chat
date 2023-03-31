@@ -36,8 +36,15 @@ public class UserContainer {
 
     public static final Map<String, Channel> channelMap = new ConcurrentHashMap<String, Channel>();
 
-    public boolean hasUser(Channel channel) {
-        return (channel.hasAttr(USER_ID_KEY) || channel.attr(USER_ID_KEY).get() != null);
+    public Integer hasUser(Channel channel) {
+        if (!channel.hasAttr(USER_ID_KEY)) {
+            return null;
+        }
+        String userId = channel.attr(USER_ID_KEY).get();
+        if (userId == null) {
+            return null;
+        }
+        return Integer.valueOf(userId);
     }
 
     public void online(Channel channel, String userId) {
@@ -64,13 +71,13 @@ public class UserContainer {
 
     public List<Channel> getChannels(ChatSession chatSession) {
         if (chatSession.isOne2One()) {
-            Channel targetChannel = this.getChannelByUserId(chatSession.getTarget()+"");
+            Channel targetChannel = this.getChannelByUserId(chatSession.getTarget() + "");
             return Collections.singletonList(targetChannel);
         }
         QunRepository qunRepository = SpringContext.getContext().getBean(QunRepository.class);
         String sessionKey = chatSession.getSessionKey();
         List<Integer> userIds = qunRepository.getUserIdList(sessionKey);
-        List<Channel> channels=new ArrayList<>(userIds.size());
+        List<Channel> channels = new ArrayList<>(userIds.size());
         for (Integer userId : userIds) {
             if (userId.equals(chatSession.getMe())) {
                 continue;

@@ -22,7 +22,8 @@
             console.log("current user" + token)
             ws = new WebSocket("ws://chat.sparrowzoo.com/websocket", [token]);
             //申请一个WebSocket对象，参数是服务端地址，同http协议使用http://开头一样，WebSocket协议的url使用ws://开头，另外安全的WebSocket协议使用wss://开头
-            ws.onopen = function () {
+            ws.onopen = function (e) {
+            	console.log(e)
                 //当WebSocket创建成功时，触发onopen事件
                 console.log("open");
             }

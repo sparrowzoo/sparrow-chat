@@ -70,6 +70,13 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             BinaryWebSocketFrame msg = (BinaryWebSocketFrame) frame;
             ByteBuf content = msg.content();
             Protocol protocol = new Protocol(content);
+            Integer fromUserId = UserContainer.getContainer().hasUser(ctx.channel());
+            if (protocol.getFromUserId() != fromUserId) {
+                logger.error("user id is not allow {}", fromUserId);
+                return;
+            }
+            //从发前channel 中获取当前用户id
+            protocol.setFromUserId(fromUserId);
             ChatService chatService = ApplicationContext.getContainer().getBean("chatService");
             chatService.saveMessage(protocol);
             List<Channel> channels = UserContainer.getContainer().getChannels(protocol.getChatSession());
