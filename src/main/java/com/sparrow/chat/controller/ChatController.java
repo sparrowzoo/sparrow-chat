@@ -1,5 +1,7 @@
 package com.sparrow.chat.controller;
 
+import com.sparrow.chat.commons.TokenParser;
+import com.sparrow.chat.core.UserContainer;
 import com.sparrow.chat.init.InitQun;
 import com.sparrow.chat.init.InitUser;
 import com.sparrow.chat.protocol.ContactsDTO;
@@ -7,6 +9,7 @@ import com.sparrow.chat.protocol.MessageCancelParam;
 import com.sparrow.chat.protocol.MessageReadParam;
 import com.sparrow.chat.protocol.SessionDTO;
 import com.sparrow.chat.service.ChatService;
+import com.sparrow.protocol.BusinessException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +43,12 @@ public class ChatController {
             this.initQun.buildQunOfContact(i, qunId);
         }
         return true;
+    }
+
+    @RequestMapping("/is-online")
+    public Boolean online(String token) throws BusinessException {
+        int userId = TokenParser.parseUserId(token);
+        return UserContainer.getContainer().online(String.valueOf(userId));
     }
 
     //    @CrossOrigin(origins = {"*"})

@@ -17,18 +17,23 @@
             //https://www.cnblogs.com/huic/p/15878201.html
             var token=document.getElementById("txtToken").value;
 	        if (token == "") {
-		        token = 'eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl9tZW1iZXJfa2V5IjoiOWU2MzZlYTAtNjE0Yy00YWRiLWJkNjEtMTA3MWJjNjI3M2QzIn0.kqaYZwnvIpwkP1gmSSAbfJnCTFxNoUZLg0XihZzudvk8rt0bVjOfiKv-mGIDFMqSzi8J5kf5yS3uu9vUklTHkA'; //document.getElementById("userId").value;//Math.floor(Math.random() * 100);
+		        token="eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl9tZW1iZXJfa2V5IjoiMTgyOWUzNTUtYjgwNi00NjQ1LTlhNGMtZmRiMzkzZTE0OTJkIn0.KLg7eFHCvsA8dKQ_b8w00BlLpNSGvvYHEKrf8cCtFFaYUWCOsS85bfMp65i0qJSVMimFaSOl3liwbchFqSztaw";
 	        }
             console.log("current user" + token)
             ws = new WebSocket("ws://chat.sparrowzoo.com/websocket", [token]);
             //申请一个WebSocket对象，参数是服务端地址，同http协议使用http://开头一样，WebSocket协议的url使用ws://开头，另外安全的WebSocket协议使用wss://开头
             ws.onopen = function (e) {
+	            console.log(ws);
             	console.log(e)
                 //当WebSocket创建成功时，触发onopen事件
                 console.log("open");
             }
             ws.onmessage = function (e) {
-                if(e.data=='PONG'){
+				if(e.data==='CLOSE'){
+					ws.close();
+					return;
+                }
+                if(e.data==='PONG'){
                     console.log(e.data);
                     return;
                 }
@@ -55,6 +60,7 @@
                 });
             }
             ws.onclose = function (e) {
+				console.log(ws);
                 //当客户端收到服务端发送的关闭连接请求时，触发onclose事件
                 console.log("close");
             }

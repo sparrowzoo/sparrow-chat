@@ -1,5 +1,6 @@
 package com.sparrow.chat.core;
 
+import com.sparrow.chat.commons.TokenParser;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.enums.HttpMethod;
 import com.sparrow.json.Json;
@@ -54,31 +55,15 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
         super(websocketPath, "*", true, maxLength);
     }
 
-    public Integer parseUserId(String token) throws BusinessException {
-        Map<String, String> header = new HashMap<>();
-        header.put("X-Sugar-Token", token);
-        String result = HttpClient.request(HttpMethod.GET, "http://studyapi.zhilongsoft.com/app/authMember/info"
-            , "", null, header, false);
-        Json json = JsonFactory.getProvider();
-        Map<String, Object> map = json.parse(result);
-        Integer code = (Integer) map.get("code");
-        if (code.equals(200)) {
-            Map<String, Object> userMap = (Map<String, Object>) map.get("data");
-            Map<String, Object> userProperty = (Map<String, Object>) userMap.get("member");
-            return (Integer) userProperty.get("id");
-        }
-        throw new BusinessException(SparrowError.USER_NOT_LOGIN);
-    }
+
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof HandshakeComplete) {
             HandshakeComplete serverHandshakeComplete = (HandshakeComplete) evt;
             String token = serverHandshakeComplete.requestHeaders().get("sec-websocket-protocol");
-            Integer userId = this.parseUserId(token);
-            HandshakeComplete event= (HandshakeComplete)(evt);
-            event.requestHeaders().add("user-id",userId);
-            ctx.channel().writeAndFlush("USER:" + userId);
+            Integer userId = TokenParser.parseUserId(token);
+
             UserContainer.getContainer().online(ctx.channel(), userId + "");
             super.userEventTriggered(ctx, evt);
         } else {
