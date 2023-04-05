@@ -4,6 +4,7 @@ import com.sparrow.chat.commons.Chat;
 import com.sparrow.chat.commons.PropertyAccessBuilder;
 import com.sparrow.chat.commons.RedisKey;
 import com.sparrow.chat.protocol.ChatSession;
+import com.sparrow.chat.repository.ContactRepository;
 import com.sparrow.chat.repository.QunRepository;
 import com.sparrow.chat.repository.SessionRepository;
 import com.sparrow.core.spi.JsonFactory;
@@ -22,6 +23,9 @@ import org.springframework.stereotype.Component;
 public class RedisSessionRepository implements SessionRepository {
     @Autowired
     private QunRepository qunRepository;
+
+    private ContactRepository contactRepository;
+
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -61,6 +65,13 @@ public class RedisSessionRepository implements SessionRepository {
         for (String session : charSessions) {
             ChatSession chatSession = this.json.parse(session, ChatSession.class);
             chatSession.setMe(userId);
+            if (!chatSession.isOne2One()) {
+                //通讯录是否存在群
+                if (!this.contactRepository.existQunByUserId(userId, chatSession.getSessionKey())) {
+                    this.redisTemplate.opsForZSet().remove(userSessionKey, session);
+                    continue;
+                }
+            }
             chatSessionList.add(chatSession);
         }
         return chatSessionList;

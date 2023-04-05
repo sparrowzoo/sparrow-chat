@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisContactsRepository implements ContactRepository {
 
-    private static Logger logger= LoggerFactory.getLogger(RedisContactsRepository.class);
+    private static Logger logger = LoggerFactory.getLogger(RedisContactsRepository.class);
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -38,6 +38,22 @@ public class RedisContactsRepository implements ContactRepository {
     private QunRepository qunRepository;
 
     private Json json = JsonFactory.getProvider();
+
+    public Boolean existQunByUserId(Integer userId, String qunId) {
+        if (qunId == null) {
+            return null;
+        }
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, Chat.CHAT_TYPE_1_2_N);
+        String userQunKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
+        List<String> qunIds = this.redisTemplate.opsForList().range(userQunKey, 0, Integer.MAX_VALUE);
+        if (CollectionsUtility.isNullOrEmpty(qunIds)) {
+            return null;
+        }
+        if (qunIds.contains(qunId)) {
+            return true;
+        }
+        return false;
+    }
 
     @Override public List<QunDTO> getQunsByUserId(Integer userId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, Chat.CHAT_TYPE_1_2_N);
@@ -55,7 +71,7 @@ public class RedisContactsRepository implements ContactRepository {
         List<String> quns = this.redisTemplate.opsForValue().multiGet(qunKeys);
         List<QunDTO> qunDtos = new ArrayList<>(quns.size());
         for (String qun : quns) {
-            if(StringUtility.isNullOrEmpty(qun)){
+            if (StringUtility.isNullOrEmpty(qun)) {
                 logger.error("qun");
                 continue;
             }
@@ -99,7 +115,7 @@ public class RedisContactsRepository implements ContactRepository {
         for (Integer userId : userIds) {
             PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(userId);
             String userKey = PlaceHolderParser.parse(RedisKey.USER, propertyAccessor);
-            userKeys.add(userKey)   ;
+            userKeys.add(userKey);
         }
         //好友列表
         List<String> users = this.redisTemplate.opsForValue().multiGet(userKeys);
