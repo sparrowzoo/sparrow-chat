@@ -41,13 +41,13 @@ public class RedisContactsRepository implements ContactRepository {
 
     public Boolean existQunByUserId(Integer userId, String qunId) {
         if (qunId == null) {
-            return null;
+            return false;
         }
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, Chat.CHAT_TYPE_1_2_N);
         String userQunKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         List<String> qunIds = this.redisTemplate.opsForList().range(userQunKey, 0, Integer.MAX_VALUE);
         if (CollectionsUtility.isNullOrEmpty(qunIds)) {
-            return null;
+            return false;
         }
         if (qunIds.contains(qunId)) {
             return true;

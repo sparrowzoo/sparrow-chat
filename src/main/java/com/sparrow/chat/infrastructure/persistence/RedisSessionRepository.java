@@ -24,6 +24,7 @@ public class RedisSessionRepository implements SessionRepository {
     @Autowired
     private QunRepository qunRepository;
 
+    @Autowired
     private ContactRepository contactRepository;
 
     @Autowired
