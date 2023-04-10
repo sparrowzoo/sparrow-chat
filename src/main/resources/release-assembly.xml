@@ -1,0 +1,24 @@
+<assembly>
+    <id>sparrow-chat</id>
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>src/bin</directory>
+            <outputDirectory>/</outputDirectory>
+            <fileMode>0755</fileMode>
+            <includes>
+                <include>startup.sh</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>target</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>sparrow-chat-release.jar</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>

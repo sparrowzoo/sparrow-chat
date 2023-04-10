@@ -74,11 +74,11 @@
             <artifactId>commons-lang</artifactId>
             <version>2.3</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.netty</groupId>-->
-<!--            <artifactId>netty-transport-native-epoll</artifactId>-->
-<!--            <classifier>linux-x86_64</classifier>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.netty</groupId>-->
+        <!--            <artifactId>netty-transport-native-epoll</artifactId>-->
+        <!--            <classifier>linux-x86_64</classifier>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>com.sparrowzoo</groupId>
@@ -112,7 +112,28 @@
     </dependencies>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <finalName>${project.artifactId}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>src/main/resources/release-assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assembly</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -125,6 +146,8 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <finalName>${project.artifactId}-release</finalName>
+
                     <mainClass>com.sparrow.chat.boot.Application</mainClass>
                 </configuration>
             </plugin>
