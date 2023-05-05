@@ -1,6 +1,7 @@
 package com.sparrow.chat.service;
 
 import com.sparrow.chat.commons.Chat;
+import com.sparrow.chat.commons.TokenParser;
 import com.sparrow.chat.core.UserContainer;
 import com.sparrow.chat.protocol.CancelProtocol;
 import com.sparrow.chat.protocol.ChatSession;
@@ -45,7 +46,7 @@ public class ChatService {
         this.sessionRepository.saveSession(protocol.getChatSession());
     }
 
-    public void read(MessageReadParam messageRead) {
+    public void read(MessageReadParam messageRead) throws BusinessException {
         this.messageRepository.read(messageRead);
     }
 

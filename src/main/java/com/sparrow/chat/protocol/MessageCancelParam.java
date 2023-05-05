@@ -2,6 +2,7 @@ package com.sparrow.chat.protocol;
 
 public class MessageCancelParam {
     private Integer fromUserId;
+    private String token;
     private Long clientSendTime;
     private String sessionKey;
     private Integer chatType;
@@ -37,5 +38,14 @@ public class MessageCancelParam {
 
     public void setClientSendTime(Long clientSendTime) {
         this.clientSendTime = clientSendTime;
+    }
+
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

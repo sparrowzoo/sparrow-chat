@@ -5,7 +5,7 @@
     <parent>
         <artifactId>sparrow-zoo-bom</artifactId>
         <groupId>com.sparrowzoo</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
         <relativePath/>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -146,8 +146,8 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <classifier>exe</classifier>
                     <finalName>${project.artifactId}-release</finalName>
-
                     <mainClass>com.sparrow.chat.boot.Application</mainClass>
                 </configuration>
             </plugin>

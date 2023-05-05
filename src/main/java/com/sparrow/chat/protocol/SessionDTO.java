@@ -1,8 +1,10 @@
 package com.sparrow.chat.protocol;
 
+import com.sparrow.protocol.VO;
+
 import java.util.List;
 
-public class SessionDTO{
+public class SessionDTO implements VO {
     private ChatSession chatSession;
     private List<MessageDTO> messages;
     private Long lastReadTime;

@@ -79,6 +79,9 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             protocol.setFromUserId(fromUserId);
             ChatService chatService = ApplicationContext.getContainer().getBean("chatService");
             chatService.saveMessage(protocol);
+            if(protocol.getCharType()==Chat.CHAT_TYPE_1_2_1&&protocol.getFromUserId()==protocol.getTargetUserId()){
+                return;
+            }
             List<Channel> channels = UserContainer.getContainer().getChannels(protocol.getChatSession());
             this.writeAndFlush(ctx, protocol.getCharType(), msg, channels);
         } else if (frame instanceof ContinuationWebSocketFrame) {

@@ -2,6 +2,7 @@ package com.sparrow.chat.protocol;
 
 public class MessageReadParam {
     private Integer userId;
+    private String token;
     private Integer chatType;
     private String sessionKey;
 
@@ -28,4 +29,14 @@ public class MessageReadParam {
     public void setSessionKey(String sessionKey) {
         this.sessionKey = sessionKey;
     }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+
 }
