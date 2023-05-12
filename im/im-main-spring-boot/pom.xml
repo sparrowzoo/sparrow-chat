@@ -29,7 +29,7 @@
         </dependency>
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
-            <artifactId>contact-adapter</artifactId>
+            <artifactId>im-adapter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
