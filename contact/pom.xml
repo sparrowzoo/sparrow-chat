@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>sparrow-bom</artifactId>
+        <groupId>com.sparrowzoo</groupId>
+        <version>1.0.3-RELEASE</version>
+        <relativePath/>
+    </parent>
+    <packaging>pom</packaging>
+    <artifactId>contact</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <groupId>com.sparrow.chat</groupId>
+
+    <properties>
+        <chat_contact_version>1.0.0-SNAPSHOT</chat_contact_version>
+    </properties>
+    <modules>
+        <module>contact-adapter</module>
+        <module>contact-dao-api</module>
+        <module>contact-dao-mybatis</module>
+        <module>contact-dao-sparrow</module>
+        <module>contact-domain</module>
+        <module>contact-infrastructure</module>
+        <module>contact-main-spring-boot</module>
+        <module>contact-protocol</module>
+        <module>contact-po</module>
+    </modules>
+    <url>http://maven.apache.org</url>
+</project>
