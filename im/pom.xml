@@ -21,6 +21,5 @@
         <module>im-infrastructure</module>
         <module>im-main-spring-boot</module>
         <module>im-protocol</module>
-        <module>im-academy-main</module>
     </modules>
 </project>
