@@ -8,7 +8,6 @@
         <artifactId>im</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <groupId>com.sparrowzoo.chat</groupId>
     <artifactId>im-adapter</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <dependencies>
