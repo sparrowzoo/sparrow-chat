@@ -38,8 +38,8 @@ public class ChatV2Controller {
     }
 
     @RequestMapping("/is-online")
-    public Boolean online() {
-        LoginUser loginUser = ThreadContext.getLoginToken();
+    public Boolean online(LoginUser loginUser) {
+        //LoginUser loginUser = ThreadContext.getLoginToken();
         int userId = loginUser.getUserId().intValue();
         return UserContainer.getContainer().online(String.valueOf(userId));
     }
