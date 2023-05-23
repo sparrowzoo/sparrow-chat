@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 public class CustomWebSocketFrameAggregator extends WebSocketFrameAggregator {
     private static Logger logger = LoggerFactory.getLogger(CustomWebSocketFrameAggregator.class);
-    private static final int DEFAULT_MAX_FRAME_SIZE = 65536 * 10;
+    private static final int DEFAULT_MAX_FRAME_SIZE = 1024 * 1024 * 3;
 
     public CustomWebSocketFrameAggregator() {
         super(DEFAULT_MAX_FRAME_SIZE);

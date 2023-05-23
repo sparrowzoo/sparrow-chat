@@ -8,7 +8,7 @@
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
     <modules>
-        <module>contact</module>
+        <module>social-contact</module>
         <module>im</module>
     </modules>
     <properties>
