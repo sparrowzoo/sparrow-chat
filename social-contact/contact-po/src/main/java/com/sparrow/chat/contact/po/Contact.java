@@ -2,6 +2,7 @@ package com.sparrow.chat.contact.po;
 
 import com.sparrow.protocol.MethodOrder;
 import com.sparrow.protocol.POJO;
+
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,7 +17,7 @@ public class Contact implements POJO {
     private Long friendId;
     private Long applyTime;
     private Long auditTime;
-    private Long createTime;
+    private Long gmtCreate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,10 +33,10 @@ public class Contact implements POJO {
 
     @MethodOrder(order = 2)
     @Column(
-        name = "user_id",
-        columnDefinition = "int(11) UNSIGNED  DEFAULT 0 COMMENT '用户ID'",
-        nullable = false,
-        updatable = false
+            name = "user_id",
+            columnDefinition = "int(11) UNSIGNED  DEFAULT 0 COMMENT '用户ID'",
+            nullable = false,
+            updatable = false
     )
     public Long getUserId() {
         return userId;
@@ -47,10 +48,10 @@ public class Contact implements POJO {
 
     @MethodOrder(order = 3)
     @Column(
-        name = "friend_id",
-        columnDefinition = "int(11) UNSIGNED  DEFAULT 0 COMMENT '好友ID'",
-        nullable = false,
-        updatable = false
+            name = "friend_id",
+            columnDefinition = "int(11) UNSIGNED  DEFAULT 0 COMMENT '好友ID'",
+            nullable = false,
+            updatable = false
     )
     public Long getFriendId() {
         return friendId;
@@ -62,10 +63,10 @@ public class Contact implements POJO {
 
     @MethodOrder(order = 4)
     @Column(
-        name = "apply_time",
-        columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '申请时间'",
-        nullable = false,
-        updatable = false
+            name = "apply_time",
+            columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '申请时间'",
+            nullable = false,
+            updatable = false
     )
     public Long getApplyTime() {
         return applyTime;
@@ -77,10 +78,10 @@ public class Contact implements POJO {
 
     @MethodOrder(order = 5)
     @Column(
-        name = "audit_time",
-        columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '审核时间'",
-        nullable = false,
-        updatable = false
+            name = "audit_time",
+            columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '审核时间'",
+            nullable = false,
+            updatable = false
     )
     public Long getAuditTime() {
         return auditTime;
@@ -90,18 +91,4 @@ public class Contact implements POJO {
         this.auditTime = auditTime;
     }
 
-    @MethodOrder(order = 6)
-    @Column(
-        name = "create_time",
-        columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '创建时间'",
-        nullable = false,
-        updatable = false
-    )
-    public Long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Long createTime) {
-        this.createTime = createTime;
-    }
 }

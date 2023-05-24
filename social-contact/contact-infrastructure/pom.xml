@@ -3,13 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.sparrow.chat</groupId>
-        <artifactId>social-contact</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <groupId>com.sparrowzoo</groupId>
+        <artifactId>sparrow-bom</artifactId>
+        <version>1.0.3.1-RELEASE</version>
+        <relativePath/>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.sparrowzoo.chat</groupId>
-    <version>${chat_contact_version}</version>
+    <version>1.0.0-SNAPSHOT</version>
     <artifactId>contact-infrastructure</artifactId>
     <properties>
         <shiro.version>1.7.1</shiro.version>
@@ -20,11 +21,7 @@
             <artifactId>contact-dao-api</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.sparrowzoo.chat</groupId>
-            <artifactId>contact-domain</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
+
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -33,6 +30,11 @@
         <dependency>
             <groupId>com.sparrowzoo</groupId>
             <artifactId>sparrow-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo.chat</groupId>
+            <artifactId>contact-domain</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

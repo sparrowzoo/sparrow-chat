@@ -12,10 +12,6 @@ public class FriendAuditParam implements Param {
     private Long auditId;
 
     /**
-     * 申请时产生的密文串,用作申请校验
-     */
-    private String friendSecretIdentify;
-    /**
      * 审核原因
      */
     private String reason;

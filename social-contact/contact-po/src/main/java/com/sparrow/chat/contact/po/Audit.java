@@ -1,28 +1,60 @@
 package com.sparrow.chat.contact.po;
 
-import com.sparrow.chat.enums.AuditStatus;
-import com.sparrow.chat.enums.BusinessType;
 import com.sparrow.protocol.MethodOrder;
 import com.sparrow.protocol.POJO;
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+
+import javax.persistence.*;
 
 @Table(name = "audit")
 public class Audit implements POJO {
 
+    /**
+     * 主键 ID
+     */
     private Long id;
+    /**
+     * 申请人ID
+     */
     private Long userId;
-    private BusinessType businessType;
+    /**
+     * 业务类型  申请的群或者好友ID
+     */
+    private Integer businessType;
+    /**
+     * 业务ID  与业务类型对应
+     * 如果是群，则为群ID
+     * 如果是好友，则为好友ID
+     */
     private Long businessId;
+    /**
+     * 申请时间
+     */
+    private Long applyTime;
+    /**
+     * 审核时间
+     */
     private Long auditTime;
+    /**
+     * 审核人ID
+     */
     private Long auditUserId;
+    /**
+     * 申请的理由
+     */
     private String applyReason;
+    /**
+     * 审核的理由
+     */
     private String auditReason;
-    private AuditStatus status;
-    private Long createTime;
+    /**
+     * 审核的状态 0 未审核 1 审核通过 2 审核不通过
+     */
+    private Integer status;
+
+    /**
+     * 创建时间
+     */
+    private Long gmtCreate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,9 +70,9 @@ public class Audit implements POJO {
 
     @MethodOrder(order = 2)
     @Column(name = "user_id",
-        columnDefinition = "int(11)  UNSIGNED DEFAULT 0 COMMENT '用户ID'",
-        nullable = false,
-        updatable = false)
+            columnDefinition = "int(11)  UNSIGNED DEFAULT 0 COMMENT '用户ID'",
+            nullable = false,
+            updatable = false)
     public Long getUserId() {
         return userId;
     }
@@ -51,25 +83,21 @@ public class Audit implements POJO {
 
     @MethodOrder(order = 3)
     @Column(
-        name = "business_type",
-        columnDefinition = "tinyint(1)  DEFAULT 0 COMMENT '业务类型'",
-        nullable = false,
-        updatable = false
+            name = "business_type",
+            columnDefinition = "tinyint(1)  DEFAULT 0 COMMENT '业务类型'",
+            nullable = false,
+            updatable = false
     )
-    public BusinessType getBusinessType() {
+    public Integer getBusinessType() {
         return businessType;
-    }
-
-    public void setBusinessType(BusinessType businessType) {
-        this.businessType = businessType;
     }
 
     @MethodOrder(order = 4)
     @Column(
-        name = "business_id",
-        columnDefinition = "int(11)  UNSIGNED DEFAULT 0 COMMENT '业务ID'",
-        nullable = false,
-        updatable = false
+            name = "business_id",
+            columnDefinition = "int(11)  UNSIGNED DEFAULT 0 COMMENT '业务ID'",
+            nullable = false,
+            updatable = false
     )
     public Long getBusinessId() {
         return businessId;
@@ -81,10 +109,10 @@ public class Audit implements POJO {
 
     @MethodOrder(order = 5)
     @Column(
-        name = "audit_user_id",
-        columnDefinition = "int(11)  UNSIGNED DEFAULT 0 COMMENT '审核用户ID'",
-        nullable = false,
-        updatable = false
+            name = "audit_user_id",
+            columnDefinition = "int(11)  UNSIGNED DEFAULT 0 COMMENT '审核用户ID'",
+            nullable = false,
+            updatable = false
     )
     public Long getAuditUserId() {
         return auditUserId;
@@ -95,7 +123,7 @@ public class Audit implements POJO {
     }
 
     @MethodOrder(order = 6)
-    @Column(name = "apply_reason", columnDefinition = "varchar(256)  DEFAULT '' COMMENT '申请理由'", nullable = false,updatable = false)
+    @Column(name = "apply_reason", columnDefinition = "varchar(256)  DEFAULT '' COMMENT '申请理由'", nullable = false, updatable = false)
     public String getApplyReason() {
         return applyReason;
     }
@@ -116,23 +144,23 @@ public class Audit implements POJO {
 
     @MethodOrder(order = 8)
     @Column(
-        name = "status",
-        columnDefinition = "tinyint(1)  DEFAULT 0 COMMENT '审核状态'",
-        nullable = false
+            name = "status",
+            columnDefinition = "tinyint(1)  DEFAULT 0 COMMENT '审核状态'",
+            nullable = false
     )
-    public AuditStatus getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(AuditStatus status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
     @MethodOrder(order = 9)
     @Column(
-        name = "audit_time",
-        columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '审核时间'",
-        nullable = false
+            name = "audit_time",
+            columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '审核时间'",
+            nullable = false
     )
     public Long getAuditTime() {
         return auditTime;
@@ -144,16 +172,29 @@ public class Audit implements POJO {
 
     @MethodOrder(order = 10)
     @Column(
-        name = "create_time",
-        columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '创建时间'",
-        nullable = false,
-        updatable = false
+            name = "create_time",
+            columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '创建时间'",
+            nullable = false,
+            updatable = false
     )
-    public Long getCreateTime() {
-        return createTime;
+
+    public void setBusinessType(Integer businessType) {
+        this.businessType = businessType;
     }
 
-    public void setCreateTime(Long createTime) {
-        this.createTime = createTime;
+    public Long getApplyTime() {
+        return applyTime;
+    }
+
+    public void setApplyTime(Long applyTime) {
+        this.applyTime = applyTime;
+    }
+
+    public Long getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(Long gmtCreate) {
+        this.gmtCreate = gmtCreate;
     }
 }

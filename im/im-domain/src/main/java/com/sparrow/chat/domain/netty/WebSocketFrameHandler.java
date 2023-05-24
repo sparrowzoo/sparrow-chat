@@ -23,6 +23,7 @@ import com.sparrow.protocol.ThreadContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufHolder;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -35,9 +36,11 @@ import io.netty.handler.codec.http.websocketx.ContinuationWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.ReferenceCountUtil;
+import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.util.ByteUtils;
 
 /**
  * Echoes uppercase content of text frames.
@@ -46,10 +49,20 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketFrameHandler.class);
 
+    /**
+     *  一定要重写channelRead0方法，否则会报错,内存泄漏问题交由netty处理
+     * @param ctx           the {@link ChannelHandlerContext} which this {@link SimpleChannelInboundHandler}
+     *                      belongs to
+     * @param frame           the message to handle
+     * @throws Exception
+     */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
         // ping and pong frames already handled js 不支持PingFrame 需要手动处理
         if (frame instanceof TextWebSocketFrame) {
+            TextWebSocketFrame text=(TextWebSocketFrame)frame;
+            ByteBuf byteBuf = text.content();
+            logger.info("ping pong content address hashcode {},capacity {}",byteBuf.hashCode(),byteBuf.capacity());
             // Send the uppercase string back.
             String content = ((TextWebSocketFrame) frame).text();
             if ("ping".equalsIgnoreCase(content)) {
@@ -58,6 +71,12 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             }
         } else if (frame instanceof BinaryWebSocketFrame) {
             BinaryWebSocketFrame msg = (BinaryWebSocketFrame) frame;
+            ByteBuf byteBuf = msg.content();
+            byte [] bytes=byteBuf.array();
+            String content1 = ByteBufUtil.hexDump(bytes,0,256);
+            String content2 = ByteBufUtil.hexDump(bytes,0,byteBuf.capacity());
+
+            logger.info("msg content address-hashcode:{},byte-length:{}M,capacity:{},readable-readableBytes:{},\nc-content:{},\na-content:{}\n\n",byteBuf.hashCode(),bytes.length/1024/1024,byteBuf.capacity(),byteBuf.readableBytes(),content2,content1);
             ByteBuf content = msg.content();
             Protocol protocol = new Protocol(content);
             Integer currentUserId = UserContainer.getContainer().hasUser(ctx.channel());
@@ -79,8 +98,36 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         }
     }
 
-    private BinaryWebSocketFrame unsafeDuplicate(BinaryWebSocketFrame msg) {
+    private BinaryWebSocketFrame unsafeDuplicate(
+        BinaryWebSocketFrame msg) {
+        byte[] serviceTimeBytes = ("_" + System.currentTimeMillis()).getBytes();
+        int capacity = msg.content().readableBytes() + serviceTimeBytes.length;
+
+        byte [] bytes=msg.content().array();
+        logger.info("msg length {}",bytes.length);
+        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.directBuffer(capacity);
+        byteBuf.writeBytes(bytes);
+        //byteBuf.writeBytes(msg.content());
+        //服务器时间戮
+        byteBuf.writeBytes(serviceTimeBytes);
+        /**
+         *  public ByteBuf writeBytes(ByteBuf src, int length) {
+         *         if (checkBounds) {
+         *             checkReadableBounds(src, length);
+         *         }
+         *         writeBytes(src, src.readerIndex(), length);
+         *         src.readerIndex(src.readerIndex() + length);
+         *         return this;
+         *     }
+         */
+        msg.content().resetReaderIndex();
+        return new BinaryWebSocketFrame(byteBuf);
+    }
+
+    @Deprecated
+    private BinaryWebSocketFrame unsafeDuplicateDeprecated(BinaryWebSocketFrame msg) {
         ByteBuf byteBuf = ByteBufAllocator.DEFAULT.directBuffer(msg.content().capacity());
+        ;
         byteBuf.writeBytes(msg.content());
         //必须重置
         msg.content().resetReaderIndex();
