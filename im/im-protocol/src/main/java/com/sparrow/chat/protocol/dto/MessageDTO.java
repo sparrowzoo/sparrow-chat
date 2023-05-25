@@ -1,8 +1,9 @@
 package com.sparrow.chat.protocol.dto;
 
 import com.sparrow.chat.protocol.MessageKey;
+import com.sparrow.protocol.POJO;
 
-public class MessageDTO {
+public class MessageDTO implements POJO {
     private int messageType;
     private int chatType;
     private int sender;
@@ -12,8 +13,8 @@ public class MessageDTO {
     private Long serverTime;
     private Long clientSendTime;
 
-    public String getKey(){
-        return new MessageKey(this.sender,this.clientSendTime).key();
+    public String getKey() {
+        return new MessageKey(this.sender, this.clientSendTime).key();
     }
 
     public int getMessageType() {
@@ -78,18 +79,5 @@ public class MessageDTO {
 
     public void setClientSendTime(Long clientSendTime) {
         this.clientSendTime = clientSendTime;
-    }
-
-    public String json() {
-        return "{" +
-            "'messageType':" + messageType +
-            ", 'chatType':" + chatType +
-            ", 'sender':" + sender +
-            ", 'receiver':" + receiver +
-            ", 'session':'" + session + '\'' +
-            ", 'content':'" + content + '\'' +
-            ", 'serverTime':" + serverTime +
-            ", 'clientSendTime':" + clientSendTime +
-            '}';
     }
 }

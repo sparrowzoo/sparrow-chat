@@ -1,14 +1,14 @@
 package com.sparrow.chat.infrastructure.persistence;
 
+import com.sparrow.chat.domain.netty.Protocol;
 import com.sparrow.chat.infrastructure.commons.ConfigKey;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.MessageConverter;
-import com.sparrow.chat.protocol.param.MessageCancelParam;
-import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.MessageKey;
+import com.sparrow.chat.protocol.dto.MessageDTO;
+import com.sparrow.chat.protocol.param.MessageCancelParam;
 import com.sparrow.chat.protocol.param.MessageReadParam;
-import com.sparrow.chat.domain.netty.Protocol;
 import com.sparrow.chat.repository.MessageRepository;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.json.Json;
@@ -19,24 +19,21 @@ import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import com.sparrow.utility.ConfigUtility;
 import com.sparrow.utility.FileUtility;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import static com.sparrow.chat.protocol.constant.Chat.IMAGE_MESSAGE;
-import static com.sparrow.chat.protocol.constant.Chat.MAX_MSG_OF_SESSION;
-import static com.sparrow.chat.protocol.constant.Chat.MESSAGE_EXPIRE_DAYS;
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import static com.sparrow.chat.protocol.constant.Chat.*;
 
 @Component
 public class RedisMessageRepository implements MessageRepository {
+    private static Logger logger = LoggerFactory.getLogger(RedisMessageRepository.class);
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -53,16 +50,17 @@ public class RedisMessageRepository implements MessageRepository {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         String rootPhysicalPath = ConfigUtility.getValue(ConfigKey.IMAGE_PHYSICAL_ROOT_PATH);
         String physicalUrl = rootPhysicalPath +
-            File.separator +
-            year + File.separator +
-            month + File.separator +
-            day + File.separator +
-            userId + File.separator +
-            calendar.getTimeInMillis() + Extension.JPG;
+                File.separator +
+                year + File.separator +
+                month + File.separator +
+                day + File.separator +
+                userId + File.separator +
+                calendar.getTimeInMillis() + Extension.JPG;
         return physicalUrl;
     }
 
-    @Override public void cancel(MessageCancelParam messageCancel) throws BusinessException {
+    @Override
+    public void cancel(MessageCancelParam messageCancel) throws BusinessException {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(messageCancel.getSessionKey());
         String redisKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
         String msgKey = new MessageKey(messageCancel.getSender(), messageCancel.getClientSendTime()).key();
@@ -78,7 +76,8 @@ public class RedisMessageRepository implements MessageRepository {
         redisTemplate.opsForList().remove("l" + redisKey, 1, msgKey);
     }
 
-    @Override public String saveImageContent(Protocol protocol) {
+    @Override
+    public String saveImageContent(Protocol protocol) {
         if (IMAGE_MESSAGE != protocol.getMessageType()) {
             return null;
         }
@@ -97,20 +96,26 @@ public class RedisMessageRepository implements MessageRepository {
         Map<String, String> messages = redisTemplate.opsForHash().entries(messageKey);
         List<MessageDTO> messageList = new ArrayList<>(messages.size());
         for (String key : messages.keySet()) {
-            messageList.add(this.json.parse(messages.get(key), MessageDTO.class));
+            String message = messages.get(key);
+            try {
+                messageList.add(this.json.parse(message, MessageDTO.class));
+            } catch (Exception e) {
+                logger.error("parse json error key:{},message:{}", key, message, e);
+            }
         }
         messageList.sort(Comparator.comparing(MessageDTO::getServerTime));
         return messageList;
     }
 
-    @Override public void saveMessage(Protocol protocol) {
+    @Override
+    public void saveMessage(Protocol protocol) {
         this.saveImageContent(protocol);
         MessageDTO message = this.messageConverter.assembleMessage(protocol);
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(protocol.getChatSession().getSessionKey());
         String messageKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
         String lkey = "l" + messageKey;
         redisTemplate.opsForList().rightPush(lkey, message.getKey());
-        redisTemplate.opsForHash().put(messageKey, message.getKey(), message.json());
+        redisTemplate.opsForHash().put(messageKey, message.getKey(), this.json.toString(message));
         if (redisTemplate.opsForHash().size(messageKey) > MAX_MSG_OF_SESSION) {
             String firstKey = (String) redisTemplate.opsForList().leftPop(lkey);
             redisTemplate.opsForHash().delete(messageKey, firstKey);
@@ -118,13 +123,15 @@ public class RedisMessageRepository implements MessageRepository {
         redisTemplate.expire(messageKey, MESSAGE_EXPIRE_DAYS, TimeUnit.DAYS);
     }
 
-    @Override public void read(MessageReadParam messageRead) {
+    @Override
+    public void read(MessageReadParam messageRead) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserId(messageRead.getSessionKey(), messageRead.getUserId());
         String sessionReadKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_READ, propertyAccessor);
         redisTemplate.opsForValue().set(sessionReadKey, System.currentTimeMillis() + "");
     }
 
-    @Override public Map<String, Long> getLastRead(Integer me, List<String> sessionKeys) {
+    @Override
+    public Map<String, Long> getLastRead(Integer me, List<String> sessionKeys) {
         List<String> messageReadKeys = new ArrayList<>(sessionKeys.size());
         for (String sessionKey : sessionKeys) {
             PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserId(sessionKey, me);
@@ -142,7 +149,8 @@ public class RedisMessageRepository implements MessageRepository {
         return lastReadTimeMap;
     }
 
-    @Override public List<MessageDTO> getMessageBySession(String session) {
+    @Override
+    public List<MessageDTO> getMessageBySession(String session) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(session);
         String messageKey = PlaceHolderParser.parse(RedisKey.MESSAGE_KEY, propertyAccessor);
         return this.getMessages(messageKey);
