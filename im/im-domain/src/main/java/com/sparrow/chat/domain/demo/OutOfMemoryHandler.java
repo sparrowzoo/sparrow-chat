@@ -64,6 +64,15 @@ public class OutOfMemoryHandler extends ChannelInboundHandlerAdapter {
         if (msg instanceof BinaryWebSocketFrame) {
             BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) msg;
             ByteBuf byteBuf = binaryWebSocketFrame.content();
+            /**
+             * java.lang.UnsupportedOperationException: null
+             * 	at io.netty.buffer.CompositeByteBuf.array(CompositeByteBuf.java:784)
+             * 	at com.sparrow.chat.domain.netty.WebSocketFrameHandler.unsafeDuplicate(WebSocketFrameHandler.java:90)
+             * 	at com.sparrow.chat.domain.netty.WebSocketFrameHandler.writeAndFlush(WebSocketFrameHandler.java:145)
+             * 	at com.sparrow.chat.domain.netty.WebSocketFrameHandler.channelRead0(WebSocketFrameHandler.java:79)
+             * 	at com.sparrow.chat.domain.netty.WebSocketFrameHandler.channelRead0(WebSocketFrameHandler.java:38)
+             * 	可能会报错
+             */
             byte[] bytes = byteBuf.array();
             String content1 = ByteBufUtil.hexDump(bytes, 0, 256);
             String content2 = ByteBufUtil.hexDump(bytes, 0, byteBuf.capacity());
