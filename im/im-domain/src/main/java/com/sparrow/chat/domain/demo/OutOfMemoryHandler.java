@@ -1,10 +1,13 @@
-package com.sparrow.chat.domain.bo;
+package com.sparrow.chat.domain.demo;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Recent access records:
@@ -53,14 +56,24 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
  * java.lang.Thread.run(Thread.java:748)
  */
 public class OutOfMemoryHandler extends ChannelInboundHandlerAdapter {
+    private static Logger logger = LoggerFactory.getLogger(OutOfMemoryHandler.class);
     PooledByteBufAllocator allocator = new PooledByteBufAllocator(false);
 
-    @Override public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof BinaryWebSocketFrame) {
+            BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) msg;
+            ByteBuf byteBuf = binaryWebSocketFrame.content();
+            byte[] bytes = byteBuf.array();
+            String content1 = ByteBufUtil.hexDump(bytes, 0, 256);
+            String content2 = ByteBufUtil.hexDump(bytes, 0, byteBuf.capacity());
+            logger.info("msg content address-hashcode:{},byte-length:{}M,capacity:{},readable-readableBytes:{},\nc-content:{},\na-content:{}\n\n", byteBuf.hashCode(), bytes.length / 1024 / 1024, byteBuf.capacity(), byteBuf.readableBytes(), content2, content1);
+
             ByteBuf req = ((BinaryWebSocketFrame) msg).content();
             byte[] body = new byte[req.readableBytes()];
             new Thread(new Runnable() {
-                @Override public void run() {
+                @Override
+                public void run() {
                     ByteBuf resp = allocator.heapBuffer(body.length);
                     resp.writeBytes(body);
                     ctx.writeAndFlush(resp);

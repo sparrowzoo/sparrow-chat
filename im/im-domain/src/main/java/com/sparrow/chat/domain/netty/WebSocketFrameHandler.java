@@ -18,29 +18,19 @@ package com.sparrow.chat.domain.netty;
 import com.sparrow.chat.domain.service.ChatService;
 import com.sparrow.chat.protocol.constant.Chat;
 import com.sparrow.core.spi.ApplicationContext;
-import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufHolder;
-import io.netty.buffer.ByteBufUtil;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.ContinuationWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.ReferenceCountUtil;
-import java.util.Arrays;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.util.ByteUtils;
+
+import java.util.List;
 
 /**
  * Echoes uppercase content of text frames.
@@ -71,12 +61,6 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             }
         } else if (frame instanceof BinaryWebSocketFrame) {
             BinaryWebSocketFrame msg = (BinaryWebSocketFrame) frame;
-            ByteBuf byteBuf = msg.content();
-            byte [] bytes=byteBuf.array();
-            String content1 = ByteBufUtil.hexDump(bytes,0,256);
-            String content2 = ByteBufUtil.hexDump(bytes,0,byteBuf.capacity());
-
-            logger.info("msg content address-hashcode:{},byte-length:{}M,capacity:{},readable-readableBytes:{},\nc-content:{},\na-content:{}\n\n",byteBuf.hashCode(),bytes.length/1024/1024,byteBuf.capacity(),byteBuf.readableBytes(),content2,content1);
             ByteBuf content = msg.content();
             Protocol protocol = new Protocol(content);
             Integer currentUserId = UserContainer.getContainer().hasUser(ctx.channel());
