@@ -90,8 +90,8 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         byte [] bytes=msg.content().array();
         logger.info("msg length {}",bytes.length);
         ByteBuf byteBuf = ByteBufAllocator.DEFAULT.directBuffer(capacity);
-        byteBuf.writeBytes(bytes);
-        //byteBuf.writeBytes(msg.content());
+        //byteBuf.writeBytes(bytes);
+        byteBuf.writeBytes(msg.content());
         //服务器时间戮
         byteBuf.writeBytes(serviceTimeBytes);
         /**
