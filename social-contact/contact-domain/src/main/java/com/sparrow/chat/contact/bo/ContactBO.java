@@ -1,22 +1,22 @@
 package com.sparrow.chat.contact.bo;
 
-import com.sparrow.chat.contact.protocol.UserDTO;
+import com.sparrow.passport.protocol.dto.UserProfileDTO;
 
 public class ContactBO {
 
-    public ContactBO(UserDTO userDto, String secretIdentify) {
+    public ContactBO(UserProfileDTO userDto, String secretIdentify) {
         this.userDto = userDto;
         this.secretIdentify = secretIdentify;
     }
 
-    private UserDTO userDto;
+    private UserProfileDTO userDto;
     private String secretIdentify;
 
-    public UserDTO getUserDto() {
+    public UserProfileDTO getUserDto() {
         return userDto;
     }
 
-    public void setUserDto(UserDTO userDto) {
+    public void setUserDto(UserProfileDTO userDto) {
         this.userDto = userDto;
     }
 

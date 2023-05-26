@@ -18,6 +18,11 @@
             <artifactId>sparrow</artifactId>
         </dependency>
         <dependency>
+            <version>1.0.0-SNAPSHOT</version>
+            <groupId>com.sparrowzoo.passport</groupId>
+            <artifactId>passport-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>contact-protocol</artifactId>
             <version>1.0.0-SNAPSHOT</version>
