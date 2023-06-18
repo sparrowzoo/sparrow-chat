@@ -11,7 +11,6 @@ import javax.persistence.Table;
 
 @Table(name = "contact")
 public class Contact implements POJO {
-
     private Long id;
     private Long userId;
     private Long friendId;

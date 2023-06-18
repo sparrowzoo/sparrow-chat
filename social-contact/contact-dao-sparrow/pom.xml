@@ -16,6 +16,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <druid.version>1.1.10</druid.version>
     </properties>
 
     <dependencies>
@@ -24,24 +25,29 @@
             <artifactId>junit</artifactId>
             <version>4.13.1</version>
             <scope>test</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
         </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.sparrowzoo</groupId>-->
+        <!--            <artifactId>sparrow-data-source</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.version}</version>
         </dependency>
+
+        <!--为防止EmbeddedDatabaseType class not found-->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.sparrowzoo</groupId>
-            <artifactId>sparrow-data-source</artifactId>
-        </dependency>
+
+
         <dependency>
             <groupId>com.sparrowzoo</groupId>
             <artifactId>sparrow-orm</artifactId>
@@ -61,6 +67,11 @@
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>contact-dao-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo.chat</groupId>
+            <artifactId>contact-protocol</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

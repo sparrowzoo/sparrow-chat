@@ -1,28 +1,33 @@
 package com.sparrow.chat.boot;
 
+import com.sparrow.passport.authenticate.AuthenticatorService;
 import com.sparrow.support.Authenticator;
 import com.sparrow.support.web.MonolithicLoginUserFilter;
-import javax.servlet.Filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.servlet.Filter;
+
 @Configuration
 public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
     private static Logger logger = LoggerFactory.getLogger(WebMvcConfigurer.class);
 
+    @Value("${mock_login_user}")
+    private Boolean mockLoginUser;
     @Bean
     Authenticator authenticator() {
-        return null;//return new Authenticator();
+        return new AuthenticatorService();
     }
 
     @Bean
     MonolithicLoginUserFilter loginTokenFilter() {
-        return new MonolithicLoginUserFilter(authenticator(), null);
+        return new MonolithicLoginUserFilter(authenticator(), this.mockLoginUser);
     }
 
     @Override

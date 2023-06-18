@@ -2,6 +2,7 @@ package com.sparrow.chat.contact.po;
 
 import com.sparrow.protocol.MethodOrder;
 import com.sparrow.protocol.POJO;
+import com.sparrow.protocol.enums.StatusRecord;
 
 import javax.persistence.*;
 
@@ -15,7 +16,7 @@ public class Audit implements POJO {
     /**
      * 申请人ID
      */
-    private Long userId;
+    private Long applyUserId;
     /**
      * 业务类型  申请的群或者好友ID
      */
@@ -47,14 +48,10 @@ public class Audit implements POJO {
      */
     private String auditReason;
     /**
-     * 审核的状态 0 未审核 1 审核通过 2 审核不通过
+     * 审核的状态
      */
-    private Integer status;
+    private StatusRecord status;
 
-    /**
-     * 创建时间
-     */
-    private Long gmtCreate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,12 +70,12 @@ public class Audit implements POJO {
             columnDefinition = "int(11)  UNSIGNED DEFAULT 0 COMMENT '用户ID'",
             nullable = false,
             updatable = false)
-    public Long getUserId() {
-        return userId;
+    public Long getApplyUserId() {
+        return applyUserId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setApplyUserId(Long applyUserId) {
+        this.applyUserId = applyUserId;
     }
 
     @MethodOrder(order = 3)
@@ -111,8 +108,7 @@ public class Audit implements POJO {
     @Column(
             name = "audit_user_id",
             columnDefinition = "int(11)  UNSIGNED DEFAULT 0 COMMENT '审核用户ID'",
-            nullable = false,
-            updatable = false
+            nullable = false
     )
     public Long getAuditUserId() {
         return auditUserId;
@@ -122,8 +118,27 @@ public class Audit implements POJO {
         this.auditUserId = auditUserId;
     }
 
+    public void setBusinessType(Integer businessType) {
+        this.businessType = businessType;
+    }
+
     @MethodOrder(order = 6)
-    @Column(name = "apply_reason", columnDefinition = "varchar(256)  DEFAULT '' COMMENT '申请理由'", nullable = false, updatable = false)
+    @Column(
+            name = "apply_time",
+            columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '申请时间'",
+            nullable = false
+    )
+    public Long getApplyTime() {
+        return applyTime;
+    }
+
+    public void setApplyTime(Long applyTime) {
+        this.applyTime = applyTime;
+    }
+
+
+    @MethodOrder(order = 6.1f)
+    @Column(name = "apply_reason", columnDefinition = "varchar(256)  DEFAULT '' COMMENT '申请理由'", nullable = false)
     public String getApplyReason() {
         return applyReason;
     }
@@ -148,11 +163,11 @@ public class Audit implements POJO {
             columnDefinition = "tinyint(1)  DEFAULT 0 COMMENT '审核状态'",
             nullable = false
     )
-    public Integer getStatus() {
+    public StatusRecord getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(StatusRecord status) {
         this.status = status;
     }
 
@@ -168,33 +183,5 @@ public class Audit implements POJO {
 
     public void setAuditTime(Long auditTime) {
         this.auditTime = auditTime;
-    }
-
-    @MethodOrder(order = 10)
-    @Column(
-            name = "create_time",
-            columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '创建时间'",
-            nullable = false,
-            updatable = false
-    )
-
-    public void setBusinessType(Integer businessType) {
-        this.businessType = businessType;
-    }
-
-    public Long getApplyTime() {
-        return applyTime;
-    }
-
-    public void setApplyTime(Long applyTime) {
-        this.applyTime = applyTime;
-    }
-
-    public Long getGmtCreate() {
-        return gmtCreate;
-    }
-
-    public void setGmtCreate(Long gmtCreate) {
-        this.gmtCreate = gmtCreate;
     }
 }

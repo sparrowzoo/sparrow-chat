@@ -7,6 +7,7 @@
         <groupId>com.sparrowzoo</groupId>
         <artifactId>sparrow-bom</artifactId>
         <version>1.0.3.1-RELEASE</version>
+        <relativePath/>
     </parent>
     <packaging>jar</packaging>
     <groupId>com.sparrowzoo.chat</groupId>

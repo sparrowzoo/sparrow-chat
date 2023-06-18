@@ -1,16 +1,20 @@
-//package com.sparrow.chat.contact.repository;
+package com.sparrow.chat.contact.repository;
+
+
+import com.sparrow.chat.contact.bo.AuditBO;
+import com.sparrow.chat.contact.bo.FriendApplyBO;
+import com.sparrow.chat.contact.protocol.audit.FriendAuditParam;
+
+import java.util.List;
+
+public interface AuditRepository {
+    Long applyFriend(FriendApplyBO friendApply);
+
+    List<AuditBO> getFriendAuditList(Long userId);
+
+    //    Long applyQun(Long currentUserId, QunApplyParam qunApplyParam);
 //
-//import com.sparrow.chat.po.Audit;
-//import com.sparrow.chat.protocol.audit.FriendApplyParam;
-//import com.sparrow.chat.protocol.audit.FriendAuditParam;
-//import com.sparrow.chat.protocol.audit.QunApplyParam;
-//
-//public interface AuditRepository {
-//    Long applyFriend(Long currentUserId, FriendApplyParam friendApplyParam);
-//
-//    Long applyQun(Long currentUserId, QunApplyParam qunApplyParam);
-//
-//    Integer auditFriend(Audit audit, FriendAuditParam friendAuditParam);
-//
-//    Audit getAudit(Long auditId);
-//}
+    Integer auditFriend(AuditBO auditBO, FriendAuditParam friendAuditParam);
+
+    AuditBO getAudit(Long auditId);
+}

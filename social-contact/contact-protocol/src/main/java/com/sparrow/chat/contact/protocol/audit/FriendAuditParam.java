@@ -1,24 +1,31 @@
 package com.sparrow.chat.contact.protocol.audit;
 
 import com.sparrow.protocol.Param;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * 好友的审核
  */
+@ApiModel("好友审核")
 public class FriendAuditParam implements Param {
-    /**
-     * 审核主键ID
-     */
+
+    @ApiModelProperty("审核主键ID")
     private Long auditId;
 
-    /**
-     * 审核原因
-     */
+    @ApiModelProperty("审核原因")
     private String reason;
-    /**
-     * 审核的状态
-     */
-    private Boolean agree;
+
+    @ApiModelProperty("是否同意")
+    private Boolean isAgree;
+
+    public Boolean getAgree() {
+        return isAgree;
+    }
+
+    public void setAgree(Boolean agree) {
+        isAgree = agree;
+    }
 
     public Long getAuditId() {
         return auditId;
@@ -26,14 +33,6 @@ public class FriendAuditParam implements Param {
 
     public void setAuditId(Long auditId) {
         this.auditId = auditId;
-    }
-
-    public Boolean getAgree() {
-        return agree;
-    }
-
-    public void setAgree(Boolean agree) {
-        this.agree = agree;
     }
 
     public String getReason() {

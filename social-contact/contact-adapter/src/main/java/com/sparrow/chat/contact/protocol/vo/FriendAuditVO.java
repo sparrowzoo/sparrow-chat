@@ -2,7 +2,7 @@ package com.sparrow.chat.contact.protocol.vo;
 
 public class FriendAuditVO {
     /**
-     * 审核标识
+     * 审核记录ID
      */
     private Long auditId;
 
@@ -19,7 +19,7 @@ public class FriendAuditVO {
     /**
      * 审核状态
      */
-    private String auditStatus;
+    private Integer auditStatus;
 
     public Long getAuditId() {
         return auditId;
@@ -45,11 +45,12 @@ public class FriendAuditVO {
         this.nickName = nickName;
     }
 
-    public String getAuditStatus() {
+
+    public Integer getAuditStatus() {
         return auditStatus;
     }
 
-    public void setAuditStatus(String auditStatus) {
+    public void setAuditStatus(Integer auditStatus) {
         this.auditStatus = auditStatus;
     }
 }
