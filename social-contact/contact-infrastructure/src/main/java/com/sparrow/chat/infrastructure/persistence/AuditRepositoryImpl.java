@@ -5,6 +5,8 @@ import com.sparrow.chat.contact.bo.FriendApplyBO;
 import com.sparrow.chat.contact.dao.AuditDao;
 import com.sparrow.chat.contact.po.Audit;
 import com.sparrow.chat.contact.protocol.audit.FriendAuditParam;
+import com.sparrow.chat.contact.protocol.audit.JoinQunParam;
+import com.sparrow.chat.contact.protocol.audit.QunAuditParam;
 import com.sparrow.chat.contact.repository.AuditRepository;
 import com.sparrow.chat.infrastructure.persistence.data.converter.AuditConverter;
 
@@ -16,7 +18,6 @@ import java.util.List;
 public class AuditRepositoryImpl implements AuditRepository {
     @Inject
     private AuditDao auditDao;
-
     @Inject
     private AuditConverter auditConverter;
 
@@ -38,8 +39,25 @@ public class AuditRepositoryImpl implements AuditRepository {
     }
 
     @Override
+    public Long joinQun(JoinQunParam joinQun) {
+        Audit audit = this.auditConverter.joinQun2AuditPo(joinQun);
+        Audit oldAudit = this.auditDao.exist(audit);
+        if (oldAudit != null) {
+            audit.setId(oldAudit.getId());
+            return (long) this.auditDao.update(audit);
+        }
+        return this.auditDao.insert(audit);
+    }
+
+    @Override
     public Integer auditFriend(AuditBO auditBO, FriendAuditParam friendAuditParam) {
         Audit audit = this.auditConverter.convert2po(auditBO, friendAuditParam);
+        return this.auditDao.update(audit);
+    }
+
+    @Override
+    public Integer auditQun(AuditBO auditBO, QunAuditParam qunAuditParam) {
+        Audit audit = this.auditConverter.convert2po(auditBO, qunAuditParam);
         return this.auditDao.update(audit);
     }
 

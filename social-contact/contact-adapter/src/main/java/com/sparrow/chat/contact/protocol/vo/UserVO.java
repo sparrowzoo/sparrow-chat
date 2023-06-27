@@ -1,8 +1,8 @@
-package com.sparrow.chat.protocol.dto;
+package com.sparrow.chat.contact.protocol.vo;
 
-import com.sparrow.protocol.POJO;
+import com.sparrow.protocol.VO;
 
-public class UserDTO implements POJO, Comparable<UserDTO> {
+public class UserVO implements VO {
     /**
      * 国籍
      */
@@ -74,10 +74,5 @@ public class UserDTO implements POJO, Comparable<UserDTO> {
 
     public void setAddTime(Long addTime) {
         this.addTime = addTime;
-    }
-
-    @Override
-    public int compareTo(UserDTO o) {
-        return this.userName.compareTo(o.getUserName());
     }
 }

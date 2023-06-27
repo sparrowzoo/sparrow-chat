@@ -25,7 +25,6 @@ public class QunVO implements VO {
     private Long categoryId;
     @ApiModelProperty("所属类型名")
     private String categoryName;
-
     @ApiModelProperty("图标")
     private String icon;
 

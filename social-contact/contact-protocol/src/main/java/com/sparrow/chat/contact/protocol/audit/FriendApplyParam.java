@@ -1,4 +1,4 @@
-package com.sparrow.chat.contact.protocol;
+package com.sparrow.chat.contact.protocol.audit;
 
 import com.sparrow.protocol.Param;
 import io.swagger.annotations.ApiModel;

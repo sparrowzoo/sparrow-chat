@@ -102,6 +102,18 @@
             <artifactId>sparrow-protocol-mq</artifactId>
             <version>1.0.3.1-RELEASE</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.sparrowzoo.chat</groupId>
+            <artifactId>im-adapter</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sparrowzoo.chat</groupId>
+            <artifactId>im-infrastructure</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     <build>
         <filters>

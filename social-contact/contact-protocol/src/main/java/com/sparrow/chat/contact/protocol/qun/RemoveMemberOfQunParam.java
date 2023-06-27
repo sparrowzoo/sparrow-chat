@@ -5,6 +5,11 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel("移除群成员")
 public class RemoveMemberOfQunParam {
+    public RemoveMemberOfQunParam(Long qunId, Long memberId) {
+        this.qunId = qunId;
+        this.memberId = memberId;
+    }
+
     @ApiModelProperty("群ID")
     private Long qunId;
     @ApiModelProperty("成员ID")

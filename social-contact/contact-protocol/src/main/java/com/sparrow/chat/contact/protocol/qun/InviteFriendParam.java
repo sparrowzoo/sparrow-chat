@@ -1,10 +1,11 @@
 package com.sparrow.chat.contact.protocol.qun;
 
+import com.sparrow.protocol.Param;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel("邀请好友")
-public class InviteFriendParam {
+public class InviteFriendParam implements Param {
     @ApiModelProperty("群ID")
     private Long qunId;
 

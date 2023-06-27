@@ -1,13 +1,18 @@
 package com.sparrow.chat.infrastructure.persistence;
 
+import com.sparrow.chat.contact.bo.AuditBO;
 import com.sparrow.chat.contact.bo.QunBO;
 import com.sparrow.chat.contact.dao.QunDao;
+import com.sparrow.chat.contact.dao.QunMemberDao;
 import com.sparrow.chat.contact.po.Qun;
+import com.sparrow.chat.contact.po.QunMember;
 import com.sparrow.chat.contact.protocol.enums.ContactError;
 import com.sparrow.chat.contact.protocol.qun.QunCreateParam;
 import com.sparrow.chat.contact.protocol.qun.QunModifyParam;
+import com.sparrow.chat.contact.protocol.qun.RemoveMemberOfQunParam;
 import com.sparrow.chat.contact.repository.QunRepository;
 import com.sparrow.chat.infrastructure.persistence.data.converter.QunConverter;
+import com.sparrow.chat.infrastructure.persistence.data.converter.QunMemberConverter;
 import com.sparrow.exception.Asserts;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.enums.StatusRecord;
@@ -22,7 +27,43 @@ public class QunRepositoryImpl implements QunRepository {
     private QunDao qunDao;
 
     @Inject
+    private QunMemberDao qunMemberDao;
+
+    @Inject
     private QunConverter qunConverter;
+
+    @Inject
+    private QunMemberConverter qunMemberConverter;
+
+    @Override
+    public Long joinQun(AuditBO qunAuditBo) {
+        QunMember qunMember = this.qunMemberConverter.convert2QunMember(qunAuditBo);
+        this.qunMemberDao.insert(qunMember);
+        return qunMember.getId();
+    }
+
+    @Override
+    public void removeMember(RemoveMemberOfQunParam removeMemberOfQunParam) {
+        this.qunMemberDao.removeMember(removeMemberOfQunParam.getQunId(), removeMemberOfQunParam.getMemberId());
+    }
+
+    @Override
+    public void dissolve(Long qunId) {
+        this.qunDao.delete(qunId);
+        this.qunMemberDao.dissolve(qunId);
+    }
+
+    @Override
+    public Boolean isMember(Long qunId, Long memberId) {
+        return this.qunMemberDao.isMember(qunId, memberId);
+    }
+
+
+    @Override
+    public void transfer(QunBO qunBO, Long newOwnerId) throws BusinessException {
+        this.qunDao.transfer(qunBO.getId(), newOwnerId);
+    }
+
 
     @Override
     public Long createQun(QunCreateParam qunCreateParam) {

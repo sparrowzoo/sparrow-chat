@@ -2,18 +2,14 @@ package com.sparrow.chat.contact.bo;
 
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class FriendAuditWrapBO {
 
-    public FriendAuditWrapBO(List<AuditBO> auditList, List<UserProfileDTO> userProfiles) {
+    public FriendAuditWrapBO(List<AuditBO> auditList, Map<Long,UserProfileDTO> userProfiles) {
         this.auditList = auditList;
-        this.friendMap = new HashMap<>(userProfiles.size());
-        for (UserProfileDTO userProfile : userProfiles) {
-            this.friendMap.put(userProfile.getUserId(), userProfile);
-        }
+        this.friendMap = userProfiles;
     }
 
     /**

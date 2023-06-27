@@ -4,6 +4,8 @@ import com.sparrow.chat.contact.bo.AuditBO;
 import com.sparrow.chat.contact.bo.FriendApplyBO;
 import com.sparrow.chat.contact.po.Audit;
 import com.sparrow.chat.contact.protocol.audit.FriendAuditParam;
+import com.sparrow.chat.contact.protocol.audit.JoinQunParam;
+import com.sparrow.chat.contact.protocol.audit.QunAuditParam;
 import com.sparrow.chat.contact.protocol.enums.AuditBusiness;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.ThreadContext;
@@ -21,10 +23,27 @@ import java.util.List;
 public class AuditConverter {
     public Audit friendApply2AuditPo(FriendApplyBO friendApply) {
         Audit audit = new Audit();
+        BeanUtility.copyProperties(friendApply, audit);
         audit.setApplyUserId(friendApply.getCurrentUserId());
         audit.setBusinessType(AuditBusiness.FRIEND.getBusiness());
         audit.setBusinessId(friendApply.getFriendId());
         audit.setApplyReason(friendApply.getReason());
+        audit.setAuditReason(Symbol.EMPTY);
+        audit.setStatus(StatusRecord.INIT);
+        audit.setAuditUserId(0L);
+        audit.setAuditTime(0L);
+        audit.setApplyTime(System.currentTimeMillis());
+        return audit;
+    }
+
+    public Audit joinQun2AuditPo(JoinQunParam joinQunParam) {
+        Audit audit = new Audit();
+        BeanUtility.copyProperties(joinQunParam, audit);
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        audit.setApplyUserId(loginUser.getUserId());
+        audit.setBusinessType(AuditBusiness.GROUP.getBusiness());
+        audit.setBusinessId(joinQunParam.getQunId());
+        audit.setApplyReason(joinQunParam.getReason());
         audit.setAuditReason(Symbol.EMPTY);
         audit.setStatus(StatusRecord.INIT);
         audit.setAuditUserId(0L);
@@ -51,6 +70,22 @@ public class AuditConverter {
             auditBos.add(auditBO);
         }
         return auditBos;
+    }
+
+    public Audit convert2po(AuditBO auditBO, QunAuditParam qunAuditParam) {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        Audit audit = new Audit();
+        audit.setId(auditBO.getAuditId());
+        audit.setApplyUserId(auditBO.getApplyUserId());
+        audit.setBusinessId(auditBO.getBusinessId());
+        audit.setAuditUserId(loginUser.getUserId());
+        audit.setApplyReason(auditBO.getApplyReason());
+        audit.setAuditReason(qunAuditParam.getReason());
+        audit.setStatus(qunAuditParam.getAgree() ? StatusRecord.ENABLE : StatusRecord.DISABLE);
+        audit.setAuditTime(System.currentTimeMillis());
+        audit.setBusinessType(AuditBusiness.GROUP.getBusiness());
+        audit.setApplyTime(auditBO.getApplyTime());
+        return audit;
     }
 
     public Audit convert2po(AuditBO auditBO, FriendAuditParam friendAuditParam) {

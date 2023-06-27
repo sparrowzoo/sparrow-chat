@@ -34,6 +34,7 @@ public class QunConverter {
     }
 
 
+
     public Qun modifyParam2Po(QunModifyParam qunModifyParam) {
         Qun qun = new Qun();
         BeanUtility.copyProperties(qunModifyParam, qun);

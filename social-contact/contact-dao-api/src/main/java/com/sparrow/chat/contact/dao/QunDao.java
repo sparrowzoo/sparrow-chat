@@ -9,4 +9,6 @@ public interface QunDao extends DaoSupport<Qun, Long> {
     List<Qun> queryQunList(Long category);
 
     List<Qun> queryEnabledQunList();
+
+    void transfer(Long qunId,Long newOwnerId);
 }

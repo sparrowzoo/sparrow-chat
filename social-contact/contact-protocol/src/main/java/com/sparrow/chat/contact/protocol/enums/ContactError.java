@@ -24,6 +24,11 @@ public enum ContactError implements ErrorSupport {
     QUN_STATUS_INVALID(false, ContactModule.IM_QUN, "04", "status of qun is invalid!"),
 
     NATIONALITY_OF_QUN_EMPTY(false, ContactModule.IM_QUN, "05", "qun nationality can't be empty"),
+    QUN_OWNER_IS_NOT_MATCH(false, ContactModule.IM_QUN, "06", "qun owner can't match"),
+
+    USER_IS_NOT_MEMBER(false, ContactModule.IM_QUN, "07", "user is not member of qun"),
+
+    USER_IS_MEMBER(false, ContactModule.IM_QUN, "08", "user is member of qun"),
     ;
     /**
      * 是否系统级别的错误

@@ -12,13 +12,6 @@ import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import com.sparrow.utility.CollectionsUtility;
 import com.sparrow.utility.StringUtility;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +19,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 
+import java.util.*;
+
 import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_1;
 import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_N;
 
 @Component
 public class RedisContactsRepository implements ContactRepository {
-
     private static Logger logger = LoggerFactory.getLogger(RedisContactsRepository.class);
     @Autowired
     private RedisTemplate redisTemplate;
@@ -57,7 +51,8 @@ public class RedisContactsRepository implements ContactRepository {
         return false;
     }
 
-    @Override public List<QunDTO> getQunsByUserId(Integer userId) {
+    @Override
+    public List<QunDTO> getQunsByUserId(Integer userId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, CHAT_TYPE_1_2_N);
         String userQunKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         List<String> qunIds = this.redisTemplate.opsForList().range(userQunKey, 0, Integer.MAX_VALUE);
@@ -86,7 +81,8 @@ public class RedisContactsRepository implements ContactRepository {
         return qunDtos;
     }
 
-    @Override public List<UserDTO> getFriendsByUserId(Integer userId) {
+    @Override
+    public List<UserDTO> getFriendsByUserId(Integer userId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, CHAT_TYPE_1_2_1);
         String user121ContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         //好友列表
@@ -116,7 +112,8 @@ public class RedisContactsRepository implements ContactRepository {
         return userDtos;
     }
 
-    @Override public List<UserDTO> getUsersByIds(Collection<Integer> userIds) {
+    @Override
+    public List<UserDTO> getUsersByIds(Collection<Integer> userIds) {
         List<String> userKeys = new ArrayList<>(userIds.size());
         for (Integer userId : userIds) {
             PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(userId);
@@ -137,7 +134,8 @@ public class RedisContactsRepository implements ContactRepository {
         return userDtos;
     }
 
-    @Override public void addFriend(Integer userId, Integer friendId) {
+    @Override
+    public void addFriend(Integer userId, Integer friendId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, CHAT_TYPE_1_2_1);
         String user121ContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         this.redisTemplate.opsForZSet().add(user121ContactKey, friendId, System.currentTimeMillis());

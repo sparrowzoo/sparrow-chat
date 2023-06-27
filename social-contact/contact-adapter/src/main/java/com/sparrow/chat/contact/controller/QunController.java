@@ -61,37 +61,38 @@ public class QunController {
 
     @ApiOperation("邀请好友加群")
     @PostMapping("invite-friend-join")
-    public String inviteFriend(@RequestBody InviteFriendParam inviteFriendParam) {
-        return "token";
+    public String inviteFriend(@RequestBody InviteFriendParam inviteFriendParam) throws BusinessException {
+        return this.qunService.inviteFriend(inviteFriendParam);
     }
 
     @ApiOperation("退群")
     @PostMapping("exist-qun")
-    public void existQun(Long qunId) {
-
+    public void existQun(Long qunId) throws BusinessException {
+        this.qunService.existQun(qunId);
     }
 
     @ApiOperation("移除群成员")
     @PostMapping("remove-member")
-    public void removeMember(@RequestBody RemoveMemberOfQunParam removeMemberOfQunParam) {
-
+    public void removeMember(@RequestBody RemoveMemberOfQunParam removeMemberOfQunParam) throws BusinessException {
+        this.qunService.removeMember(removeMemberOfQunParam);
     }
 
     @ApiOperation("群解散")
     @PostMapping("dissolve")
-    public void dissolve(@RequestBody Long qunId) {
-
+    public void dissolve(@RequestBody Long qunId) throws BusinessException {
+        this.qunService.dissolve(qunId);
     }
 
     @ApiOperation("转移群主")
     @PostMapping
-    public void transfer(@RequestBody TransferOwnerOfQunParam transferOwnerOfQun) {
-
+    public void transfer(@RequestBody TransferOwnerOfQunParam transferOwnerOfQun) throws BusinessException {
+        this.qunService.transfer(transferOwnerOfQun);
     }
 
-    @ApiOperation("根据群ID，获取申请详情")
-    @GetMapping("apply-detail/{qunId}")
-    public QunVO getApplyDetail(Long qunId) {
-        return new QunVO();
+
+    @ApiOperation("根据邀请链接获取群详情")
+    @GetMapping("invite/{token}")
+    public QunVO inviteJoinQun(@PathVariable("token") String token) throws BusinessException {
+        return null;
     }
 }

@@ -2,8 +2,9 @@ package com.sparrow.chat.contact.controller;
 
 import com.sparrow.chat.contact.assembler.ContactAssembler;
 import com.sparrow.chat.contact.bo.FriendAuditWrapBO;
-import com.sparrow.chat.contact.protocol.FriendApplyParam;
+import com.sparrow.chat.contact.protocol.audit.FriendApplyParam;
 import com.sparrow.chat.contact.protocol.audit.FriendAuditParam;
+import com.sparrow.chat.contact.protocol.audit.JoinQunParam;
 import com.sparrow.chat.contact.protocol.audit.QunAuditParam;
 import com.sparrow.chat.contact.protocol.vo.FriendAuditWrapVO;
 import com.sparrow.chat.contact.service.AuditService;
@@ -48,13 +49,21 @@ public class AuditController {
 
     @PostMapping("audit-qun-apply")
     @ApiOperation("对加群进行审核")
-    public void auditQunApply(@RequestBody QunAuditParam qunAuditParam) {
-
+    public void auditQunApply(@RequestBody QunAuditParam qunAuditParam) throws BusinessException {
+        this.auditService.auditQunApply(qunAuditParam);
     }
 
+    /**
+     * 1. 从controller 获取loginUser 并放入joinQunParam
+     * 2. 在业务里直接使用loginUser 参数不透传
+     * 3. 从service 逐层传递
+     *
+     * @param joinQunParam
+     * @throws BusinessException
+     */
     @ApiOperation("加群")
     @PostMapping("join")
-    public void joinQun(@RequestBody Long qunId) {
-
+    public void joinQun(@RequestBody JoinQunParam joinQunParam) throws BusinessException {
+        this.auditService.joinQun(joinQunParam);
     }
 }

@@ -1,6 +1,7 @@
 package com.sparrow.chat.protocol.dto;
 
 import com.sparrow.protocol.DTO;
+
 import java.util.List;
 
 public class QunDTO implements DTO {
@@ -21,17 +22,9 @@ public class QunDTO implements DTO {
      */
     private String flagUrl;
     /**
-     * 单位
-     */
-    private String unit;
-    /**
-     * 单位类型
-     */
-    private String unitType;
-    /**
      * 单位图标
      */
-    private String unitIcon;
+    private String icon;
     /**
      * 群公告
      */
@@ -77,28 +70,12 @@ public class QunDTO implements DTO {
         this.flagUrl = flagUrl;
     }
 
-    public String getUnit() {
-        return unit;
+    public String getIcon() {
+        return icon;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    public String getUnitType() {
-        return unitType;
-    }
-
-    public void setUnitType(String unitType) {
-        this.unitType = unitType;
-    }
-
-    public String getUnitIcon() {
-        return unitIcon;
-    }
-
-    public void setUnitIcon(String unitIcon) {
-        this.unitIcon = unitIcon;
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public String getAnnouncement() {
