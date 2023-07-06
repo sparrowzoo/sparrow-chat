@@ -1,6 +1,8 @@
 package com.sparrow.chat.boot.config;
 
 import com.sparrow.chat.boot.ValidateCode;
+import com.sparrow.file.servlet.FileDownLoad;
+import com.sparrow.file.servlet.FileUpload;
 import com.sparrow.passport.authenticate.AuthenticatorService;
 import com.sparrow.spring.starter.resolver.ClientInfoArgumentResolvers;
 import com.sparrow.spring.starter.resolver.LoginUserArgumentResolvers;
@@ -46,6 +48,16 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
     @Bean
     public ServletRegistrationBean validateCode() {
         return new ServletRegistrationBean(new ValidateCode(), "/validate-code");
+    }
+
+    @Bean
+    public ServletRegistrationBean fileUpload() {
+        return new ServletRegistrationBean(new FileUpload(), "/file-upload");
+    }
+
+    @Bean
+    public ServletRegistrationBean fileDownload() {
+        return new ServletRegistrationBean(new FileDownLoad(), "/file-download");
     }
 
     @Bean
