@@ -15,11 +15,15 @@ import com.sparrow.chat.infrastructure.persistence.data.converter.QunConverter;
 import com.sparrow.chat.infrastructure.persistence.data.converter.QunMemberConverter;
 import com.sparrow.exception.Asserts;
 import com.sparrow.protocol.BusinessException;
+import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.ThreadContext;
 import com.sparrow.protocol.enums.StatusRecord;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Named
 public class QunRepositoryImpl implements QunRepository {
@@ -68,7 +72,10 @@ public class QunRepositoryImpl implements QunRepository {
     @Override
     public Long createQun(QunCreateParam qunCreateParam) {
         Qun qun = this.qunConverter.createParam2Po(qunCreateParam);
-        return this.qunDao.insert(qun);
+        Long qunId = this.qunDao.insert(qun);
+        QunMember qunMember = this.qunMemberConverter.convert2QunMember(qunId);
+        this.qunMemberDao.insert(qunMember);
+        return qunId;
     }
 
     @Override
@@ -96,5 +103,16 @@ public class QunRepositoryImpl implements QunRepository {
     public List<QunBO> queryQunPlaza() {
         List<Qun> quns = this.qunDao.queryEnabledQunList();
         return this.qunConverter.poList2BoList(quns);
+    }
+
+    @Override
+    public List<QunBO> getMyQunList() {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        Map<Long, Long> myQunIds = this.qunMemberDao.getQunsByMemberId(loginUser.getUserId());
+        if (myQunIds == null || myQunIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Qun> myQuns = this.qunDao.getQuns(myQunIds.values());
+        return this.qunConverter.poList2BoList(myQuns);
     }
 }

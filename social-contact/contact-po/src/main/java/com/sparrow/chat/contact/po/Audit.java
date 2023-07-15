@@ -66,7 +66,7 @@ public class Audit implements POJO {
     }
 
     @MethodOrder(order = 2)
-    @Column(name = "user_id",
+    @Column(name = "apply_user_id",
             columnDefinition = "int(11)  UNSIGNED DEFAULT 0 COMMENT '用户ID'",
             nullable = false,
             updatable = false)

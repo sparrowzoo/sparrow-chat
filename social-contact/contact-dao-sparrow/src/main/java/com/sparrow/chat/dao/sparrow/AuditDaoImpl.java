@@ -14,7 +14,7 @@ import java.util.List;
 @Named
 public class AuditDaoImpl extends ORMStrategy<Audit, Long> implements AuditDao {
     @Override
-    public List<Audit> getAudits(Long userId) {
+    public List<Audit> getAuditingFriendList(Long userId) {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
@@ -25,13 +25,24 @@ public class AuditDaoImpl extends ORMStrategy<Audit, Long> implements AuditDao {
     }
 
     @Override
+    public List<Audit> getAuditingQunMemberList(Long qunId) {
+        SearchCriteria searchCriteria = new SearchCriteria();
+        searchCriteria.setWhere(
+                BooleanCriteria.criteria
+                                (Criteria.field("audit.businessId").equal(qunId))
+                        .and
+                                (Criteria.field("audit.businessType").equal(AuditBusiness.GROUP.getBusiness())));
+        return this.getList(searchCriteria);
+    }
+
+    @Override
     public Audit exist(Audit audit) {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
                                 (Criteria.field("audit.businessId").equal(audit.getBusinessId()))
                         .and
-                                (Criteria.field("audit.businessType").equal(AuditBusiness.FRIEND.getBusiness()))
+                                (Criteria.field("audit.businessType").equal(audit.getBusinessType()))
                         .and
                                 (Criteria.field("audit.applyUserId").equal(audit.getApplyUserId())));
         return this.getEntity(searchCriteria);

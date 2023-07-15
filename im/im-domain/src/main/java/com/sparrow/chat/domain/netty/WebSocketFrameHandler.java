@@ -32,27 +32,25 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-/**
- * Echoes uppercase content of text frames.
- */
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketFrameHandler.class);
 
     /**
-     *  一定要重写channelRead0方法，否则会报错,内存泄漏问题交由netty处理
-     * @param ctx           the {@link ChannelHandlerContext} which this {@link SimpleChannelInboundHandler}
-     *                      belongs to
-     * @param frame           the message to handle
+     * 一定要重写channelRead0方法，否则会报错,内存泄漏问题交由netty处理
+     *
+     * @param ctx   the {@link ChannelHandlerContext} which this {@link SimpleChannelInboundHandler}
+     *              belongs to
+     * @param frame the message to handle
      * @throws Exception
      */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
         // ping and pong frames already handled js 不支持PingFrame 需要手动处理
         if (frame instanceof TextWebSocketFrame) {
-            TextWebSocketFrame text=(TextWebSocketFrame)frame;
+            TextWebSocketFrame text = (TextWebSocketFrame) frame;
             ByteBuf byteBuf = text.content();
-            logger.info("ping pong content address hashcode {},capacity {}",byteBuf.hashCode(),byteBuf.capacity());
+            logger.info("ping pong content address hashcode {},capacity {}", byteBuf.hashCode(), byteBuf.capacity());
             // Send the uppercase string back.
             String content = ((TextWebSocketFrame) frame).text();
             if ("ping".equalsIgnoreCase(content)) {
@@ -83,7 +81,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     }
 
     private BinaryWebSocketFrame unsafeDuplicate(
-        BinaryWebSocketFrame msg) {
+            BinaryWebSocketFrame msg) {
         byte[] serviceTimeBytes = ("_" + System.currentTimeMillis()).getBytes();
         int capacity = msg.content().readableBytes() + serviceTimeBytes.length;
 
@@ -130,7 +128,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     }
 
     private void writeAndFlush(ChannelHandlerContext ctx, Integer chatType, BinaryWebSocketFrame msg,
-        List<Channel> channels) throws InterruptedException {
+                               List<Channel> channels) throws InterruptedException {
 //分组发送 或者自定义发送 release 会报错
 //        ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 //        channelGroup.addAll(channels);

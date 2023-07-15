@@ -18,4 +18,14 @@ public class QunMemberConverter {
         qunMember.setApplyTime(auditBo.getApplyTime());
         return qunMember;
     }
+
+    public QunMember convert2QunMember(Long qunId) {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        QunMember qunMember = new QunMember();
+        qunMember.setQunId(qunId);
+        qunMember.setMemberId(loginUser.getUserId());
+        qunMember.setAuditTime(System.currentTimeMillis());
+        qunMember.setApplyTime(System.currentTimeMillis());
+        return qunMember;
+    }
 }

@@ -3,7 +3,6 @@ package com.sparrow.chat.boot.config;
 import com.sparrow.chat.boot.ValidateCode;
 import com.sparrow.file.servlet.FileDownLoad;
 import com.sparrow.file.servlet.FileUpload;
-import com.sparrow.passport.authenticate.AuthenticatorService;
 import com.sparrow.spring.starter.resolver.ClientInfoArgumentResolvers;
 import com.sparrow.spring.starter.resolver.LoginUserArgumentResolvers;
 import com.sparrow.support.Authenticator;
@@ -22,10 +21,7 @@ import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -36,6 +32,9 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
 
     @Value("${mock_login_user}")
     private Boolean mockUser;
+
+    @Value("${authenticator.white.list}")
+    private List<String> whiteList;
 
 
     @Inject
@@ -60,14 +59,11 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
         return new ServletRegistrationBean(new FileDownLoad(), "/file-download");
     }
 
-    @Bean
-    Authenticator authenticator() {
-        return new AuthenticatorService();
-    }
-
+    @Inject
+    private Authenticator authenticator;
     @Bean
     MonolithicLoginUserFilter loginTokenFilter() {
-        return new MonolithicLoginUserFilter(authenticator(), this.mockUser);
+        return new MonolithicLoginUserFilter(authenticator, this.mockUser,this.whiteList);
     }
 
     @Bean
@@ -75,6 +71,15 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
         return new GlobalAttributeFilter();
     }
 
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
+                .maxAge(3600)
+                .allowCredentials(true);
+    }
 
     /**
      * 兼容swagger 配置

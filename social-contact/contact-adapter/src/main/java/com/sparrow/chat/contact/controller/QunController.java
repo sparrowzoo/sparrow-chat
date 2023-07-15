@@ -52,12 +52,6 @@ public class QunController {
         return this.qunAssembler.assembleQunPlaza(qunPlaza);
     }
 
-    @GetMapping("qun-plaza")
-    @ApiOperation("群广场")
-    public QunPlazaVO qunPlaza() throws BusinessException {
-        QunPlazaBO qunPlaza = this.qunService.qunPlaza();
-        return this.qunAssembler.assembleQunPlaza(qunPlaza);
-    }
 
     @ApiOperation("邀请好友加群")
     @PostMapping("invite-friend-join")

@@ -7,12 +7,22 @@ import javax.inject.Named;
 
 @Named
 public class ContactConverter {
-    public Contact convert2po(AuditBO auditBO) {
-        Contact contact = new Contact();
-        contact.setUserId(auditBO.getApplyUserId());
-        contact.setFriendId(auditBO.getBusinessId());
-        contact.setApplyTime(auditBO.getApplyTime());
-        contact.setAuditTime(auditBO.getAuditTime());
-        return contact;
+    public Contact convert2MyPo(AuditBO auditBO) {
+        Contact myContact = new Contact();
+        myContact.setUserId(auditBO.getApplyUserId());
+        myContact.setFriendId(auditBO.getBusinessId());
+        myContact.setApplyTime(auditBO.getApplyTime());
+        myContact.setAuditTime(System.currentTimeMillis());
+        return myContact;
+    }
+
+    public Contact convert2FriendPo(AuditBO auditBO) {
+
+        Contact friendContact = new Contact();
+        friendContact.setUserId(auditBO.getApplyUserId());
+        friendContact.setFriendId(auditBO.getBusinessId());
+        friendContact.setApplyTime(auditBO.getApplyTime());
+        friendContact.setAuditTime(System.currentTimeMillis());
+        return friendContact;
     }
 }

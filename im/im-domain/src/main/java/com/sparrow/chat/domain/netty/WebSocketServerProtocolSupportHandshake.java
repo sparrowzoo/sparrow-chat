@@ -4,37 +4,16 @@ import com.sparrow.chat.protocol.constant.Chat;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.spring.starter.SpringContext;
 import com.sparrow.support.Authenticator;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
+import com.sparrow.utility.JSUtility;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.DefaultHttpHeaders;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpHeaderValues;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpUtil;
-import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketHandshakeException;
-import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
-import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import io.netty.handler.codec.http.websocketx.extensions.WebSocketExtensionUtil;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.CharsetUtil;
-import java.net.InetSocketAddress;
-import java.util.Date;
-import java.util.List;
 
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-import static io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker13.WEBSOCKET_13_ACCEPT_GUID;
+import java.net.InetSocketAddress;
+import java.util.List;
 
 /**
  * WebSocketServerProtocolHandshakeHandler
@@ -81,7 +60,7 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof HandshakeComplete) {
             HandshakeComplete serverHandshakeComplete = (HandshakeComplete) evt;
-            String token = serverHandshakeComplete.requestHeaders().get("sec-websocket-protocol");
+            String token = JSUtility.decodeURIComponent(serverHandshakeComplete.requestHeaders().get("sec-websocket-protocol"));
 
             InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
             String ip = address.getAddress().getHostAddress();
@@ -100,7 +79,7 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
 
     @Override
     protected void decode(ChannelHandlerContext ctx, WebSocketFrame frame, List<Object> out)
-        throws Exception {
+            throws Exception {
         if (frame instanceof CloseWebSocketFrame) {
             UserContainer.getContainer().offline(ctx.channel());
         }

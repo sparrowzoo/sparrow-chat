@@ -4,10 +4,12 @@ import com.sparrow.chat.contact.dao.QunMemberDao;
 import com.sparrow.chat.contact.po.QunMember;
 import com.sparrow.orm.query.BooleanCriteria;
 import com.sparrow.orm.query.Criteria;
+import com.sparrow.orm.query.OrderCriteria;
 import com.sparrow.orm.query.SearchCriteria;
 import com.sparrow.orm.template.impl.ORMStrategy;
 
 import javax.inject.Named;
+import java.util.Map;
 
 @Named
 public class QunMemberDaoImpl extends ORMStrategy<QunMember, Long> implements QunMemberDao {
@@ -39,5 +41,16 @@ public class QunMemberDaoImpl extends ORMStrategy<QunMember, Long> implements Qu
                 BooleanCriteria.criteria
                         (Criteria.field("qunMember.qunId").equal(qunId)));
         this.delete(searchCriteria);
+    }
+
+    @Override
+    public Map<Long,Long> getQunsByMemberId(Long memberId) {
+        SearchCriteria searchCriteria = new SearchCriteria();
+        searchCriteria.setFields("qunMember.memberId,qunMember.qunId");
+        searchCriteria.setWhere(
+                BooleanCriteria.criteria
+                        (Criteria.field("qunMember.memberId").equal(memberId)));
+        searchCriteria.addOrderCriteria(OrderCriteria.asc("qunMember.applyTime"));
+        return this.getMap(searchCriteria);
     }
 }

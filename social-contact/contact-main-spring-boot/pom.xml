@@ -22,6 +22,11 @@
         <mybatis.version>3.2.8</mybatis.version>
     </properties>
     <dependencies>
+        <!--支持热部署-->
+<!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-devtools</artifactId>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>com.sparrowzoo.passport</groupId>

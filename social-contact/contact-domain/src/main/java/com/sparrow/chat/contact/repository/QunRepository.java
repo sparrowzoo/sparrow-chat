@@ -33,5 +33,6 @@ public interface QunRepository {
 
     List<QunBO> queryQunPlaza();
 
+    List<QunBO> getMyQunList();
 
 }

@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.Filter;
+import java.util.List;
 
 @Configuration
 public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
@@ -20,6 +21,10 @@ public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
 
     @Value("${mock_login_user}")
     private Boolean mockLoginUser;
+
+    @Value("${authenticator.white.list}")
+    private List<String> whiteList;
+
     @Bean
     Authenticator authenticator() {
         return new AuthenticatorService();
@@ -27,7 +32,7 @@ public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
 
     @Bean
     MonolithicLoginUserFilter loginTokenFilter() {
-        return new MonolithicLoginUserFilter(authenticator(), this.mockLoginUser);
+        return new MonolithicLoginUserFilter(authenticator(), this.mockLoginUser,this.whiteList);
     }
 
     @Override

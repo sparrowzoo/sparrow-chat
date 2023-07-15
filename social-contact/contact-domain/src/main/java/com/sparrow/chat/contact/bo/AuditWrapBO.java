@@ -5,9 +5,9 @@ import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import java.util.List;
 import java.util.Map;
 
-public class FriendAuditWrapBO {
+public class AuditWrapBO {
 
-    public FriendAuditWrapBO(List<AuditBO> auditList, Map<Long,UserProfileDTO> userProfiles) {
+    public AuditWrapBO(List<AuditBO> auditList, Map<Long,UserProfileDTO> userProfiles) {
         this.auditList = auditList;
         this.friendMap = userProfiles;
     }

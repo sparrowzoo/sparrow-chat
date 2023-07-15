@@ -56,7 +56,7 @@ public class AuditConverter {
         AuditBO auditBO = new AuditBO();
         BeanUtility.copyProperties(audit, auditBO);
         auditBO.setAuditId(audit.getId());
-        auditBO.setAuditBusiness(AuditBusiness.FRIEND);
+        auditBO.setAuditBusiness(AuditBusiness.getInstance(audit.getBusinessType()));
         return auditBO;
     }
 

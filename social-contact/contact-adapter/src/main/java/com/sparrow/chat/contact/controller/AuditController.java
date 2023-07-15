@@ -1,7 +1,7 @@
 package com.sparrow.chat.contact.controller;
 
 import com.sparrow.chat.contact.assembler.ContactAssembler;
-import com.sparrow.chat.contact.bo.FriendAuditWrapBO;
+import com.sparrow.chat.contact.bo.AuditWrapBO;
 import com.sparrow.chat.contact.protocol.audit.FriendApplyParam;
 import com.sparrow.chat.contact.protocol.audit.FriendAuditParam;
 import com.sparrow.chat.contact.protocol.audit.JoinQunParam;
@@ -11,33 +11,37 @@ import com.sparrow.chat.contact.service.AuditService;
 import com.sparrow.protocol.BusinessException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 
 @RestController
+@RequestMapping("/contact")
 @Api(value = "contact", tags = "IM 联系人审核")
 public class AuditController {
-
     @Inject
     private ContactAssembler contactAssembler;
 
     @Inject
     private AuditService auditService;
 
-
-    @PostMapping("friend-apply-list")
+    @GetMapping("friend-apply-list")
     @ApiOperation("获取好友申请列表")
     public FriendAuditWrapVO friendApplyList() throws BusinessException {
-        FriendAuditWrapBO friendAuditBO = this.auditService.friendApplyList();
+        AuditWrapBO friendAuditBO = this.auditService.friendApplyList();
+        return this.contactAssembler.toUserFriendApplyVoList(friendAuditBO);
+    }
+
+    @PostMapping("qun-member-apply-list")
+    @ApiOperation("群成员申请列表")
+    public FriendAuditWrapVO qunMemberApplyList(Long qunId) throws BusinessException {
+        AuditWrapBO friendAuditBO = this.auditService.qunMemberApplyList(qunId);
         return this.contactAssembler.toUserFriendApplyVoList(friendAuditBO);
     }
 
     @PostMapping("apply-friend")
     @ApiOperation("申请好友")
-    public Long applyFriend(FriendApplyParam friendApplyParam) throws BusinessException {
+    public Long applyFriend(@RequestBody FriendApplyParam friendApplyParam) throws BusinessException {
         return this.auditService.applyFriend(friendApplyParam);
     }
 
@@ -62,8 +66,8 @@ public class AuditController {
      * @throws BusinessException
      */
     @ApiOperation("加群")
-    @PostMapping("join")
-    public void joinQun(@RequestBody JoinQunParam joinQunParam) throws BusinessException {
-        this.auditService.joinQun(joinQunParam);
+    @PostMapping("join-qun")
+    public void applyJoinQun(@RequestBody JoinQunParam joinQunParam) throws BusinessException {
+        this.auditService.applyJoinQun(joinQunParam);
     }
 }

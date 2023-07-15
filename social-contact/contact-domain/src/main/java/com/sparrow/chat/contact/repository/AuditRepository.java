@@ -12,7 +12,11 @@ import java.util.List;
 public interface AuditRepository {
     Long applyFriend(FriendApplyBO friendApply);
 
-    List<AuditBO> getFriendAuditList(Long userId);
+    List<AuditBO> getAuditingFriendList(Long userId);
+
+
+    List<AuditBO> getAuditingQunMemberList(Long qunId);
+
 
     Long joinQun(JoinQunParam joinQun);
 

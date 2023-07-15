@@ -5,17 +5,18 @@
     <meta content="程序员有问题就上麻雀窝 和大牛直接聊" name="description"/>
     <meta name="application-name" content="麻雀窝"/>
     <meta name="msapplication-tooltip" content="麻雀窝"/>
-
-    <link rel="stylesheet" type="text/css" href="http://r.sparrowzoo.net/styles/pure-css/pure-min.css?v=1.0"/>
-    <!--[if lte IE 8]>
-    <link rel="stylesheet" type="text/css" href="http://r.sparrowzoo.net/styles/layouts-old-ie.css?v=1.0"/>
-    <![endif]-->
-    <!--[if gt IE 8]><!-->
-    <link rel="stylesheet" type="text/css" href="http://r.sparrowzoo.net/styles/layouts.css?v=1.0"/>
-    <!--<![endif]-->
-    <link rel="stylesheet" type="text/css" href="http://r.sparrowzoo.net/styles/sparrow.css?v=1.0"/>
-    <script language="javascript" type="text/javascript"
-            src="http://r.sparrowzoo.net/scripts/sparrow.js?v=1.0"></script>
+    <th:block th:include="/frames::global_resource"/>
+    <script type="text/javascript">
+        function joinQun(qunId) {
+            var param = {
+                "qunId": qunId,
+                "reason": "加我，志哥"
+            }
+            $.http.post($.url.root + "/contact/join-qun", param, function (result) {
+                $.message("申请成功哟，等待后台审核哈.....")
+            });
+        }
+    </script>
 </head>
 <body>
 <div class="body">
@@ -27,7 +28,7 @@
             <a href="login" target="_blank">登录</a>
             <a href="register" target="_blank">注册</a>
 
-            <a href="http://passport.sparrowzoo.com/modify-avatar">上传头象</a>
+            <a href="http://www.sparrowzoo.com/modify-avatar">上传头象</a>
         </h2>
     </div>
 
@@ -39,10 +40,35 @@
             </li>
             <li>原同程旅游ATPCO 项目负责人，全球10亿数据量</li>
         </ul>
-
-        <h2><a href="https://sparrowzoo.feishu.cn/docx/PdOed85n0o86TxxQBEOcOGZPnoh" target="_blank">0基础大纲指南</a>
+        <h2>
+            <a href="https://sparrowzoo.feishu.cn/docx/PdOed85n0o86TxxQBEOcOGZPnoh" target="_blank">0基础大纲指南</a>
         </h2>
+        <h2>
+            <a href="http://www.sparrowzoo.com/chat/pc#contact" target="_blank">Sparrow IM</a>
+        </h2>
+        <h2>欢迎大家进群体验</h2>
+        <div th:each="category,categoryStat:${qunPlazaVO?.categoryDicts}">
+            <!--        <div style="border: #ccc solid 1px ">-->
+            <!--            ID<span th:text="${category.key}"></span>-->
+            <!--            categoryName<span th:text="${category.value?.categoryName}"></span>-->
+            <!--            description<span th:text="${category.value?.description}"></span>-->
+            <!--            id<span th:text="${category.value?.id}"></span>-->
+            <!--        </div>-->
+            <div style="border: #ccc solid 1px;" th:each="qun,qunStat:${qunPlazaVO.qunMap[category.key]}">
+                <!--            <span th:text="${qunStat.count}"></span>-->
+                <span th:text="${qun.qunName}"></span><br/>
+                <span th:text="${qun.announcement}"></span><br/>
+                <span th:text="${qun.nationality}"></span><br/>
+                <!--            <span th:text="${qun.qunId}"></span><br/>-->
+                <span th:text="${qun.remark}"></span><br/>
+                <input type="button"
+                       th:onclick="'joinQun('+${qun.qunId}+')'" title="加入群聊"
+                       value="加入群聊" class="pure-button"/>
+            </div>
+        </div>
     </div>
+
+
 </div>
 </body>
 </html>

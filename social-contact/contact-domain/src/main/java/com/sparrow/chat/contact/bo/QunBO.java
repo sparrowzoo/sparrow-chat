@@ -5,6 +5,8 @@ import com.sparrow.protocol.BO;
 public class QunBO implements BO {
     private Long id;
     private String name;
+
+    private String avatar;
     private String announcement;
     private Integer nationalityId;
     private String nationality;
@@ -29,6 +31,14 @@ public class QunBO implements BO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getAnnouncement() {

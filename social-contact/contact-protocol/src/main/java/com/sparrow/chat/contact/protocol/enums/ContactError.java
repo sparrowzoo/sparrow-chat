@@ -14,6 +14,9 @@ public enum ContactError implements ErrorSupport {
     AUDIT_BUSINESS_TYPE_NOT_MATCH(false, ContactModule.IM_CONTACT, "06", "audit business type is not match"),
     AUDIT_USER_IS_NOT_MATCH(false, ContactModule.IM_CONTACT, "07", "audit user id not match"),
 
+    CANNOT_APPLY_SELF_FRIEND(false, ContactModule.IM_CONTACT, "08", "user can't apply friend with self "),
+
+    APPLY_FRIEND_CANNOT_BE_NULL(false, ContactModule.IM_CONTACT, "08", "user can't apply friend with self "),
 
     QUN_ID_IS_EMPTY(false, ContactModule.IM_QUN, "00", "qun id can't be empty"),
 
@@ -29,6 +32,8 @@ public enum ContactError implements ErrorSupport {
     USER_IS_NOT_MEMBER(false, ContactModule.IM_QUN, "07", "user is not member of qun"),
 
     USER_IS_MEMBER(false, ContactModule.IM_QUN, "08", "user is member of qun"),
+
+
     ;
     /**
      * 是否系统级别的错误

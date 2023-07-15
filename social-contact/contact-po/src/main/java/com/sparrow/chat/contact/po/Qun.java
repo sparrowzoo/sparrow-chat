@@ -9,6 +9,7 @@ import javax.persistence.*;
 public class Qun extends PO {
     private Long id;
     private String name;
+    private String avatar;
     private String announcement;
     private Integer nationalityId;
     private Long organizationId;
@@ -36,6 +37,16 @@ public class Qun extends PO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @MethodOrder(order = 2.1F)
+    @Column(name = "avatar", columnDefinition = "varchar(256)  DEFAULT '' COMMENT '群名称'", nullable = false)
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     @MethodOrder(order = 3)

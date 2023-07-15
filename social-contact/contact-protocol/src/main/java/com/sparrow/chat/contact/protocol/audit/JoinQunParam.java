@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 /**
  * 加群
+ * group room qun
  */
 @ApiModel("加群参数")
 public class JoinQunParam implements Param {

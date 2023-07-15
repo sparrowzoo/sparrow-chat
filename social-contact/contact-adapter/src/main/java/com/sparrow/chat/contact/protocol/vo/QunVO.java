@@ -9,7 +9,7 @@ public class QunVO implements VO {
     @ApiModelProperty("群ID")
     private Long qunId;
     @ApiModelProperty("群名称")
-    private String name;
+    private String qunName;
     @ApiModelProperty("群公告")
     private String announcement;
     @ApiModelProperty("所属国籍")
@@ -26,7 +26,7 @@ public class QunVO implements VO {
     @ApiModelProperty("所属类型名")
     private String categoryName;
     @ApiModelProperty("图标")
-    private String icon;
+    private String avatar;
 
     public Long getQunId() {
         return qunId;
@@ -36,12 +36,12 @@ public class QunVO implements VO {
         this.qunId = qunId;
     }
 
-    public String getName() {
-        return name;
+    public String getQunName() {
+        return qunName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setQunName(String qunName) {
+        this.qunName = qunName;
     }
 
     public String getAnnouncement() {
@@ -101,11 +101,11 @@ public class QunVO implements VO {
     }
 
 
-    public String getIcon() {
-        return icon;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setIcon(String icon) {
-        this.icon = icon;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

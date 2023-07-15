@@ -10,6 +10,7 @@ import com.sparrow.protocol.ClientInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -47,8 +48,8 @@ public class SpringUserLoginController {
         }
     }
 
-    @PostMapping("/shortcut-login.json")
-    public LoginDTO shortcut(LoginQuery login, ClientInformation client) throws BusinessException {
+    @PostMapping("/shortcut-login")
+    public LoginDTO shortcut(@RequestBody LoginQuery login, ClientInformation client) throws BusinessException {
         return this.userLoginController.shortcut(login, client);
     }
 

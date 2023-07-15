@@ -7,6 +7,7 @@ import com.sparrow.orm.template.impl.ORMStrategy;
 import com.sparrow.protocol.enums.StatusRecord;
 
 import javax.inject.Named;
+import java.util.Collection;
 import java.util.List;
 
 @Named
@@ -35,5 +36,12 @@ public class QunDaoImpl extends ORMStrategy<Qun, Long> implements QunDao {
         updateCriteria.set(UpdateSetClausePair.field("qun.id").equal(qunId));
         updateCriteria.setWhere(Criteria.field("qun.ownerId").equal(newOwnerId));
         this.update(updateCriteria);
+    }
+
+    @Override
+    public List<Qun> getQuns(Collection<Long> qunIds) {
+        SearchCriteria searchCriteria = new SearchCriteria();
+        searchCriteria.setWhere(Criteria.field("qun.id").in(qunIds));
+        return this.getList(searchCriteria);
     }
 }
