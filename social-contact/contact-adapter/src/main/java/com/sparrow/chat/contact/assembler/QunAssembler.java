@@ -36,12 +36,14 @@ public class QunAssembler {
     public QunVO assembleQun(QunBO qunBO, UserProfileDTO userProfile) throws BusinessException {
         QunVO qunVo = new QunVO();
         BeanUtility.copyProperties(qunBO, qunVo);
-        qunVo.setQunId(qunBO.getId());
+        qunVo.setQunId(qunBO.getId().toString());
         qunVo.setQunName(qunBO.getName());
         Nationality nationality = Nationality.getById(qunBO.getNationalityId());
         Asserts.isTrue(nationality == null, ContactError.NATIONALITY_OF_QUN_EMPTY);
         qunVo.setNationality(nationality.getName());
-        qunVo.setOwnerName(userProfile.getUserName());
+        if (userProfile != null) {
+            qunVo.setOwnerName(userProfile.getUserName());
+        }
         //todo
         Category category = Category.getById(qunBO.getCategoryId().intValue());
         Asserts.isTrue(category == null, ContactError.CATEGORY_OF_QUN_EMPTY);

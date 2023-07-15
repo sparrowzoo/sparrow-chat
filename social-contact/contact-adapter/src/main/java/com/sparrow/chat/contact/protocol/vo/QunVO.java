@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel("群详情")
 public class QunVO implements VO {
     @ApiModelProperty("群ID")
-    private Long qunId;
+    private String qunId;
     @ApiModelProperty("群名称")
     private String qunName;
     @ApiModelProperty("群公告")
@@ -28,11 +28,11 @@ public class QunVO implements VO {
     @ApiModelProperty("图标")
     private String avatar;
 
-    public Long getQunId() {
+    public String getQunId() {
         return qunId;
     }
 
-    public void setQunId(Long qunId) {
+    public void setQunId(String  qunId) {
         this.qunId = qunId;
     }
 

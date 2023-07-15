@@ -60,7 +60,7 @@ public class ContactAssembler {
         for (QunBO qunBO : contactsWrap.getQuns()) {
             QunVO qunVO = new QunVO();
             BeanUtility.copyProperties(qunBO, qunVO);
-            qunVO.setQunId(qunBO.getId());
+            qunVO.setQunId(qunBO.getId().toString());
             qunVO.setQunName(qunBO.getName());
             qunVOS.add(qunVO);
         }
