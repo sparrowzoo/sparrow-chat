@@ -17,10 +17,9 @@ public class ContactConverter {
     }
 
     public Contact convert2FriendPo(AuditBO auditBO) {
-
         Contact friendContact = new Contact();
-        friendContact.setUserId(auditBO.getApplyUserId());
-        friendContact.setFriendId(auditBO.getBusinessId());
+        friendContact.setUserId(auditBO.getBusinessId());
+        friendContact.setFriendId(auditBO.getApplyUserId());
         friendContact.setApplyTime(auditBO.getApplyTime());
         friendContact.setAuditTime(System.currentTimeMillis());
         return friendContact;
