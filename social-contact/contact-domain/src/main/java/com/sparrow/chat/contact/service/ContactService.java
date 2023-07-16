@@ -9,6 +9,7 @@ import com.sparrow.exception.Asserts;
 import com.sparrow.passport.api.UserProfileAppService;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
+import com.sparrow.protocol.ThreadContext;
 import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.utility.StringUtility;
 
@@ -40,6 +41,8 @@ public class ContactService {
 
     public ContactsWrapBO getContacts() throws BusinessException {
         List<Long> contactUserIds = this.contactRepository.getContacts();
+        //通讯录加自己f
+        contactUserIds.add(ThreadContext.getLoginToken().getUserId());
         Map<Long, UserProfileDTO> userProfileMap = this.userProfileAppService.getUserMap(contactUserIds);
         List<QunBO> myQuns = this.qunRepository.getMyQunList();
         return new ContactsWrapBO(userProfileMap.values(), myQuns);
