@@ -23,7 +23,7 @@ public class SecretServiceImpl implements SecretService {
     /**
      * 密钥的key
      */
-    private static final String USER_IDENTIFY_SECRET_KEY = "sparrow_user_identify_secret_key";
+    private static final String USER_IDENTIFY_SECRET_KEY = "contact_identify_secret_key";
     /**
      * 当前生产环境标识
      */
@@ -72,7 +72,7 @@ public class SecretServiceImpl implements SecretService {
     private String getSecretKey() {
         //如果当前是生产环境，我在生产环境的服务器上通过环境变量来获取，保证安全性
         if (this.profile.equalsIgnoreCase(SPARROW_PROD_PROFILE)) {
-            return "123456";//System.getenv(USER_IDENTIFY_SECRET_KEY);
+            return System.getenv(USER_IDENTIFY_SECRET_KEY);
         }
         return this.secretKey;
     }
