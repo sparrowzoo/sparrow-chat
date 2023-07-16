@@ -27,7 +27,6 @@
         <h2>
             <a href="login" target="_blank">登录</a>
             <a href="register" target="_blank">注册</a>
-
             <a href="http://www.sparrowzoo.com/modify-avatar">上传头象</a>
         </h2>
     </div>
@@ -59,10 +58,12 @@
                 <span th:text="${qun.qunName}"></span><br/>
                 <span th:text="${qun.announcement}"></span><br/>
                 <span th:text="${qun.nationality}"></span><br/>
-                <!--            <span th:text="${qun.qunId}"></span><br/>-->
+<!--                <span th:text="${qun.qunId}"></span><br/>-->
                 <span th:text="${qun.remark}"></span><br/>
+
                 <input type="button"
-                       th:onclick="'joinQun('+${qun.qunId}+')'" title="加入群聊"
+                       th:onclick="joinQun([[${qun.qunId}]])"
+                       title="加入群聊"
                        value="加入群聊" class="pure-button"/>
             </div>
         </div>
