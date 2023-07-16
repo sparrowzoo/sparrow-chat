@@ -10,10 +10,9 @@ import javax.inject.Named;
 @Named
 public class QunMemberConverter {
     public QunMember convert2QunMember(AuditBO auditBo) {
-        LoginUser loginUser = ThreadContext.getLoginToken();
         QunMember qunMember = new QunMember();
         qunMember.setQunId(auditBo.getBusinessId());
-        qunMember.setMemberId(loginUser.getUserId());
+        qunMember.setMemberId(auditBo.getApplyUserId());
         qunMember.setAuditTime(System.currentTimeMillis());
         qunMember.setApplyTime(auditBo.getApplyTime());
         return qunMember;
