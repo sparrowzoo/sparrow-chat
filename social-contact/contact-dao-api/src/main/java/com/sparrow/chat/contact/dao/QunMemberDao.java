@@ -3,6 +3,7 @@ package com.sparrow.chat.contact.dao;
 import com.sparrow.chat.contact.po.QunMember;
 import com.sparrow.protocol.dao.DaoSupport;
 
+import java.util.List;
 import java.util.Map;
 
 public interface QunMemberDao extends DaoSupport<QunMember, Long> {
@@ -11,6 +12,9 @@ public interface QunMemberDao extends DaoSupport<QunMember, Long> {
     void dissolve(Long qunId);
 
     Boolean isMember(Long qunId, Long memberId);
+
+    List<QunMember> members(Long qunId);
+
 
 
     /**

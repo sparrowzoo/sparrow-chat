@@ -3,6 +3,8 @@ package com.sparrow.chat.boot.config;
 import com.sparrow.chat.boot.ValidateCode;
 import com.sparrow.file.servlet.FileDownLoad;
 import com.sparrow.file.servlet.FileUpload;
+import com.sparrow.mq.DefaultQueueHandlerMappingContainer;
+import com.sparrow.mq.EventHandlerMappingContainer;
 import com.sparrow.spring.starter.resolver.ClientInfoArgumentResolvers;
 import com.sparrow.spring.starter.resolver.LoginUserArgumentResolvers;
 import com.sparrow.support.Authenticator;
@@ -37,12 +39,18 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
     private List<String> whiteList;
 
 
+
+
     @Inject
     private ClientInfoArgumentResolvers clientInfoArgumentResolvers;
 
     @Inject
     private LoginUserArgumentResolvers loginTokenArgumentResolvers;
 
+    @Bean
+    public EventHandlerMappingContainer eventHandlerMappingContainer(){
+        return new DefaultQueueHandlerMappingContainer();
+    }
 
     @Bean
     public ServletRegistrationBean validateCode() {

@@ -9,6 +9,7 @@ import com.sparrow.orm.query.SearchCriteria;
 import com.sparrow.orm.template.impl.ORMStrategy;
 
 import javax.inject.Named;
+import java.util.List;
 import java.util.Map;
 
 @Named
@@ -35,6 +36,15 @@ public class QunMemberDaoImpl extends ORMStrategy<QunMember, Long> implements Qu
         return this.getCount(searchCriteria) > 0;
     }
 
+    @Override
+    public List<QunMember> members(Long qunId) {
+        SearchCriteria searchCriteria = new SearchCriteria();
+        searchCriteria.setWhere(
+                BooleanCriteria.criteria
+                        (Criteria.field("qunMember.qunId").equal(qunId)));
+        return this.getList(searchCriteria);
+    }
+
     public void dissolve(Long qunId) {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(
@@ -44,7 +54,7 @@ public class QunMemberDaoImpl extends ORMStrategy<QunMember, Long> implements Qu
     }
 
     @Override
-    public Map<Long,Long> getQunsByMemberId(Long memberId) {
+    public Map<Long, Long> getQunsByMemberId(Long memberId) {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setFields("qunMember.memberId,qunMember.qunId");
         searchCriteria.setWhere(

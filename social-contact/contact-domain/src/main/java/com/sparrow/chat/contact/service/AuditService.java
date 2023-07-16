@@ -10,10 +10,12 @@ import com.sparrow.chat.contact.protocol.audit.JoinQunParam;
 import com.sparrow.chat.contact.protocol.audit.QunAuditParam;
 import com.sparrow.chat.contact.protocol.enums.AuditBusiness;
 import com.sparrow.chat.contact.protocol.enums.ContactError;
+import com.sparrow.chat.contact.protocol.event.QunMemberEvent;
 import com.sparrow.chat.contact.repository.AuditRepository;
 import com.sparrow.chat.contact.repository.ContactRepository;
 import com.sparrow.chat.contact.repository.QunRepository;
 import com.sparrow.exception.Asserts;
+import com.sparrow.mq.MQPublisher;
 import com.sparrow.passport.api.UserProfileAppService;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
@@ -37,6 +39,9 @@ public class AuditService {
     private SecretService secretService;
     @Inject
     private QunRepository qunRepository;
+
+    @Inject
+    private MQPublisher mqPublisher;
 
     public Long applyFriend(FriendApplyParam friendApplyParam) throws BusinessException {
         Asserts.isTrue(StringUtility.isNullOrEmpty(friendApplyParam.getFriendSecretIdentify()), ContactError.APPLY_FRIEND_CANNOT_BE_NULL);
@@ -104,16 +109,17 @@ public class AuditService {
         }
     }
 
-    public void auditQunApply(QunAuditParam qunAuditParam) throws BusinessException {
+    public void auditQunApply(QunAuditParam qunAuditParam) throws Throwable {
         AuditBO auditBO = this.auditRepository.getAudit(qunAuditParam.getAuditId());
         Asserts.isTrue(AuditBusiness.GROUP != auditBO.getAuditBusiness(), ContactError.AUDIT_BUSINESS_TYPE_NOT_MATCH);
         LoginUser loginUser = ThreadContext.getLoginToken();
-        QunBO existQun=this.qunRepository.qunDetail(auditBO.getBusinessId());
-        Asserts.isTrue(existQun==null,ContactError.QUN_NOT_FOUND);
+        QunBO existQun = this.qunRepository.qunDetail(auditBO.getBusinessId());
+        Asserts.isTrue(existQun == null, ContactError.QUN_NOT_FOUND);
         Asserts.isTrue(!existQun.getOwnerId().equals(loginUser.getUserId()), ContactError.AUDIT_USER_IS_NOT_MATCH);
         this.auditRepository.auditQun(auditBO, qunAuditParam);
         if (qunAuditParam.getAgree()) {
             this.qunRepository.joinQun(auditBO);
+            this.mqPublisher.publish(new QunMemberEvent(existQun.getId(), auditBO.getApplyUserId()));
         }
     }
 }

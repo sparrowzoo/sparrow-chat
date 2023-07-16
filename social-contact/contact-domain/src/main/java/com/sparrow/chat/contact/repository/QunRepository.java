@@ -2,6 +2,7 @@ package com.sparrow.chat.contact.repository;
 
 import com.sparrow.chat.contact.bo.AuditBO;
 import com.sparrow.chat.contact.bo.QunBO;
+import com.sparrow.chat.contact.bo.QunMemberBO;
 import com.sparrow.chat.contact.protocol.qun.QunCreateParam;
 import com.sparrow.chat.contact.protocol.qun.QunModifyParam;
 import com.sparrow.chat.contact.protocol.qun.RemoveMemberOfQunParam;
@@ -28,6 +29,10 @@ public interface QunRepository {
     void modifyQun(QunModifyParam qunModifyParam) throws BusinessException;
 
     QunBO qunDetail(Long qunId) throws BusinessException;
+
+
+    List<QunMemberBO> qunMembers(Long qunId) throws BusinessException;
+
 
     List<QunBO> queryQunPlaza(Long categoryId);
 

@@ -1,26 +1,23 @@
 package com.sparrow.chat.contact.assembler;
 
-import com.sparrow.chat.contact.bo.QunBO;
-import com.sparrow.chat.contact.bo.QunDetailWrapBO;
-import com.sparrow.chat.contact.bo.QunPlazaBO;
+import com.sparrow.chat.contact.bo.*;
 import com.sparrow.chat.contact.protocol.enums.Category;
 import com.sparrow.chat.contact.protocol.enums.ContactError;
 import com.sparrow.chat.contact.protocol.enums.Nationality;
 import com.sparrow.chat.contact.protocol.vo.CategoryVO;
+import com.sparrow.chat.contact.protocol.vo.QunMemberVO;
 import com.sparrow.chat.contact.protocol.vo.QunPlazaVO;
 import com.sparrow.chat.contact.protocol.vo.QunVO;
 import com.sparrow.exception.Asserts;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.utility.BeanUtility;
+import com.sparrow.utility.CollectionsUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Named
 public class QunAssembler {
@@ -88,5 +85,28 @@ public class QunAssembler {
         categoryVO.setCategoryName(category.getName());
         categoryVO.setDescription(category.getDescription());
         return categoryVO;
+    }
+
+    public List<QunMemberVO> assembleQunMember(QunMemberWrapBO qunMemberWrap) {
+        if (qunMemberWrap == null) {
+            return Collections.emptyList();
+        }
+        if (CollectionsUtility.isNullOrEmpty(qunMemberWrap.getQunMemberBOS())) {
+            return Collections.emptyList();
+        }
+        List<QunMemberVO> qunMembers = new ArrayList<>(qunMemberWrap.getQunMemberBOS().size());
+        for (QunMemberBO qunMemberBO : qunMemberWrap.getQunMemberBOS()) {
+            QunMemberVO qunMember = new QunMemberVO();
+            qunMember.setUserId(qunMemberBO.getMemberId());
+            qunMember.setNationality(Nationality.CHINA.getName());
+            qunMember.setFlagUrl(Nationality.CHINA.getFlag());
+            UserProfileDTO userProfile = qunMemberWrap.getUserProfileDTOMap().get(qunMember.getUserId());
+            if (userProfile != null) {
+                qunMember.setUserName(userProfile.getUserName());
+                qunMember.setAvatar(userProfile.getAvatar());
+            }
+            qunMembers.add(qunMember);
+        }
+        return qunMembers;
     }
 }

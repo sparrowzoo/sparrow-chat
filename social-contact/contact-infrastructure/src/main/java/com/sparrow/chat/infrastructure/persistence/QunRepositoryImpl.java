@@ -2,6 +2,7 @@ package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.contact.bo.AuditBO;
 import com.sparrow.chat.contact.bo.QunBO;
+import com.sparrow.chat.contact.bo.QunMemberBO;
 import com.sparrow.chat.contact.dao.QunDao;
 import com.sparrow.chat.contact.dao.QunMemberDao;
 import com.sparrow.chat.contact.po.Qun;
@@ -91,6 +92,12 @@ public class QunRepositoryImpl implements QunRepository {
     public QunBO qunDetail(Long qunId) throws BusinessException {
         Qun qun = this.qunDao.getEntity(qunId);
         return this.qunConverter.po2Bo(qun);
+    }
+
+    @Override
+    public List<QunMemberBO> qunMembers(Long qunId) throws BusinessException {
+        List<QunMember> qunMembers = this.qunMemberDao.members(qunId);
+        return this.qunConverter.membersPo2BoList(qunMembers);
     }
 
     @Override

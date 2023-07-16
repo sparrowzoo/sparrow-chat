@@ -1,9 +1,10 @@
 package com.sparrow.chat.contact.controller;
 
 import com.sparrow.chat.contact.assembler.QunAssembler;
-import com.sparrow.chat.contact.bo.QunDetailWrapBO;
+import com.sparrow.chat.contact.bo.QunMemberWrapBO;
 import com.sparrow.chat.contact.bo.QunPlazaBO;
 import com.sparrow.chat.contact.protocol.qun.*;
+import com.sparrow.chat.contact.protocol.vo.QunMemberVO;
 import com.sparrow.chat.contact.protocol.vo.QunPlazaVO;
 import com.sparrow.chat.contact.protocol.vo.QunVO;
 import com.sparrow.chat.contact.service.QunService;
@@ -13,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @RestController
 @RequestMapping("qun")
@@ -38,11 +40,11 @@ public class QunController {
     }
 
 
-    @ApiOperation("群详情")
-    @GetMapping("detail/{qunId}")
-    public QunVO detail(@PathVariable("qunId") Long qunId) throws BusinessException {
-        QunDetailWrapBO qunDetail = this.qunService.qunDetail(qunId);
-        return this.qunAssembler.assembleQun(qunDetail);
+    @ApiOperation("群成员详情")
+    @PostMapping("members")
+    public List<QunMemberVO> detail(Long qunId) throws BusinessException {
+        QunMemberWrapBO qunMemberWrap = this.qunService.getMembersById(qunId);
+        return this.qunAssembler.assembleQunMember(qunMemberWrap);
     }
 
     @PostMapping("plaza-of-category-id/{categoryId}")
@@ -61,13 +63,13 @@ public class QunController {
 
     @ApiOperation("退群")
     @PostMapping("exist-qun")
-    public void existQun(Long qunId) throws BusinessException {
+    public void existQun(Long qunId) throws Throwable {
         this.qunService.existQun(qunId);
     }
 
     @ApiOperation("移除群成员")
     @PostMapping("remove-member")
-    public void removeMember(@RequestBody RemoveMemberOfQunParam removeMemberOfQunParam) throws BusinessException {
+    public void removeMember(@RequestBody RemoveMemberOfQunParam removeMemberOfQunParam) throws Throwable {
         this.qunService.removeMember(removeMemberOfQunParam);
     }
 

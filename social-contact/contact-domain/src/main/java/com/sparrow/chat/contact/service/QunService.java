@@ -1,13 +1,13 @@
 package com.sparrow.chat.contact.service;
 
-import com.sparrow.chat.contact.bo.QunBO;
-import com.sparrow.chat.contact.bo.QunDetailWrapBO;
-import com.sparrow.chat.contact.bo.QunPlazaBO;
+import com.sparrow.chat.contact.bo.*;
 import com.sparrow.chat.contact.protocol.enums.Category;
 import com.sparrow.chat.contact.protocol.enums.ContactError;
+import com.sparrow.chat.contact.protocol.event.QunMemberEvent;
 import com.sparrow.chat.contact.protocol.qun.*;
 import com.sparrow.chat.contact.repository.QunRepository;
 import com.sparrow.exception.Asserts;
+import com.sparrow.mq.MQPublisher;
 import com.sparrow.passport.api.UserProfileAppService;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
@@ -29,6 +29,9 @@ public class QunService {
 
     @Inject
     private InviteFriendSecurity inviteFriendSecurity;
+
+    @Inject
+    private MQPublisher mqPublisher;
 
     public Long createQun(QunCreateParam qunCreateParam) throws BusinessException {
         Asserts.isTrue(StringUtility.isNullOrEmpty(qunCreateParam.getName()), ContactError.QUN_NAME_IS_EMPTY);
@@ -75,23 +78,23 @@ public class QunService {
         return this.wrapQunPlaza(qunBOs);
     }
 
-    public void existQun(Long qunId) throws BusinessException {
+    public void existQun(Long qunId) throws Throwable {
         QunBO existQun = this.qunRepository.qunDetail(qunId);
         Asserts.isTrue(existQun == null, ContactError.QUN_NOT_FOUND);
         LoginUser loginUser = ThreadContext.getLoginToken();
         Boolean isMember = this.qunRepository.isMember(qunId, loginUser.getUserId());
         Asserts.isTrue(!isMember, ContactError.QUN_ID_IS_EMPTY);
         this.qunRepository.removeMember(new RemoveMemberOfQunParam(qunId, loginUser.getUserId()));
-        //todo 发消息
+        mqPublisher.publish(new QunMemberEvent(existQun.getId(), loginUser.getUserId()));
     }
 
-    public void removeMember(RemoveMemberOfQunParam removeMemberOfQunParam) throws BusinessException {
+    public void removeMember(RemoveMemberOfQunParam removeMemberOfQunParam) throws Throwable {
         QunBO existQun = this.qunRepository.qunDetail(removeMemberOfQunParam.getQunId());
         Asserts.isTrue(existQun == null, ContactError.QUN_NOT_FOUND);
         LoginUser loginUser = ThreadContext.getLoginToken();
         Asserts.isTrue(!existQun.getOwnerId().equals(loginUser.getUserId()), ContactError.QUN_OWNER_IS_NOT_MATCH);
         this.qunRepository.removeMember(removeMemberOfQunParam);
-        //todo 发消息
+        mqPublisher.publish(new QunMemberEvent(existQun.getId(), removeMemberOfQunParam.getMemberId()));
     }
 
     public void dissolve(Long qunId) throws BusinessException {
@@ -126,5 +129,21 @@ public class QunService {
         Boolean isMember = this.qunRepository.isMember(inviteFriendParam.getQunId(), inviteFriendParam.getFriendId());
         Asserts.isTrue(isMember, ContactError.USER_IS_MEMBER);
         return this.inviteFriendSecurity.encryptInviteFriend(inviteFriendParam);
+    }
+
+    public List<QunMemberBO> getMemberIdsById(Long qunId) throws BusinessException {
+        return this.qunRepository.qunMembers(qunId);
+    }
+
+    public QunMemberWrapBO getMembersById(Long qunId) throws BusinessException {
+        List<QunMemberBO> qunMemberBOs = this.qunRepository.qunMembers(qunId);
+        Set<Long> userIds = new HashSet<>();
+        //Set<Long> categories = new HashSet<>();
+        for (QunMemberBO qun : qunMemberBOs) {
+            userIds.add(qun.getMemberId());
+            //categories.add(qun.getCategoryId());
+        }
+        Map<Long, UserProfileDTO> userProfileMap = this.userProfileAppService.getUserMap(userIds);
+        return new QunMemberWrapBO(qunMemberBOs, userProfileMap);
     }
 }

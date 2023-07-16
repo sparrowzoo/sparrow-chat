@@ -1,0 +1,25 @@
+package com.sparrow.chat.infrastructure.mq;
+
+import com.sparrow.chat.contact.protocol.event.QunMemberEvent;
+import com.sparrow.chat.repository.QunRepository;
+import com.sparrow.spring.starter.mq.AbstractSpringMQHandler;
+import com.sparrowzoo.chat.contact.QunServiceApi;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.List;
+
+@Named
+public class QunMemberHandler extends AbstractSpringMQHandler<QunMemberEvent> {
+    @Inject
+    private QunServiceApi qunService;
+
+    @Inject
+    private QunRepository qunRepository;
+
+    @Override
+    public void handle(QunMemberEvent qunMemberEvent) throws Throwable {
+        List<Integer> members = this.qunService.getMemberById(qunMemberEvent.getQunId());
+        this.qunRepository.syncQunMember(qunMemberEvent.getQunId(),members);
+    }
+}

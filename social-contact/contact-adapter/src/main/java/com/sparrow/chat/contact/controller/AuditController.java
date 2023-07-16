@@ -53,7 +53,7 @@ public class AuditController {
 
     @PostMapping("audit-qun-apply")
     @ApiOperation("对加群进行审核")
-    public void auditQunApply(@RequestBody QunAuditParam qunAuditParam) throws BusinessException {
+    public void auditQunApply(@RequestBody QunAuditParam qunAuditParam) throws Throwable {
         this.auditService.auditQunApply(qunAuditParam);
     }
 
