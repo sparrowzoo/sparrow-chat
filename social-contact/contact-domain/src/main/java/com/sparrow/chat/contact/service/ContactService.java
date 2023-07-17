@@ -41,7 +41,7 @@ public class ContactService {
 
     public ContactsWrapBO getContacts() throws BusinessException {
         List<Long> contactUserIds = this.contactRepository.getContacts();
-        //通讯录加自己f
+        //通讯录加自己
         contactUserIds.add(ThreadContext.getLoginToken().getUserId());
         Map<Long, UserProfileDTO> userProfileMap = this.userProfileAppService.getUserMap(contactUserIds);
         List<QunBO> myQuns = this.qunRepository.getMyQunList();

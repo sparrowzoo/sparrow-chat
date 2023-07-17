@@ -8,20 +8,18 @@ import com.sparrow.chat.repository.QunRepository;
 import com.sparrow.chat.repository.SessionRepository;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.json.Json;
-import com.sparrow.protocol.ThreadContext;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_1;
-import static com.sparrow.chat.protocol.constant.Chat.MAX_SESSION_OF_USER;
-import static com.sparrow.chat.protocol.constant.Chat.MESSAGE_EXPIRE_DAYS;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import static com.sparrow.chat.protocol.constant.Chat.*;
 
 @Component
 public class RedisSessionRepository implements SessionRepository {
@@ -46,9 +44,6 @@ public class RedisSessionRepository implements SessionRepository {
         }
         List<Integer> userIdList = this.qunRepository.getUserIdList(session.getSessionKey());
         for (Integer userId : userIdList) {
-            if (userId.equals(currentUserId)) {
-                continue;
-            }
             addNewSessionForUserId(session, userId);
         }
     }
