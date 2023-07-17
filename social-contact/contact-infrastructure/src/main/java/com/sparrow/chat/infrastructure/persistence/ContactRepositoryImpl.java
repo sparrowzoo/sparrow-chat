@@ -12,7 +12,6 @@ import com.sparrow.utility.CollectionsUtility;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Named
@@ -43,7 +42,7 @@ public class ContactRepositoryImpl implements ContactRepository {
         LoginUser loginUser = ThreadContext.getLoginToken();
         List<Contact> contacts = this.contactDao.getMyContact(loginUser.getUserId());
         if (CollectionsUtility.isNullOrEmpty(contacts)) {
-            return Collections.emptyList();
+            return null;
         }
         List<Long> contacIdList = new ArrayList<>(contacts.size());
         for (Contact contact : contacts) {

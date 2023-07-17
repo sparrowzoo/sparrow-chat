@@ -123,7 +123,7 @@ public class RedisContactsRepository implements ContactRepository {
         //好友列表
         List<String> users = this.redisTemplate.opsForValue().multiGet(userKeys);
         if (CollectionsUtility.isNullOrEmpty(users)) {
-            return Collections.emptyList();
+            return null;
         }
         List<UserDTO> userDtos = new ArrayList<>(users.size());
         for (String user : users) {

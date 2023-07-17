@@ -54,7 +54,7 @@ public class ContactAssembler {
 
     private List<QunVO> assembleMyQun(ContactsWrapBO contactsWrap) {
         if (CollectionsUtility.isNullOrEmpty(contactsWrap.getQuns())) {
-            return Collections.emptyList();
+            return null;
         }
         List<QunVO> qunVOS = new ArrayList<>(contactsWrap.getQuns().size());
         for (QunBO qunBO : contactsWrap.getQuns()) {
@@ -69,7 +69,7 @@ public class ContactAssembler {
 
     private List<UserVO> assembleMyContact(ContactsWrapBO contactsWrap) {
         if (CollectionsUtility.isNullOrEmpty(contactsWrap.getUsers())) {
-            return Collections.emptyList();
+            return null;
         }
         List<UserVO> userVOS = new ArrayList<>(contactsWrap.getUsers().size());
         for (UserProfileDTO userProfileDTO : contactsWrap.getUsers()) {

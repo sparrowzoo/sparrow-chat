@@ -22,7 +22,6 @@ import com.sparrow.protocol.enums.StatusRecord;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -117,7 +116,7 @@ public class QunRepositoryImpl implements QunRepository {
         LoginUser loginUser = ThreadContext.getLoginToken();
         Map<Long, Long> myQunIds = this.qunMemberDao.getQunsByMemberId(loginUser.getUserId());
         if (myQunIds == null || myQunIds.isEmpty()) {
-            return Collections.emptyList();
+            return null;
         }
         List<Qun> myQuns = this.qunDao.getQuns(myQunIds.values());
         return this.qunConverter.poList2BoList(myQuns);

@@ -89,10 +89,10 @@ public class QunAssembler {
 
     public List<QunMemberVO> assembleQunMember(QunMemberWrapBO qunMemberWrap) {
         if (qunMemberWrap == null) {
-            return Collections.emptyList();
+            return null;
         }
         if (CollectionsUtility.isNullOrEmpty(qunMemberWrap.getQunMemberBOS())) {
-            return Collections.emptyList();
+            return null;
         }
         List<QunMemberVO> qunMembers = new ArrayList<>(qunMemberWrap.getQunMemberBOS().size());
         for (QunMemberBO qunMemberBO : qunMemberWrap.getQunMemberBOS()) {

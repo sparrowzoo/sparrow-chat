@@ -65,13 +65,6 @@ public class RedisSessionRepository implements SessionRepository {
         List<ChatSession> chatSessionList = new ArrayList<>(charSessions.size());
         for (String session : charSessions) {
             ChatSession chatSession = this.json.parse(session, ChatSession.class);
-            if (!chatSession.isOne2One()) {
-                //通讯录是否存在群
-                if (!this.contactRepository.existQunByUserId(userId, chatSession.getSessionKey())) {
-                    this.redisTemplate.opsForZSet().remove(userSessionKey, session);
-                    continue;
-                }
-            }
             chatSessionList.add(chatSession);
         }
         return chatSessionList;

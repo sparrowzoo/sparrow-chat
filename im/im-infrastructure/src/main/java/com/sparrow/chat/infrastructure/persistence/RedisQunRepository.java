@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +27,7 @@ public class RedisQunRepository implements QunRepository {
         String userOfQunKey = PlaceHolderParser.parse(RedisKey.USER_ID_OF_QUN, propertyAccessor);
         Set<String> originUserIds = this.redisTemplate.opsForSet().members(userOfQunKey);
         if (CollectionsUtility.isNullOrEmpty(originUserIds)) {
-            return Collections.emptyList();
+            return null;
         }
         List<Integer> userIds = new ArrayList<>(originUserIds.size());
         for (String userId : originUserIds) {
