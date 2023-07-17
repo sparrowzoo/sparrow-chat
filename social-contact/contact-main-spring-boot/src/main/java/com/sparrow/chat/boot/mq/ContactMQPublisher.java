@@ -37,8 +37,12 @@ public class ContactMQPublisher implements MQPublisher, InitializingBean {
         throw new UnsupportedOperationException("ignore");
     }
 
+    /**
+     * 可以考虑发事务消息
+     * @param event
+     */
     @Override
-    public void publish(MQEvent event) throws Throwable {
+    public void publish(MQEvent event) {
         qunMemberSyncExecutorService.execute(() -> {
             try {
                 queueHandlerMappingContainer.get(event.getClass().getName()).handle(event);
