@@ -36,9 +36,10 @@ public class ContactHealthController {
     @RequestMapping("env/{env}")
     public String env(@PathVariable("env") String env, ServletRequest servletRequest) {
         String ip = ServletUtility.getInstance().getClientIp(servletRequest);
+
         if (Constant.LOCALHOST_IP.equals(ip)) {
             return System.getenv(env);
         }
-        return "reject";
+        return "reject"+ip;
     }
 }
