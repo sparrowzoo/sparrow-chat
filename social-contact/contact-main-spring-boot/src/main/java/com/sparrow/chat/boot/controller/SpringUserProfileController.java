@@ -7,23 +7,36 @@ import com.sparrow.protocol.BusinessException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/profile")
 public class SpringUserProfileController {
     @Inject
     private UserProfileController userProfileController;
 
-    @RequestMapping("load-user-profile")
-    BasicUserVO loadUserBasic() throws BusinessException {
-        return this.userProfileController.loadUserBasic();
+    @RequestMapping("my")
+    public ModelAndView loadUserBasic() throws BusinessException {
+        BasicUserVO basicUserVO = this.userProfileController.loadUserBasic();
+        return new ModelAndView("/my", "profile", basicUserVO);
+    }
+
+    @RequestMapping("profile")
+    public ModelAndView profile() throws BusinessException {
+        BasicUserVO basicUserVO = this.userProfileController.loadUserBasic();
+        return new ModelAndView("/profile", "profile", basicUserVO);
+    }
+
+    @RequestMapping("/modify-avatar")
+    public ModelAndView loadUser() throws BusinessException {
+        BasicUserVO basicUserVO = this.userProfileController.loadUserBasic();
+        return new ModelAndView("/modify-avatar", "profile", basicUserVO);
     }
 
     @RequestMapping("modify-user-avatar")
     public String modifyAvatar(@RequestBody AvatarModifyParam avatarModifyParam) throws BusinessException, IOException {
-      return   this.userProfileController.modifyAvatar(avatarModifyParam);
+        return this.userProfileController.modifyAvatar(avatarModifyParam);
     }
 }
