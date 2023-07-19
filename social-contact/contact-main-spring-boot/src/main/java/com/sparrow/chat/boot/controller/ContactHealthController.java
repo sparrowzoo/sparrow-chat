@@ -2,8 +2,7 @@ package com.sparrow.chat.boot.controller;
 
 import com.sparrow.datasource.DataSourceValidChecker;
 import com.sparrow.datasource.checker.ConnectionValidCheckerAdapter;
-import com.sparrow.protocol.constant.Constant;
-import com.sparrow.support.web.ServletUtility;
+import com.sparrow.utility.StringUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +33,7 @@ public class ContactHealthController {
     }
 
     @RequestMapping("env/{env}")
-    public String env(@PathVariable("env") String env, ServletRequest servletRequest) {
-        String ip = ServletUtility.getInstance().getClientIp(servletRequest);
-
-        if (Constant.LOCALHOST_IP.equals(ip)||"8.131.72.186".equals(ip)) {
-            return System.getenv(env);
-        }
-        return "reject"+ip;
+    public Boolean env(@PathVariable("env") String env, ServletRequest servletRequest) {
+        return !StringUtility.isNullOrEmpty(System.getenv(env));
     }
 }
