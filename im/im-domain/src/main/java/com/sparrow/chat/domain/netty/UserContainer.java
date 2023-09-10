@@ -6,13 +6,14 @@ import com.sparrow.spring.starter.SpringContext;
 import io.netty.channel.Channel;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UserContainer {
     private static Logger logger = LoggerFactory.getLogger(UserContainer.class);
@@ -30,7 +31,7 @@ public class UserContainer {
         return userContainer;
     }
 
-    public static final Map<String, Channel> channelMap = new ConcurrentHashMap<String, Channel>();
+    private static final Map<String, Channel> channelMap = new ConcurrentHashMap<String, Channel>();
 
     public Integer hasUser(Channel channel) {
         if (!channel.hasAttr(USER_ID_KEY)) {
@@ -65,7 +66,7 @@ public class UserContainer {
         return channelMap.remove(userId.get());
     }
 
-    public List<Channel> getChannels(ChatSession chatSession,Integer currentUserId) {
+    public List<Channel> getChannels(ChatSession chatSession, Integer currentUserId) {
         if (chatSession.isOne2One()) {
             Integer oppositeUser = chatSession.getOppositeUser(currentUserId);
             Channel targetChannel = this.getChannelByUserId(oppositeUser + "");
@@ -88,5 +89,10 @@ public class UserContainer {
             //logger.warn("user [{}] is offline ", userId);
         }
         return channels;
+    }
+
+
+    public Map<String, Channel> getChannelMap() {
+        return channelMap;
     }
 }

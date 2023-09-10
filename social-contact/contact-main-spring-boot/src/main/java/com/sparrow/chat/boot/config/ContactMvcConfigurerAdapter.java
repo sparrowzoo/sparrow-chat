@@ -5,9 +5,13 @@ import com.sparrow.file.servlet.FileDownLoad;
 import com.sparrow.file.servlet.FileUpload;
 import com.sparrow.mq.DefaultQueueHandlerMappingContainer;
 import com.sparrow.mq.EventHandlerMappingContainer;
+import com.sparrow.spring.starter.filter.AccessMonitorFilter;
+import com.sparrow.spring.starter.filter.ClientInformationFilter;
+import com.sparrow.spring.starter.monitor.Monitor;
 import com.sparrow.spring.starter.resolver.ClientInfoArgumentResolvers;
 import com.sparrow.spring.starter.resolver.LoginUserArgumentResolvers;
 import com.sparrow.support.Authenticator;
+import com.sparrow.support.IpSupport;
 import com.sparrow.support.web.GlobalAttributeFilter;
 import com.sparrow.support.web.MonolithicLoginUserFilter;
 import org.slf4j.Logger;
@@ -15,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.servlet.ConditionalOnMissingFilterBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +31,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.*;
 
 import javax.inject.Inject;
+import javax.servlet.Filter;
 import java.util.List;
 
 @Configuration
@@ -35,10 +41,11 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
     @Value("${mock_login_user}")
     private Boolean mockUser;
 
+    @Inject
+    private IpSupport ipSupport;
+
     @Value("${authenticator.white.list}")
     private List<String> whiteList;
-
-
 
 
     @Inject
@@ -47,9 +54,34 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
     @Inject
     private LoginUserArgumentResolvers loginTokenArgumentResolvers;
 
+
     @Bean
-    public EventHandlerMappingContainer eventHandlerMappingContainer(){
+    @ConditionalOnMissingBean({RequestContextListener.class, RequestContextFilter.class})
+    @ConditionalOnMissingFilterBean(RequestContextFilter.class)
+    public static RequestContextFilter requestContextFilter() {
+        OrderedRequestContextFilter orderedRequestContextFilter = new OrderedRequestContextFilter();
+        orderedRequestContextFilter.setOrder(-100);
+        return orderedRequestContextFilter;
+    }
+
+    @Bean
+    public EventHandlerMappingContainer eventHandlerMappingContainer() {
         return new DefaultQueueHandlerMappingContainer();
+    }
+
+    @Bean
+    public Monitor monitor() {
+        return new Monitor(this.ipSupport);
+    }
+
+    @Bean
+    public AccessMonitorFilter accessMonitorFilter() {
+        return new AccessMonitorFilter(monitor(),-99);
+    }
+
+    @Bean
+    public ClientInformationFilter clientInformationFilter(){
+        return new ClientInformationFilter(-98);
     }
 
     @Bean
@@ -69,9 +101,21 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
 
     @Inject
     private Authenticator authenticator;
+
     @Bean
     MonolithicLoginUserFilter loginTokenFilter() {
-        return new MonolithicLoginUserFilter(authenticator, this.mockUser,this.whiteList);
+        return new MonolithicLoginUserFilter(authenticator, this.mockUser, this.whiteList);
+    }
+
+    @Bean
+    public FilterRegistrationBean<Filter> loginTokenFilterBean() {
+        FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
+        filterRegistrationBean.setFilter(loginTokenFilter());
+        filterRegistrationBean.addUrlPatterns("/*");
+        filterRegistrationBean.setName("loginTokenFilter");
+        filterRegistrationBean.setOrder(1);
+        //多个filter的时候order的数值越小 则优先级越高
+        return filterRegistrationBean;
     }
 
     @Bean
@@ -115,10 +159,4 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
         argumentResolvers.add(this.loginTokenArgumentResolvers);
     }
 
-    @Bean
-    @ConditionalOnMissingBean({RequestContextListener.class, RequestContextFilter.class})
-    @ConditionalOnMissingFilterBean(RequestContextFilter.class)
-    public static RequestContextFilter requestContextFilter() {
-        return new OrderedRequestContextFilter();
-    }
 }
