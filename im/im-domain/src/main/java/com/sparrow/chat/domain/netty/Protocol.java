@@ -1,6 +1,7 @@
 package com.sparrow.chat.domain.netty;
 
 import com.sparrow.chat.protocol.ChatSession;
+import com.sparrow.chat.protocol.ChatUser;
 import com.sparrow.cryptogram.Base64;
 import io.netty.buffer.ByteBuf;
 
@@ -14,23 +15,31 @@ public class Protocol {
     private byte messageType;
     private byte charType;
     private int sessionLength;
-    private int sender;
-    private int receiver;
+    private ChatUser sender;
+    private ChatUser receiver;
     private ChatSession chatSession;
     private int contentLength;
     private String content;
     private Long clientSendTime;
     private Long serverTime = System.currentTimeMillis();
+    public ChatUser parseUser(ByteBuf content){
+        int senderIdLength=content.readByte();
+        //剩余字节为发送时间字符串的时间戮
+        byte[] senderIdBytes = new byte[senderIdLength];
+        content.readBytes(senderIdLength);
+        Integer senderType= content.readInt();
+        return ChatUser.stringUserId(new String(senderIdBytes),senderType);
+    }
 
     public Protocol(ByteBuf content) {
         this.charType = content.readByte();
         this.messageType = content.readByte();
-        this.sender = content.readInt();
+        this.sender = parseUser(content);
         if (this.charType == CHAT_TYPE_1_2_1) {
-            this.receiver = content.readInt();
+            this.parseUser(content);
             this.chatSession = ChatSession.create1To1Session(this.sender, this.receiver);
         } else {
-            this.sessionLength = content.readInt();
+            this.sessionLength = content.readByte();
             byte[] sessionBytes = new byte[sessionLength];
             content.readBytes(sessionBytes);
             String sessionKey = new String(sessionBytes);
@@ -120,19 +129,19 @@ public class Protocol {
         this.serverTime = serverTime;
     }
 
-    public int getSender() {
+    public ChatUser getSender() {
         return sender;
     }
 
-    public void setSender(int sender) {
+    public void setSender(ChatUser sender) {
         this.sender = sender;
     }
 
-    public int getReceiver() {
+    public ChatUser getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(int receiver) {
+    public void setReceiver(ChatUser receiver) {
         this.receiver = receiver;
     }
 }

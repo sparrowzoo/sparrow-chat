@@ -1,7 +1,9 @@
 package com.sparrow.chat.boot;
 
-import com.sparrow.passport.authenticate.AuthenticatorService;
+import com.sparrow.mq.DefaultQueueHandlerMappingContainer;
+import com.sparrow.mq.EventHandlerMappingContainer;
 import com.sparrow.support.Authenticator;
+import com.sparrow.support.DefaultAuthenticatorService;
 import com.sparrow.support.web.MonolithicLoginUserFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,21 +29,21 @@ public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
 
     @Bean
     Authenticator authenticator() {
-        return new AuthenticatorService();
+        return new DefaultAuthenticatorService();
     }
 
     @Bean
     MonolithicLoginUserFilter loginTokenFilter() {
-        return new MonolithicLoginUserFilter(authenticator(), this.mockLoginUser,this.whiteList);
+        return new MonolithicLoginUserFilter(authenticator(), this.mockLoginUser, this.whiteList, null);
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOrigins("*")
-            .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
-            .maxAge(3600)
-            .allowCredentials(true);
+                .allowedOrigins("*")
+                .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
+                .maxAge(3600)
+                .allowCredentials(true);
     }
 
     @Bean
@@ -53,5 +55,10 @@ public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
         filterRegistrationBean.setOrder(0);
         //多个filter的时候order的数值越小 则优先级越高
         return filterRegistrationBean;
+    }
+
+    @Bean
+    public EventHandlerMappingContainer eventHandlerMappingContainer() {
+        return new DefaultQueueHandlerMappingContainer();
     }
 }

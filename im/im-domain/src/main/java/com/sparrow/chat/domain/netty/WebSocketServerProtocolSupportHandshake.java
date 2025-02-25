@@ -67,7 +67,7 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
             LoginUser loginUser = SpringContext.getContext().getBean(Authenticator.class).authenticate(token, ip);
             String userInfo = loginUser.getUserId().intValue() + "," + loginUser.getExtensions().get(Chat.PLATFORM);
             ctx.channel().writeAndFlush(new TextWebSocketFrame(Chat.RESPONSE_TEXT_USER + userInfo));
-            UserContainer.getContainer().online(ctx.channel(), loginUser.getUserId().intValue() + "");
+            UserContainer.getContainer().online(ctx.channel(), loginUser);
             super.userEventTriggered(ctx, evt);
         } else {
             if (evt instanceof IdleStateEvent) {

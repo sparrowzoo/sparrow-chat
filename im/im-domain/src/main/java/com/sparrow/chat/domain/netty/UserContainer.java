@@ -1,7 +1,9 @@
 package com.sparrow.chat.domain.netty;
 
 import com.sparrow.chat.protocol.ChatSession;
+import com.sparrow.chat.protocol.ChatUser;
 import com.sparrow.chat.repository.QunRepository;
+import com.sparrow.protocol.LoginUser;
 import com.sparrow.spring.starter.SpringContext;
 import io.netty.channel.Channel;
 import io.netty.util.Attribute;
@@ -33,24 +35,25 @@ public class UserContainer {
 
     private static final Map<String, Channel> channelMap = new ConcurrentHashMap<String, Channel>();
 
-    public Integer hasUser(Channel channel) {
+    public ChatUser hasUser(Channel channel) {
         if (!channel.hasAttr(USER_ID_KEY)) {
             return null;
         }
-        String userId = channel.attr(USER_ID_KEY).get();
-        if (userId == null) {
+        String user = channel.attr(USER_ID_KEY).get();
+        if (user == null) {
             return null;
         }
-        return Integer.valueOf(userId);
+        return ChatUser.parse(user);
     }
 
-    public void online(Channel channel, String userId) {
-        Channel oldChannel = channelMap.get(userId);
+    public void online(Channel channel, LoginUser loginUser) {
+        ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
+        Channel oldChannel = channelMap.get(chatUser.key());
         if (oldChannel != null) {
             oldChannel.close();
         }
-        channelMap.put(userId, channel);
-        channel.attr(USER_ID_KEY).set(userId);
+        channelMap.put(chatUser.key(), channel);
+        channel.attr(USER_ID_KEY).set(chatUser.key());
     }
 
     public Channel getChannelByUserId(String userId) {
@@ -66,9 +69,9 @@ public class UserContainer {
         return channelMap.remove(userId.get());
     }
 
-    public List<Channel> getChannels(ChatSession chatSession, Integer currentUserId) {
+    public List<Channel> getChannels(ChatSession chatSession, ChatUser currentUser) {
         if (chatSession.isOne2One()) {
-            Integer oppositeUser = chatSession.getOppositeUser(currentUserId);
+            ChatUser oppositeUser = chatSession.getOppositeUser(currentUser);
             Channel targetChannel = this.getChannelByUserId(oppositeUser + "");
             return Collections.singletonList(targetChannel);
         }

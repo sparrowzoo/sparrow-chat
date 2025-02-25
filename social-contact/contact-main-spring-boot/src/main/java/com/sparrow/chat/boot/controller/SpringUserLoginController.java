@@ -1,6 +1,5 @@
 package com.sparrow.chat.boot.controller;
 
-import com.sparrow.cache.exception.CacheNotFoundException;
 import com.sparrow.passport.controller.UserLoginController;
 import com.sparrow.passport.protocol.dto.LoginDTO;
 import com.sparrow.passport.protocol.enums.PassportError;
@@ -21,7 +20,7 @@ public class SpringUserLoginController {
     private UserLoginController userLoginController;
 
     @GetMapping("/session-id")
-    public String sessionId(HttpServletRequest request) throws BusinessException {
+    public String sessionId(HttpServletRequest request) {
         return request.getSession().getId();
     }
 
@@ -31,14 +30,14 @@ public class SpringUserLoginController {
      * @RequestBody DispatcherServlet Completed 415 UNSUPPORTED_MEDIA_TYPE
      */
     public ModelAndView login(LoginQuery login,
-                              ClientInformation client) throws BusinessException, CacheNotFoundException {
+                              ClientInformation client) throws BusinessException {
         try {
             LoginDTO loginDto = this.userLoginController.login(login, client);
             ModelAndView mv = new ModelAndView(login.getRedirectUrl());
             mv.addObject(loginDto);
             return mv;
         } catch (BusinessException e) {
-            if (e.getCode().equals(PassportError.USER_NOT_ACTIVATE.getCode())) {
+            if (e.getErrorSupport().getCode().equals(PassportError.USER_NOT_ACTIVATE.getCode())) {
                 ModelAndView mv = new ModelAndView("redirect:/email-activate");
                 mv.addObject("email", login.getUserName());
                 return mv;

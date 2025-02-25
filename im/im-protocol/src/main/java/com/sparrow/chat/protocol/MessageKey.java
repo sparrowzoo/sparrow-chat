@@ -1,15 +1,17 @@
 package com.sparrow.chat.protocol;
 
 public class MessageKey {
-    public MessageKey(Integer fromUserId, Long clientSendTime) {
-        this.fromUserId = fromUserId;
+    public MessageKey(ChatUser fromUser, Long clientSendTime) {
+        this.fromUserId = fromUser.getId();
+        this.userRole = fromUser.getCategory();
         this.clientSendTime = clientSendTime;
     }
 
-    private Integer fromUserId;
+    private String fromUserId;
+    private Integer userRole;
     private Long clientSendTime;
 
-    public String key(){
-        return fromUserId+"-"+this.clientSendTime;
+    public String key() {
+        return fromUserId + "-" + this.clientSendTime + "-" + this.userRole;
     }
 }

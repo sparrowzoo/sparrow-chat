@@ -17,6 +17,8 @@ public class Qun extends PO {
     private Long categoryId;
     private String remark;
 
+    private Integer status;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition = "int(11) UNSIGNED ")
@@ -107,5 +109,16 @@ public class Qun extends PO {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+
+    @MethodOrder(order = 9)
+    @Column(name = "status", columnDefinition = "tinyint(2)  DEFAULT 1 COMMENT '状态'", nullable = false)
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

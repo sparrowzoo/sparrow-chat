@@ -1,6 +1,5 @@
 package com.sparrow.chat.boot.mq;
 
-import com.sparrow.cache.Key;
 import com.sparrow.chat.contact.bo.QunBO;
 import com.sparrow.chat.contact.protocol.event.QunMemberEvent;
 import com.sparrow.chat.contact.repository.QunRepository;
@@ -32,13 +31,9 @@ public class ContactMQPublisher implements MQPublisher, InitializingBean {
     @Inject
     private EventHandlerMappingContainer queueHandlerMappingContainer;
 
-    @Override
-    public void publish(MQEvent event, Key productKey) {
-        throw new UnsupportedOperationException("ignore");
-    }
-
     /**
      * 可以考虑发事务消息
+     *
      * @param event
      */
     @Override

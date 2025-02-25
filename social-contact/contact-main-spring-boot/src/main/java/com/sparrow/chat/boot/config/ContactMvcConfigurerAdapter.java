@@ -5,6 +5,7 @@ import com.sparrow.file.servlet.FileDownLoad;
 import com.sparrow.file.servlet.FileUpload;
 import com.sparrow.mq.DefaultQueueHandlerMappingContainer;
 import com.sparrow.mq.EventHandlerMappingContainer;
+import com.sparrow.spring.starter.SpringServletContainer;
 import com.sparrow.spring.starter.filter.AccessMonitorFilter;
 import com.sparrow.spring.starter.filter.ClientInformationFilter;
 import com.sparrow.spring.starter.monitor.Monitor;
@@ -17,16 +18,11 @@ import com.sparrow.support.web.MonolithicLoginUserFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.web.servlet.ConditionalOnMissingFilterBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.web.context.request.RequestContextListener;
-import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.*;
 
@@ -37,15 +33,15 @@ import java.util.List;
 @Configuration
 public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
     private static Logger logger = LoggerFactory.getLogger(WebMvcConfigurer.class);
-
     @Value("${mock_login_user}")
     private Boolean mockUser;
-
     @Inject
     private IpSupport ipSupport;
-
     @Value("${authenticator.white.list}")
     private List<String> whiteList;
+
+    @Inject
+    private SpringServletContainer springServletContainer;
 
 
     @Inject
@@ -54,15 +50,6 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
     @Inject
     private LoginUserArgumentResolvers loginTokenArgumentResolvers;
 
-
-    @Bean
-    @ConditionalOnMissingBean({RequestContextListener.class, RequestContextFilter.class})
-    @ConditionalOnMissingFilterBean(RequestContextFilter.class)
-    public static RequestContextFilter requestContextFilter() {
-        OrderedRequestContextFilter orderedRequestContextFilter = new OrderedRequestContextFilter();
-        orderedRequestContextFilter.setOrder(-100);
-        return orderedRequestContextFilter;
-    }
 
     @Bean
     public EventHandlerMappingContainer eventHandlerMappingContainer() {
@@ -76,12 +63,12 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
 
     @Bean
     public AccessMonitorFilter accessMonitorFilter() {
-        return new AccessMonitorFilter(monitor(),-99);
+        return new AccessMonitorFilter(monitor(), -99, springServletContainer);
     }
 
     @Bean
-    public ClientInformationFilter clientInformationFilter(){
-        return new ClientInformationFilter(-98);
+    public ClientInformationFilter clientInformationFilter() {
+        return new ClientInformationFilter(-98, springServletContainer);
     }
 
     @Bean
@@ -104,7 +91,7 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
 
     @Bean
     MonolithicLoginUserFilter loginTokenFilter() {
-        return new MonolithicLoginUserFilter(authenticator, this.mockUser, this.whiteList);
+        return new MonolithicLoginUserFilter(authenticator, this.mockUser, this.whiteList, null);
     }
 
     @Bean

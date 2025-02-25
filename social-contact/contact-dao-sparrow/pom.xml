@@ -31,10 +31,10 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>com.sparrowzoo</groupId>-->
-        <!--            <artifactId>sparrow-data-source</artifactId>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>com.sparrowzoo</groupId>
+            <artifactId>sparrow-data-source</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>

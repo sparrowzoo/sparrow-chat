@@ -5,5 +5,5 @@ import com.sparrow.protocol.BusinessException;
 import java.util.List;
 
 public interface QunServiceApi {
-    List<Integer> getMemberById(Long qunId) throws BusinessException;
+    List<Long> getMemberById(Long qunId) throws BusinessException;
 }

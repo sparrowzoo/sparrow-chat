@@ -58,7 +58,7 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
 
         pipeline.addLast(new WebSocketServerProtocolSupportHandshake(WEBSOCKET_PATH, 65536 * 10));
         pipeline.addLast(new IdleStateHandler(10, 10, 10));
-        //和握手有先后顺序
+        //握手有先后顺序
         pipeline.addLast(new WebSocketIndexPageHandler(WEBSOCKET_PATH));
         pipeline.addLast(new WebSocketFrameHandler());
     }

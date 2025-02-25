@@ -1,5 +1,6 @@
 package com.sparrow.chat.protocol.dto;
 
+import com.sparrow.chat.protocol.ChatUser;
 import com.sparrow.protocol.POJO;
 
 public class UserDTO implements POJO, Comparable<UserDTO> {
@@ -12,9 +13,9 @@ public class UserDTO implements POJO, Comparable<UserDTO> {
      */
     private String flagUrl;
     /**
-     * 用户id
+     * 用户
      */
-    private Integer userId;
+    private ChatUser chatUser;
     /**
      * 用户名
      */
@@ -27,6 +28,11 @@ public class UserDTO implements POJO, Comparable<UserDTO> {
      * 加入时间
      */
     private Long addTime;
+
+    /**
+     * 个性签名
+     */
+    private String signature;
 
     public String getNationality() {
         return nationality;
@@ -42,14 +48,6 @@ public class UserDTO implements POJO, Comparable<UserDTO> {
 
     public void setFlagUrl(String flagUrl) {
         this.flagUrl = flagUrl;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 
     public String getUserName() {
@@ -79,5 +77,21 @@ public class UserDTO implements POJO, Comparable<UserDTO> {
     @Override
     public int compareTo(UserDTO o) {
         return this.userName.compareTo(o.getUserName());
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public ChatUser getChatUser() {
+        return chatUser;
+    }
+
+    public void setChatUser(ChatUser chatUser) {
+        this.chatUser = chatUser;
     }
 }

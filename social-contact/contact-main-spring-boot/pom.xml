@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.sparrowzoo</groupId>
         <artifactId>sparrow-bom</artifactId>
-        <version>1.0.3.1-RELEASE</version>
+        <version>1.0.4-RELEASE</version>
         <relativePath/>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -23,7 +23,7 @@
     </properties>
     <dependencies>
         <!--支持热部署-->
-<!--        <dependency>-->
+        <!--        <dependency>-->
         <!--            <groupId>org.springframework.boot</groupId>-->
         <!--            <artifactId>spring-boot-devtools</artifactId>-->
         <!--        </dependency>-->
@@ -105,7 +105,6 @@
         <dependency>
             <groupId>com.sparrowzoo</groupId>
             <artifactId>sparrow-protocol-mq</artifactId>
-            <version>1.0.3.1-RELEASE</version>
         </dependency>
 
         <dependency>

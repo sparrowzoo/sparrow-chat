@@ -22,32 +22,33 @@ public class RedisQunRepository implements QunRepository {
     private RedisTemplate redisTemplate;
 
     @Override
-    public List<Integer> getUserIdList(String qunId) {
+    public List<Long> getUserIdList(String qunId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByQunId(qunId);
         String userOfQunKey = PlaceHolderParser.parse(RedisKey.USER_ID_OF_QUN, propertyAccessor);
         Set<String> originUserIds = this.redisTemplate.opsForSet().members(userOfQunKey);
         if (CollectionsUtility.isNullOrEmpty(originUserIds)) {
             return null;
         }
-        List<Integer> userIds = new ArrayList<>(originUserIds.size());
+        List<Long> userIds = new ArrayList<>(originUserIds.size());
         for (String userId : originUserIds) {
-            userIds.add(Integer.parseInt(userId));
+            userIds.add(Long.parseLong(userId));
         }
         return userIds;
     }
 
     @Override
-    public void syncQunMember(Long qunId, List<Integer> memberIds) {
+    public void syncQunMember(Long qunId, List<Long> memberIds) {
         if (CollectionsUtility.isNullOrEmpty(memberIds)) {
             return;
         }
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByQunId(qunId + "");
         String userOfQunKey = PlaceHolderParser.parse(RedisKey.USER_ID_OF_QUN, propertyAccessor);
-        List<Integer> oldMembers = this.getUserIdList(qunId.toString());
-        KeyCollectionUpsertSplitter<Integer> keyCollectionUpsertSplitter = new KeyCollectionUpsertSplitter<>(oldMembers, memberIds);
+        List<Long> oldMembers = this.getUserIdList(qunId.toString());
+        KeyCollectionUpsertSplitter<Long> keyCollectionUpsertSplitter =
+                new KeyCollectionUpsertSplitter<>(oldMembers, memberIds);
         keyCollectionUpsertSplitter.split();
-        List<Integer> deletingMembers = keyCollectionUpsertSplitter.getDeleteSet();
-        List<Integer> insertingMembers = keyCollectionUpsertSplitter.getInsertSet();
+        List<Long> deletingMembers = keyCollectionUpsertSplitter.getDeleteSet();
+        List<Long> insertingMembers = keyCollectionUpsertSplitter.getInsertSet();
         if (!CollectionsUtility.isNullOrEmpty(insertingMembers)) {
             String[] insertingIds = new String[insertingMembers.size()];
             for (int i = 0; i < insertingMembers.size(); i++) {

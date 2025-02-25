@@ -16,6 +16,7 @@
 package com.sparrow.chat.domain.netty;
 
 import com.sparrow.chat.domain.service.ChatService;
+import com.sparrow.chat.protocol.ChatUser;
 import com.sparrow.chat.protocol.constant.Chat;
 import com.sparrow.core.spi.ApplicationContext;
 import io.netty.buffer.ByteBuf;
@@ -61,19 +62,19 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             BinaryWebSocketFrame msg = (BinaryWebSocketFrame) frame;
             ByteBuf content = msg.content();
             Protocol protocol = new Protocol(content);
-            Integer currentUserId = UserContainer.getContainer().hasUser(ctx.channel());
-            if (protocol.getSender() != currentUserId) {
-                logger.error("user id is not allow {}", currentUserId);
+            ChatUser currentUser = UserContainer.getContainer().hasUser(ctx.channel());
+            if (protocol.getSender().equals(currentUser)) {
+                logger.error("user id is not allow {}", currentUser);
                 return;
             }
             //从发前channel 中获取当前用户id
-            protocol.setSender(currentUserId);
+            protocol.setSender(currentUser);
             ChatService chatService = ApplicationContext.getContainer().getBean("chatService");
             chatService.saveMessage(protocol);
             if (protocol.getCharType() == Chat.CHAT_TYPE_1_2_1 && protocol.getSender() == protocol.getReceiver()) {
                 return;
             }
-            List<Channel> channels = UserContainer.getContainer().getChannels(protocol.getChatSession(), currentUserId);
+            List<Channel> channels = UserContainer.getContainer().getChannels(protocol.getChatSession(), currentUser);
             this.writeAndFlush(ctx, protocol.getCharType(), msg, channels);
         } else if (frame instanceof ContinuationWebSocketFrame) {
             ContinuationWebSocketFrame msg = (ContinuationWebSocketFrame) frame;

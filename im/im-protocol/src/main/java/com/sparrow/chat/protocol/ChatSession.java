@@ -1,11 +1,8 @@
 package com.sparrow.chat.protocol;
 
 import com.sparrow.protocol.constant.magic.Symbol;
-import java.util.Arrays;
 
-import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_1;
-import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_N;
-import static com.sparrow.chat.protocol.constant.Chat.USER_NOT_FOUND;
+import static com.sparrow.chat.protocol.constant.Chat.*;
 
 /**
  * 会话不应该与用户相关
@@ -24,19 +21,19 @@ public class ChatSession {
      * @param sessionKey
      * @return
      */
-    public static ChatSession create1To1CancelSession(int sender, String sessionKey) {
+    public static ChatSession create1To1CancelSession(ChatUser sender, String sessionKey) {
         return new ChatSession(CHAT_TYPE_1_2_1, sender, null, sessionKey);
     }
 
-    public static ChatSession create1To1Session(int sender, int receiver) {
+    public static ChatSession create1To1Session(ChatUser sender, ChatUser receiver) {
         return new ChatSession(CHAT_TYPE_1_2_1, sender, receiver, null);
     }
 
-    public static ChatSession createQunSession(int sender, String sessionKey) {
+    public static ChatSession createQunSession(ChatUser sender, String sessionKey) {
         return new ChatSession(CHAT_TYPE_1_2_N, sender, null, sessionKey);
     }
 
-    private ChatSession(int chatType, int sender, Integer receiver, String sessionKey) {
+    private ChatSession(int chatType, ChatUser sender, ChatUser receiver, String sessionKey) {
         this.chatType = chatType;
         if (sessionKey != null) {
             this.sessionKey = sessionKey;
@@ -68,40 +65,46 @@ public class ChatSession {
 
     public String json() {
         return "{" +
-            "'chatType':" + chatType +
-            ",'sessionKey':'" + sessionKey + '\'' +
-            '}';
+                "'chatType':" + chatType +
+                ",'sessionKey':'" + sessionKey + '\'' +
+                '}';
     }
 
     public boolean isOne2One() {
         return this.chatType == CHAT_TYPE_1_2_1;
     }
 
-    private String generateKey(Integer sender, Integer receiver) {
-        Integer[] userArray = new Integer[2];
-        userArray[0] = sender;
-        userArray[1] = receiver;
-        Arrays.sort(userArray);
-        return userArray[0] + "_" + userArray[1];
+    private String generateKey(ChatUser sender, ChatUser receiver) {
+        if (sender == null || receiver == null) {
+            return "";
+        }
+        //保证从小到大排序
+        if (sender.getId().compareTo(receiver.getId()) <= 0) {
+            return sender + "-" + receiver;
+        }
+        return receiver.key() + "-" + sender.key();
     }
 
-    public Integer getOppositeUser(Integer currentUserId) {
+    public ChatUser getOppositeUser(ChatUser currentUserId) {
+        if (currentUserId == null) {
+            return null;
+        }
         if (this.chatType != CHAT_TYPE_1_2_1) {
-            return USER_NOT_FOUND;
+            return null;
         }
 
-        String[] userIdArray = this.sessionKey.split(Symbol.UNDERLINE);
+        String[] userIdArray = this.sessionKey.split(Symbol.HORIZON_LINE);
         if (userIdArray.length != 2) {
-            return USER_NOT_FOUND;
+            return null;
         }
-        Integer userId1 = Integer.parseInt(userIdArray[0]);
-        Integer userId2 = Integer.parseInt(userIdArray[1]);
-        if (userId1.equals(currentUserId)) {
+        ChatUser userId1 = ChatUser.parse(userIdArray[0]);
+        ChatUser userId2 = ChatUser.parse(userIdArray[1]);
+        if (currentUserId.equals(userId1)) {
             return userId2;
         }
-        if (userId2.equals(currentUserId)) {
+        if (currentUserId.equals(userId2)) {
             return userId1;
         }
-        return USER_NOT_FOUND;
+        return null;
     }
 }

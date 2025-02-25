@@ -18,14 +18,14 @@ public class QunRpcService implements QunServiceApi {
     private QunService qunService;
 
     @Override
-    public List<Integer> getMemberById(Long qunId) throws BusinessException {
+    public List<Long> getMemberById(Long qunId) throws BusinessException {
         List<QunMemberBO> memberBos = this.qunService.getMemberIdsById(qunId);
         if (CollectionsUtility.isNullOrEmpty(memberBos)) {
             return Collections.emptyList();
         }
-        List<Integer> memberIds = new ArrayList<>(memberBos.size());
+        List<Long> memberIds = new ArrayList<>(memberBos.size());
         for (QunMemberBO memberBO : memberBos) {
-            memberIds.add(memberBO.getMemberId().intValue());
+            memberIds.add(memberBO.getMemberId());
         }
         return memberIds;
     }

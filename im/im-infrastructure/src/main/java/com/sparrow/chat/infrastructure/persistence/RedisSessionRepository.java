@@ -3,6 +3,7 @@ package com.sparrow.chat.infrastructure.persistence;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.protocol.ChatSession;
+import com.sparrow.chat.protocol.ChatUser;
 import com.sparrow.chat.repository.ContactRepository;
 import com.sparrow.chat.repository.QunRepository;
 import com.sparrow.chat.repository.SessionRepository;
@@ -34,8 +35,8 @@ public class RedisSessionRepository implements SessionRepository {
 
     private Json json = JsonFactory.getProvider();
 
-    @Override public void saveSession(ChatSession session, Integer currentUserId) {
-        this.addNewSessionForUserId(session, currentUserId);
+    @Override public void saveSession(ChatSession session, ChatUser currentUser) {
+        this.addNewSessionForUserId(session, currentUser);
         //1 to 1 推送
         if (session.getChatType() == CHAT_TYPE_1_2_1) {
             Integer oppositeUser = session.getOppositeUser(currentUserId);
@@ -48,8 +49,8 @@ public class RedisSessionRepository implements SessionRepository {
         }
     }
 
-    private void addNewSessionForUserId(ChatSession session, Integer userId) {
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(userId);
+    private void addNewSessionForUserId(ChatSession session, ChatUser chatUser) {
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(chatUser.key());
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
         this.redisTemplate.opsForZSet().add(userSessionKey, session.json(), System.currentTimeMillis());
         if (this.redisTemplate.opsForZSet().size(userSessionKey) > MAX_SESSION_OF_USER) {

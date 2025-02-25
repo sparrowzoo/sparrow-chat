@@ -1,6 +1,5 @@
 package com.sparrow.chat.boot.controller;
 
-import com.sparrow.cache.exception.CacheNotFoundException;
 import com.sparrow.passport.controller.UserRegisterController;
 import com.sparrow.passport.protocol.param.register.EmailActivateParam;
 import com.sparrow.passport.protocol.param.register.EmailRegisterParam;
@@ -24,16 +23,14 @@ public class SpringUserRegisterController {
 
     @PostMapping("/email/shortcut")
     public Result<Boolean> shortcut(EmailRegisterParam user,
-        ClientInformation client) throws BusinessException, CacheNotFoundException {
+                                    ClientInformation client) throws BusinessException {
         userRegisterController.emailRegister(user, client);
-        Result<Boolean> result = new Result<>(true);
-        result.setMessage("激活邮件发送成功！！");
-        return result;
+        return new Result<>(true, "激活邮件发送成功！！");
     }
 
     @PostMapping("/email")
     public ModelAndView emailRegister(EmailRegisterParam user,
-        ClientInformation client, RedirectAttributes attributes) throws BusinessException, CacheNotFoundException {
+                                      ClientInformation client, RedirectAttributes attributes) throws BusinessException {
         this.userRegisterController.emailRegister(user, client);
         ModelAndView mv = new ModelAndView("redirect:/email-activate-send-success");
         mv.addObject("email", user.getEmail());
@@ -43,11 +40,9 @@ public class SpringUserRegisterController {
 
     @PostMapping("/email/activate/send.json")
     public Result<Boolean> sendActivateEmail(EmailActivateParam user,
-        ClientInformation client) throws BusinessException {
+                                             ClientInformation client) throws BusinessException {
         this.userRegisterController.sendTokenToEmail(user, client);
-        Result<Boolean> result = new Result<>(true);
-        result.setMessage("激活邮件发送成功！！");
-        return result;
+        return new Result<>(true, "激活邮件发送成功！！");
     }
 
     @GetMapping("/email/activate")

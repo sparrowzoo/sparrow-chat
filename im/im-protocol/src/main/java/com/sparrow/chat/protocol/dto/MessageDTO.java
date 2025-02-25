@@ -1,16 +1,38 @@
 package com.sparrow.chat.protocol.dto;
 
+import com.sparrow.chat.protocol.ChatSession;
+import com.sparrow.chat.protocol.ChatUser;
 import com.sparrow.chat.protocol.MessageKey;
 import com.sparrow.protocol.POJO;
 
 public class MessageDTO implements POJO {
+    /**
+     * 消息类型
+     */
     private int messageType;
-    private int chatType;
-    private int sender;
-    private int receiver;
-    private String session;
+    /**
+     * 发送者
+     */
+    private ChatUser sender;
+    /**
+     * 接收者
+     */
+    private ChatUser receiver;
+    /**
+     * 会话
+     */
+    private ChatSession session;
+    /**
+     * 消息内容
+     */
     private String content;
+    /**
+     * 服务器时间
+     */
     private Long serverTime;
+    /**
+     * 客户端发送时间
+     */
     private Long clientSendTime;
 
     public String getKey() {
@@ -25,36 +47,20 @@ public class MessageDTO implements POJO {
         this.messageType = messageType;
     }
 
-    public int getChatType() {
-        return chatType;
-    }
-
-    public void setChatType(int chatType) {
-        this.chatType = chatType;
-    }
-
-    public int getSender() {
+    public ChatUser getSender() {
         return sender;
     }
 
-    public void setSender(int sender) {
+    public void setSender(ChatUser sender) {
         this.sender = sender;
     }
 
-    public int getReceiver() {
+    public ChatUser getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(int receiver) {
+    public void setReceiver(ChatUser receiver) {
         this.receiver = receiver;
-    }
-
-    public String getSession() {
-        return session;
-    }
-
-    public void setSession(String session) {
-        this.session = session;
     }
 
     public String getContent() {
@@ -79,5 +85,13 @@ public class MessageDTO implements POJO {
 
     public void setClientSendTime(Long clientSendTime) {
         this.clientSendTime = clientSendTime;
+    }
+
+    public ChatSession getSession() {
+        return session;
+    }
+
+    public void setSession(ChatSession session) {
+        this.session = session;
     }
 }

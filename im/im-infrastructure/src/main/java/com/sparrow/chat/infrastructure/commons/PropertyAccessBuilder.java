@@ -13,24 +13,25 @@ public class PropertyAccessBuilder {
         }
 
         private String session;
-        private Integer userId;
+        private Long userId;
         private String qunId;
         private Byte chatType;
         private Long time;
 
         public static class Builder {
             private String session;
-            private Integer userId;
+            private Long userId;
             private String qunId;
             private Byte chatType;
             private Long time;
+            private String userKey;
 
             public Builder session(String session) {
                 this.session = session;
                 return this;
             }
 
-            public Builder userId(Integer userId) {
+            public Builder userId(Long userId) {
                 this.userId = userId;
                 return this;
             }
@@ -76,7 +77,7 @@ public class PropertyAccessBuilder {
 
     }
 
-    public static PropertyAccessor buildBySessionAndUserId(String sessionKey, Integer userId) {
+    public static PropertyAccessor buildBySessionAndUserId(String sessionKey, Long userId) {
         return new ChatPropertyAccessor.Builder()
             .session(sessionKey)
             .userId(userId).build();
@@ -87,7 +88,7 @@ public class PropertyAccessBuilder {
             .session(sessionKey).build();
     }
 
-    public static PropertyAccessor buildByUserId(Integer userId) {
+    public static PropertyAccessor buildByUserId(Long userId) {
         return new ChatPropertyAccessor.Builder()
             .userId(userId).build();
     }
@@ -97,13 +98,13 @@ public class PropertyAccessBuilder {
             .qunId(qunId).build();
     }
 
-    public static PropertyAccessor buildContacts(Integer userId, Byte charType) {
+    public static PropertyAccessor buildContacts(Long userId, Byte charType) {
         return new ChatPropertyAccessor.Builder()
             .chatType(charType)
             .userId(userId).build();
     }
 
-    public static PropertyAccessor buildMsgId(Integer userId, Long time) {
+    public static PropertyAccessor buildMsgId(Long userId, Long time) {
         return new ChatPropertyAccessor.Builder()
             .time(time)
             .userId(userId).build();

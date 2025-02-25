@@ -8,7 +8,6 @@ import javax.persistence.*;
 
 @Table(name = "audit")
 public class Audit implements POJO {
-
     /**
      * 主键 ID
      */
