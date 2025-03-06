@@ -56,12 +56,13 @@ public class UserContainer {
         channel.attr(USER_ID_KEY).set(chatUser.key());
     }
 
-    public Channel getChannelByUserId(String userId) {
-        return channelMap.get(userId);
+    public Channel getChannel(ChatUser chatUser) {
+        return channelMap.get(chatUser.key());
     }
 
-    public Boolean online(String userId) {
-        return channelMap.containsKey(userId) && channelMap.get(userId) != null;
+    public Boolean online(ChatUser chatUser) {
+        String key = chatUser.key();
+        return channelMap.containsKey(key) && channelMap.get(key) != null;
     }
 
     public Channel offline(Channel channel) {
@@ -72,24 +73,26 @@ public class UserContainer {
     public List<Channel> getChannels(ChatSession chatSession, ChatUser currentUser) {
         if (chatSession.isOne2One()) {
             ChatUser oppositeUser = chatSession.getOppositeUser(currentUser);
-            Channel targetChannel = this.getChannelByUserId(oppositeUser + "");
+            Channel targetChannel = this.getChannel(oppositeUser);
             return Collections.singletonList(targetChannel);
         }
         QunRepository qunRepository = SpringContext.getContext().getBean(QunRepository.class);
         String sessionKey = chatSession.getSessionKey();
-        List<Integer> userIds = qunRepository.getUserIdList(sessionKey);
+        List<Long> userIds = qunRepository.getUserIdList(sessionKey);
         List<Channel> channels = new ArrayList<>(userIds.size());
-        for (Integer userId : userIds) {
+        Long currentUserId = Long.parseLong(currentUser.getId());
+        for (Long userId : userIds) {
             if (userId.equals(currentUserId)) {
                 continue;
             }
-            Channel channel = this.getChannelByUserId(userId + "");
+            ChatUser chatUser = ChatUser.longUserId(userId, LoginUser.CATEGORY_REGISTER);
+            Channel channel = this.getChannel(chatUser);
             if (channel != null) {
                 logger.info("fetch user channel,session-key {},user-id {},channel {}", chatSession.getSessionKey(), userId, channel);
                 channels.add(channel);
                 continue;
             }
-            //logger.warn("user [{}] is offline ", userId);
+            logger.warn("user [{}] is offline ", chatUser);
         }
         return channels;
     }

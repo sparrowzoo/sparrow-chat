@@ -53,4 +53,23 @@ public class ChatUser {
         }
         return this.id.equals(chatUser.getId()) && this.category.equals(chatUser.getCategory());
     }
+
+    public Long getLongUserId() {
+        return Long.parseLong(this.id);
+    }
+
+    /**
+     * 用户ID长度(1字节) + 用户ID([用户ID长度个字节]) + 用户类型(1字节)
+     *
+     * @return
+     */
+    public byte[] toBytes() {
+        byte[] idBytes = this.id.getBytes();
+        int capacity = 1 + idBytes.length + 1;
+        byte[] byteBuf = new byte[capacity];
+        byteBuf[0] = (byte) idBytes.length;
+        System.arraycopy(idBytes, 0, byteBuf, 1, idBytes.length);
+        idBytes[idBytes.length - 1] = this.category.byteValue();
+        return byteBuf;
+    }
 }

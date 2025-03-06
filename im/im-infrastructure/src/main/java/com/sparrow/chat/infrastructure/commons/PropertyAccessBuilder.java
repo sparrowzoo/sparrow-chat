@@ -1,5 +1,6 @@
 package com.sparrow.chat.infrastructure.commons;
 
+import com.sparrow.chat.protocol.ChatUser;
 import com.sparrow.support.PropertyAccessor;
 
 public class PropertyAccessBuilder {
@@ -14,6 +15,7 @@ public class PropertyAccessBuilder {
 
         private String session;
         private Long userId;
+        private String userKey;
         private String qunId;
         private Byte chatType;
         private Long time;
@@ -51,12 +53,18 @@ public class PropertyAccessBuilder {
                 return this;
             }
 
+            public Builder userKey(String userKey) {
+                this.userKey = userKey;
+                return this;
+            }
+
             public PropertyAccessor build() {
                 return new ChatPropertyAccessor(this);
             }
         }
 
-        @Override public Object getProperty(String s) {
+        @Override
+        public Object getProperty(String s) {
             if (s.equals("sessionKey")) {
                 return this.session;
             }
@@ -72,41 +80,49 @@ public class PropertyAccessBuilder {
             if (s.equals("time")) {
                 return this.time;
             }
+            if (s.equals("userKey")) {
+                return this.userKey;
+            }
             return "";
         }
 
     }
 
-    public static PropertyAccessor buildBySessionAndUserId(String sessionKey, Long userId) {
+    public static PropertyAccessor buildBySessionAndUserKey(String sessionKey, ChatUser user) {
         return new ChatPropertyAccessor.Builder()
-            .session(sessionKey)
-            .userId(userId).build();
+                .session(sessionKey)
+                .userKey(user.key()).build();
     }
 
     public static PropertyAccessor buildBySessionKey(String sessionKey) {
         return new ChatPropertyAccessor.Builder()
-            .session(sessionKey).build();
+                .session(sessionKey).build();
     }
 
     public static PropertyAccessor buildByUserId(Long userId) {
         return new ChatPropertyAccessor.Builder()
-            .userId(userId).build();
+                .userId(userId).build();
+    }
+
+    public static PropertyAccessor buildByUserKey(String userKey) {
+        return new ChatPropertyAccessor.Builder()
+                .userKey(userKey).build();
     }
 
     public static PropertyAccessor buildByQunId(String qunId) {
         return new ChatPropertyAccessor.Builder()
-            .qunId(qunId).build();
+                .qunId(qunId).build();
     }
 
     public static PropertyAccessor buildContacts(Long userId, Byte charType) {
         return new ChatPropertyAccessor.Builder()
-            .chatType(charType)
-            .userId(userId).build();
+                .chatType(charType)
+                .userId(userId).build();
     }
 
     public static PropertyAccessor buildMsgId(Long userId, Long time) {
         return new ChatPropertyAccessor.Builder()
-            .time(time)
-            .userId(userId).build();
+                .time(time)
+                .userId(userId).build();
     }
 }

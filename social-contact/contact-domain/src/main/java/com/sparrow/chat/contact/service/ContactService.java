@@ -26,7 +26,6 @@ public class ContactService {
     @Inject
     private SecretService secretService;
 
-    @Inject
     private UserProfileAppService userProfileAppService;
 
     @Inject

@@ -6,13 +6,13 @@ import java.util.Collection;
 import java.util.List;
 
 public interface ContactRepository {
-    List<QunDTO> getQunsByUserId(Integer userId);
+    List<QunDTO> getQunsByUserId(Long userId);
 
-    Boolean existQunByUserId(Integer userId,String qunId);
+    Boolean existQunByUserId(Long userId,String qunId);
 
-    List<UserDTO> getFriendsByUserId(Integer userId);
+    List<UserDTO> getFriendsByUserId(Long userId);
 
-    List<UserDTO> getUsersByIds(Collection<Integer> userIds);
+    List<UserDTO> getUsersByIds(Collection<Long> userIds);
 
-    void addFriend(Integer userId,Integer friendId);
+    void addFriend(Long userId,Long friendId);
 }

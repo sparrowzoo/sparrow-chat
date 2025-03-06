@@ -9,6 +9,7 @@ import com.sparrow.chat.repository.QunRepository;
 import com.sparrow.chat.repository.SessionRepository;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.json.Json;
+import com.sparrow.protocol.LoginUser;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,18 +40,18 @@ public class RedisSessionRepository implements SessionRepository {
         this.addNewSessionForUserId(session, currentUser);
         //1 to 1 推送
         if (session.getChatType() == CHAT_TYPE_1_2_1) {
-            Integer oppositeUser = session.getOppositeUser(currentUserId);
+            ChatUser oppositeUser = session.getOppositeUser(currentUser);
             addNewSessionForUserId(session, oppositeUser);
             return;
         }
-        List<Integer> userIdList = this.qunRepository.getUserIdList(session.getSessionKey());
-        for (Integer userId : userIdList) {
-            addNewSessionForUserId(session, userId);
+        List<Long> userIdList = this.qunRepository.getUserIdList(session.getSessionKey());
+        for (Long userId : userIdList) {
+            addNewSessionForUserId(session, ChatUser.longUserId(userId, LoginUser.CATEGORY_REGISTER));
         }
     }
 
     private void addNewSessionForUserId(ChatSession session, ChatUser chatUser) {
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(chatUser.key());
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
         this.redisTemplate.opsForZSet().add(userSessionKey, session.json(), System.currentTimeMillis());
         if (this.redisTemplate.opsForZSet().size(userSessionKey) > MAX_SESSION_OF_USER) {
@@ -59,8 +60,8 @@ public class RedisSessionRepository implements SessionRepository {
         redisTemplate.expire(userSessionKey, MESSAGE_EXPIRE_DAYS, TimeUnit.DAYS);
     }
 
-    @Override public List<ChatSession> getSessions(Integer userId) {
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(userId);
+    @Override public List<ChatSession> getSessions(ChatUser user) {
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(user.key());
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
         Set<String> charSessions = this.redisTemplate.opsForZSet().range(userSessionKey, 0, MAX_SESSION_OF_USER);
         List<ChatSession> chatSessionList = new ArrayList<>(charSessions.size());

@@ -2,6 +2,7 @@ package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
+import com.sparrow.chat.protocol.ChatUser;
 import com.sparrow.chat.protocol.dto.QunDTO;
 import com.sparrow.chat.protocol.dto.UserDTO;
 import com.sparrow.chat.repository.ContactRepository;
@@ -35,7 +36,7 @@ public class RedisContactsRepository implements ContactRepository {
 
     private Json json = JsonFactory.getProvider();
 
-    public Boolean existQunByUserId(Integer userId, String qunId) {
+    public Boolean existQunByUserId(Long userId, String qunId) {
         if (qunId == null) {
             return false;
         }
@@ -52,17 +53,17 @@ public class RedisContactsRepository implements ContactRepository {
     }
 
     @Override
-    public List<QunDTO> getQunsByUserId(Integer userId) {
+    public List<QunDTO> getQunsByUserId(Long userId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, CHAT_TYPE_1_2_N);
         String userQunKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         List<String> qunIds = this.redisTemplate.opsForList().range(userQunKey, 0, Integer.MAX_VALUE);
         List<String> qunKeys = new ArrayList<>(qunIds.size());
-        Map<String, List<Integer>> qunMembersMap = new HashMap<>(qunIds.size());
+        Map<String, List<Long>> qunMembersMap = new HashMap<>(qunIds.size());
         for (String qunId : qunIds) {
             PropertyAccessor qunPropertyAccessor = PropertyAccessBuilder.buildByQunId(qunId);
             String qunKey = PlaceHolderParser.parse(RedisKey.QUN, qunPropertyAccessor);
             qunKeys.add(qunKey);
-            List<Integer> usersOfQun = this.qunRepository.getUserIdList(qunId);
+            List<Long> usersOfQun = this.qunRepository.getUserIdList(qunId);
             qunMembersMap.put(qunId, usersOfQun);
         }
         List<String> quns = this.redisTemplate.opsForValue().multiGet(qunKeys);
@@ -73,7 +74,7 @@ public class RedisContactsRepository implements ContactRepository {
                 continue;
             }
             QunDTO qunDto = this.json.parse(qun, QunDTO.class);
-            List<Integer> userIds = qunMembersMap.get(qunDto.getQunId());
+            List<Long> userIds = qunMembersMap.get(qunDto.getQunId());
             List<UserDTO> userDtos = this.getUsersByIds(userIds);
             qunDto.setMembers(userDtos);
             qunDtos.add(qunDto);
@@ -82,7 +83,7 @@ public class RedisContactsRepository implements ContactRepository {
     }
 
     @Override
-    public List<UserDTO> getFriendsByUserId(Integer userId) {
+    public List<UserDTO> getFriendsByUserId(Long userId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, CHAT_TYPE_1_2_1);
         String user121ContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         //好友列表
@@ -90,13 +91,13 @@ public class RedisContactsRepository implements ContactRepository {
         if (CollectionsUtility.isNullOrEmpty(users)) {
             return Collections.emptyList();
         }
-        Map<Integer, Long> friendIdAddTimeMap = new HashMap<>(users.size());
+        Map<Long, Long> friendIdAddTimeMap = new HashMap<>(users.size());
         for (ZSetOperations.TypedTuple<String> friend : users) {
             if (friend.getValue() == null) {
                 continue;
             }
             long addTime = friend.getScore() == null ? 0 : friend.getScore().longValue();
-            friendIdAddTimeMap.put(Integer.valueOf(friend.getValue()), addTime);
+            friendIdAddTimeMap.put(Long.parseLong(friend.getValue()), addTime);
         }
         //通讯录加自己
         friendIdAddTimeMap.put(userId, 0L);
@@ -106,16 +107,17 @@ public class RedisContactsRepository implements ContactRepository {
                 logger.error("user dto is null");
                 continue;
             }
-            userDto.setAddTime(friendIdAddTimeMap.get(userDto.getUserId()));
+            ChatUser chatUser=userDto.getChatUser();
+            userDto.setAddTime(friendIdAddTimeMap.get(chatUser.getLongUserId()));
         }
         Collections.sort(userDtos);
         return userDtos;
     }
 
     @Override
-    public List<UserDTO> getUsersByIds(Collection<Integer> userIds) {
+    public List<UserDTO> getUsersByIds(Collection<Long> userIds) {
         List<String> userKeys = new ArrayList<>(userIds.size());
-        for (Integer userId : userIds) {
+        for (Long userId : userIds) {
             PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserId(userId);
             String userKey = PlaceHolderParser.parse(RedisKey.USER, propertyAccessor);
             userKeys.add(userKey);
@@ -135,7 +137,7 @@ public class RedisContactsRepository implements ContactRepository {
     }
 
     @Override
-    public void addFriend(Integer userId, Integer friendId) {
+    public void addFriend(Long userId, Long friendId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, CHAT_TYPE_1_2_1);
         String user121ContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         this.redisTemplate.opsForZSet().add(user121ContactKey, friendId, System.currentTimeMillis());

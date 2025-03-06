@@ -15,7 +15,6 @@
  */
 package com.sparrow.chat.domain.netty;
 
-import com.sparrow.chat.domain.demo.OutOfMemoryHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;

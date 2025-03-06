@@ -1,5 +1,6 @@
 package com.sparrow.chat.repository;
 
+import com.sparrow.chat.protocol.ChatUser;
 import com.sparrow.chat.protocol.param.MessageCancelParam;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.param.MessageReadParam;
@@ -17,7 +18,7 @@ public interface MessageRepository {
 
     void read(MessageReadParam messageRead);
 
-    Map<String, Long> getLastRead(Integer me, List<String> sessionKeys);
+    Map<String, Long> getLastRead(ChatUser me, List<String> sessionKeys);
 
     List<MessageDTO> getMessageBySession(String session);
 }

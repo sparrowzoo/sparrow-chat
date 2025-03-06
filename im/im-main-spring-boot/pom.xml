@@ -12,6 +12,11 @@
     <version>1.0.0-SNAPSHOT</version>
     <dependencies>
         <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -53,6 +58,12 @@
             <groupId>com.sparrowzoo</groupId>
             <artifactId>sparrow-starter</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <filters>
@@ -63,6 +74,7 @@
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>*.xml</include>
+                    <include>*.html</include>
                     <include>*.properties</include>
                 </includes>
                 <filtering>true</filtering>

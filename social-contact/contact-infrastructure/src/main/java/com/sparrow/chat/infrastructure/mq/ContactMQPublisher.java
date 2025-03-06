@@ -1,4 +1,4 @@
-package com.sparrow.chat.boot.mq;
+package com.sparrow.chat.infrastructure.mq;
 
 import com.sparrow.chat.contact.bo.QunBO;
 import com.sparrow.chat.contact.protocol.event.QunMemberEvent;
@@ -64,6 +64,6 @@ public class ContactMQPublisher implements MQPublisher, InitializingBean {
                     }
                 }
             }
-        }, 5, 5, TimeUnit.SECONDS);
+        }, 60, 5, TimeUnit.SECONDS);
     }
 }

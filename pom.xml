@@ -10,7 +10,6 @@
     <modules>
         <module>social-contact</module>
         <module>im</module>
-        <module>social-contact/contact-client-api</module>
     </modules>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

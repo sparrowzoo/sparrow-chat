@@ -30,7 +30,7 @@ public class QunConverter {
         qun.setGmtModified(qun.getGmtCreate());
         qun.setModifiedUserName(loginUser.getUserName());
         qun.setOwnerId(loginUser.getUserId());
-        qun.setStatus(StatusRecord.ENABLE.ordinal());
+        qun.setStatus(StatusRecord.ENABLE);
         return qun;
     }
 
@@ -43,7 +43,7 @@ public class QunConverter {
         qun.setModifiedUserId(loginUser.getUserId());
         qun.setGmtModified(System.currentTimeMillis());
         qun.setModifiedUserName(loginUser.getUserName());
-        qun.setStatus(StatusRecord.ENABLE.ordinal());
+        qun.setStatus(StatusRecord.ENABLE);
         return qun;
     }
 

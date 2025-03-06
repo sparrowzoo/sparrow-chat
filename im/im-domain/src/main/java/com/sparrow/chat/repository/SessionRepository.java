@@ -9,5 +9,5 @@ public interface SessionRepository {
 
     void saveSession(ChatSession session, ChatUser currentUser);
 
-    List<ChatSession> getSessions(Integer userId);
+    List<ChatSession> getSessions(ChatUser chatUser);
 }

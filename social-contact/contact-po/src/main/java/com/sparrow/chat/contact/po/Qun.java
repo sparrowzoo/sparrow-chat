@@ -2,6 +2,7 @@ package com.sparrow.chat.contact.po;
 
 import com.sparrow.protocol.MethodOrder;
 import com.sparrow.protocol.dao.PO;
+import com.sparrow.protocol.enums.StatusRecord;
 
 import javax.persistence.*;
 
@@ -17,7 +18,7 @@ public class Qun extends PO {
     private Long categoryId;
     private String remark;
 
-    private Integer status;
+    private StatusRecord status;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -114,11 +115,11 @@ public class Qun extends PO {
 
     @MethodOrder(order = 9)
     @Column(name = "status", columnDefinition = "tinyint(2)  DEFAULT 1 COMMENT '状态'", nullable = false)
-    public Integer getStatus() {
+    public StatusRecord getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(StatusRecord status) {
         this.status = status;
     }
 }

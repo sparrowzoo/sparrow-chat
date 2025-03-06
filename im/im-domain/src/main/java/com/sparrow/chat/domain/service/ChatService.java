@@ -1,28 +1,26 @@
 package com.sparrow.chat.domain.service;
 
 import com.sparrow.chat.domain.netty.CancelProtocol;
+import com.sparrow.chat.domain.netty.Protocol;
 import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.protocol.ChatSession;
-import com.sparrow.chat.protocol.dto.ContactsDTO;
-import com.sparrow.chat.protocol.param.MessageCancelParam;
-import com.sparrow.chat.protocol.dto.MessageDTO;
-import com.sparrow.chat.protocol.param.MessageReadParam;
-import com.sparrow.chat.domain.netty.Protocol;
-import com.sparrow.chat.protocol.dto.QunDTO;
-import com.sparrow.chat.protocol.dto.SessionDTO;
-import com.sparrow.chat.protocol.dto.UserDTO;
+import com.sparrow.chat.protocol.ChatUser;
 import com.sparrow.chat.protocol.constant.Chat;
+import com.sparrow.chat.protocol.dto.*;
+import com.sparrow.chat.protocol.param.MessageCancelParam;
+import com.sparrow.chat.protocol.param.MessageReadParam;
 import com.sparrow.chat.repository.ContactRepository;
 import com.sparrow.chat.repository.MessageRepository;
 import com.sparrow.chat.repository.SessionRepository;
 import com.sparrow.protocol.BusinessException;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component
 public class ChatService {
@@ -33,7 +31,7 @@ public class ChatService {
     @Autowired
     private ContactRepository contactsRepository;
 
-    public ContactsDTO getContacts(Integer userId) {
+    public ContactsDTO getContacts(Long userId) {
         List<QunDTO> quns = this.contactsRepository.getQunsByUserId(userId);
         List<UserDTO> users = this.contactsRepository.getFriendsByUserId(userId);
         return new ContactsDTO(quns, users);
@@ -69,8 +67,8 @@ public class ChatService {
         }
     }
 
-    public List<SessionDTO> fetchSessions(Integer userId) {
-        List<ChatSession> chatSessions = this.sessionRepository.getSessions(userId);
+    public List<SessionDTO> fetchSessions(ChatUser user) {
+        List<ChatSession> chatSessions = this.sessionRepository.getSessions(user);
         List<SessionDTO> sessions = new ArrayList<>(chatSessions.size());
         List<String> sessionKeys = new ArrayList<>(chatSessions.size());
         for (ChatSession session : chatSessions) {
@@ -78,7 +76,7 @@ public class ChatService {
             sessionKeys.add(session.getSessionKey());
             sessions.add(new SessionDTO(session, messages));
         }
-        Map<String, Long> lastReadMap = this.messageRepository.getLastRead(userId, sessionKeys);
+        Map<String, Long> lastReadMap = this.messageRepository.getLastRead(user, sessionKeys);
         for (SessionDTO session : sessions) {
             String sessionKey = session.getChatSession().getSessionKey();
             if(lastReadMap.containsKey(sessionKey)){

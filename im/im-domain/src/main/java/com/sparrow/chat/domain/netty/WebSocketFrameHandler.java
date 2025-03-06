@@ -47,6 +47,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
      */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
+
         // ping and pong frames already handled js 不支持PingFrame 需要手动处理
         if (frame instanceof TextWebSocketFrame) {
             TextWebSocketFrame text = (TextWebSocketFrame) frame;
@@ -63,7 +64,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             ByteBuf content = msg.content();
             Protocol protocol = new Protocol(content);
             ChatUser currentUser = UserContainer.getContainer().hasUser(ctx.channel());
-            if (protocol.getSender().equals(currentUser)) {
+            if (!protocol.getSender().equals(currentUser)) {
                 logger.error("user id is not allow {}", currentUser);
                 return;
             }
@@ -71,11 +72,11 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             protocol.setSender(currentUser);
             ChatService chatService = ApplicationContext.getContainer().getBean("chatService");
             chatService.saveMessage(protocol);
-            if (protocol.getCharType() == Chat.CHAT_TYPE_1_2_1 && protocol.getSender() == protocol.getReceiver()) {
+            if (protocol.getChatType() == Chat.CHAT_TYPE_1_2_1 && protocol.getSender() == protocol.getReceiver()) {
                 return;
             }
             List<Channel> channels = UserContainer.getContainer().getChannels(protocol.getChatSession(), currentUser);
-            this.writeAndFlush(ctx, protocol.getCharType(), msg, channels);
+            this.writeAndFlush(ctx, protocol.getChatType(), msg, channels);
         } else if (frame instanceof ContinuationWebSocketFrame) {
             ContinuationWebSocketFrame msg = (ContinuationWebSocketFrame) frame;
         }
@@ -96,6 +97,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         byteBuf.writeBytes(msg.content());
         //服务器时间戮
         byteBuf.writeBytes(serviceTimeBytes);
+
         /**
          *  public ByteBuf writeBytes(ByteBuf src, int length) {
          *         if (checkBounds) {
@@ -145,6 +147,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
                 continue;
             }
             BinaryWebSocketFrame unsafe = this.unsafeDuplicate(msg);
+
             //对比使用 bad case
             //BinaryWebSocketFrame safe=(BinaryWebSocketFrame) safeDuplicate(msg);
             logger.info("write channel {}", channel);

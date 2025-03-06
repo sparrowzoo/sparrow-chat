@@ -1,15 +1,17 @@
 package com.sparrow.chat.protocol.param;
 
+import com.sparrow.chat.protocol.ChatUser;
+
 public class MessageReadParam {
-    private Integer userId;
+    private ChatUser chatUser;
     private String sessionKey;
 
-    public Integer getUserId() {
-        return userId;
+    public ChatUser getUser() {
+        return chatUser;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUser(ChatUser user) {
+        this.chatUser = user;
     }
 
     public String getSessionKey() {

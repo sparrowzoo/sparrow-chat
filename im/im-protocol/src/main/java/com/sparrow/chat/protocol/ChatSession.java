@@ -80,13 +80,13 @@ public class ChatSession {
         }
         //保证从小到大排序
         if (sender.getId().compareTo(receiver.getId()) <= 0) {
-            return sender + "-" + receiver;
+            return sender.key() + "-" + receiver.key();
         }
         return receiver.key() + "-" + sender.key();
     }
 
-    public ChatUser getOppositeUser(ChatUser currentUserId) {
-        if (currentUserId == null) {
+    public ChatUser getOppositeUser(ChatUser currentUser) {
+        if (currentUser == null) {
             return null;
         }
         if (this.chatType != CHAT_TYPE_1_2_1) {
@@ -99,10 +99,10 @@ public class ChatSession {
         }
         ChatUser userId1 = ChatUser.parse(userIdArray[0]);
         ChatUser userId2 = ChatUser.parse(userIdArray[1]);
-        if (currentUserId.equals(userId1)) {
+        if (currentUser.equals(userId1)) {
             return userId2;
         }
-        if (currentUserId.equals(userId2)) {
+        if (currentUser.equals(userId2)) {
             return userId1;
         }
         return null;

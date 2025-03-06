@@ -1,7 +1,8 @@
 package com.sparrow.chat.domain.netty;
 
-import com.sparrow.chat.protocol.constant.Chat;
+import com.alibaba.fastjson.JSON;
 import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.Result;
 import com.sparrow.spring.starter.SpringContext;
 import com.sparrow.support.Authenticator;
 import com.sparrow.utility.JSUtility;
@@ -60,14 +61,23 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof HandshakeComplete) {
             HandshakeComplete serverHandshakeComplete = (HandshakeComplete) evt;
-            String token = JSUtility.decodeURIComponent(serverHandshakeComplete.requestHeaders().get("sec-websocket-protocol"));
+            //token 必须要url编码 否则会报invalid token
 
+            String token = JSUtility.decodeURIComponent(serverHandshakeComplete.requestHeaders().get("sec-websocket-protocol"));
             InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
             String ip = address.getAddress().getHostAddress();
-            LoginUser loginUser = SpringContext.getContext().getBean(Authenticator.class).authenticate(token, ip);
-            String userInfo = loginUser.getUserId().intValue() + "," + loginUser.getExtensions().get(Chat.PLATFORM);
-            ctx.channel().writeAndFlush(new TextWebSocketFrame(Chat.RESPONSE_TEXT_USER + userInfo));
-            UserContainer.getContainer().online(ctx.channel(), loginUser);
+            try {
+                LoginUser loginUser = SpringContext.getContext().getBean(Authenticator.class).authenticate(token, ip);
+                Result<LoginUser> result = new Result<>(loginUser);
+                String userInfo = JSON.toJSONString(result);
+                ctx.channel().writeAndFlush(new TextWebSocketFrame(userInfo));
+                UserContainer.getContainer().online(ctx.channel(), loginUser);
+            } catch (Exception e) {
+                Result result = Result.fail(e);
+                ctx.channel().writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(result))).addListener(future -> {
+                    ctx.channel().close();
+                });
+            }
             super.userEventTriggered(ctx, evt);
         } else {
             if (evt instanceof IdleStateEvent) {

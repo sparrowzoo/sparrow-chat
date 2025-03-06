@@ -24,7 +24,6 @@ public class QunService {
     @Inject
     private QunRepository qunRepository;
 
-    @Inject
     private UserProfileAppService userProfileAppService;
 
     @Inject

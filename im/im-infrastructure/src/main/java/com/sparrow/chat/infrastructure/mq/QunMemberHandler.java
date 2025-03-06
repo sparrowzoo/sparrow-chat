@@ -1,7 +1,6 @@
 package com.sparrow.chat.infrastructure.mq;
 
 import com.sparrow.chat.contact.protocol.event.QunMemberEvent;
-import com.sparrow.chat.protocol.ChatUser;
 import com.sparrow.chat.repository.QunRepository;
 import com.sparrow.spring.starter.mq.AbstractSpringMQHandler;
 import com.sparrowzoo.chat.contact.QunServiceApi;

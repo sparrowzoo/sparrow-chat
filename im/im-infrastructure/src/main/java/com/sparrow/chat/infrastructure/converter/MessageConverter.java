@@ -10,10 +10,8 @@ public class MessageConverter {
     public MessageDTO assembleMessage(Protocol protocol) {
         MessageDTO message = new MessageDTO();
         message.setMessageType(protocol.getMessageType());
-        message.setChatType(protocol.getCharType());
-
         message.setContent(protocol.getContent());
-        message.setSession(protocol.getChatSession().getSessionKey());
+        message.setSession(protocol.getChatSession());
         message.setSender(protocol.getSender());
         message.setReceiver(protocol.getReceiver());
         message.setServerTime(protocol.getServerTime());

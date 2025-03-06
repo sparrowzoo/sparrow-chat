@@ -82,7 +82,7 @@ public class QunRepositoryImpl implements QunRepository {
     public void modifyQun(QunModifyParam qunModifyParam) throws BusinessException {
         Qun oldQun = this.qunDao.getEntity(qunModifyParam.getQunId());
         Asserts.isTrue(null == oldQun, ContactError.QUN_NOT_FOUND);
-        Asserts.isTrue(StatusRecord.ENABLE.ordinal() != oldQun.getStatus(), ContactError.QUN_STATUS_INVALID);
+        Asserts.isTrue(StatusRecord.ENABLE != oldQun.getStatus(), ContactError.QUN_STATUS_INVALID);
         Qun qun = this.qunConverter.modifyParam2Po(qunModifyParam);
         this.qunDao.update(qun);
     }

@@ -24,12 +24,23 @@ public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
     @Value("${mock_login_user}")
     private Boolean mockLoginUser;
 
+    @Value("${authenticator.encrypt_key}")
+    private String encryptKey;
+
+    @Value("${authenticator.validate_device_id}")
+    private Boolean validateDeviceId;
+
+    @Value("${authenticator.validate_status}")
+    private Boolean validateStatus;
+
     @Value("${authenticator.white.list}")
     private List<String> whiteList;
 
+    private static final String EXCLUSIONS = "/doc.html,/webjars/**";
+
     @Bean
     Authenticator authenticator() {
-        return new DefaultAuthenticatorService();
+        return new DefaultAuthenticatorService(this.encryptKey, this.validateDeviceId, this.validateStatus);
     }
 
     @Bean
@@ -50,10 +61,10 @@ public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
     public FilterRegistrationBean<Filter> loginTokenFilterBean() {
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(loginTokenFilter());
-        filterRegistrationBean.addUrlPatterns("/*");
+        filterRegistrationBean.addUrlPatterns("/");
         filterRegistrationBean.setName("loginTokenFilter");
+        filterRegistrationBean.addInitParameter("excludePatterns", EXCLUSIONS);
         filterRegistrationBean.setOrder(0);
-        //多个filter的时候order的数值越小 则优先级越高
         return filterRegistrationBean;
     }
 

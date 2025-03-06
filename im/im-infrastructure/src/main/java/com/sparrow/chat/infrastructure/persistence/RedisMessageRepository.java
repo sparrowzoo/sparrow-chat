@@ -5,6 +5,7 @@ import com.sparrow.chat.infrastructure.commons.ConfigKey;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.MessageConverter;
+import com.sparrow.chat.protocol.ChatUser;
 import com.sparrow.chat.protocol.MessageKey;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.param.MessageCancelParam;
@@ -42,7 +43,7 @@ public class RedisMessageRepository implements MessageRepository {
 
     private Json json = JsonFactory.getProvider();
 
-    private String generateImageId(Integer userId) {
+    private String generateImageId(ChatUser user) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         int year = calendar.get(Calendar.YEAR);
@@ -54,7 +55,7 @@ public class RedisMessageRepository implements MessageRepository {
                 year + File.separator +
                 month + File.separator +
                 day + File.separator +
-                userId + File.separator +
+                user.key() + File.separator +
                 calendar.getTimeInMillis() + Extension.JPG;
         return physicalUrl;
     }
@@ -69,7 +70,7 @@ public class RedisMessageRepository implements MessageRepository {
         if (message == null) {
             throw new BusinessException(SparrowError.GLOBAL_REQUEST_ID_NOT_EXIST);
         }
-        if (message.getSender() != messageCancel.getSender()) {
+        if (!message.getSender().equals(messageCancel.getSender())) {
             throw new BusinessException(SparrowError.GLOBAL_PARAMETER_IS_ILLEGAL);
         }
         redisTemplate.opsForHash().delete(redisKey, msgKey);
@@ -82,7 +83,7 @@ public class RedisMessageRepository implements MessageRepository {
             return null;
         }
         String physicalUrl = this.generateImageId(protocol.getSender());
-        FileUtility.getInstance().generateImage(protocol.getContent(), physicalUrl);
+        FileUtility.getInstance().generateImage(protocol.getContentBytes(), physicalUrl);
         String rootPhysicalPath = ConfigUtility.getValue(ConfigKey.IMAGE_PHYSICAL_ROOT_PATH);
         String rootWebPath = ConfigUtility.getValue(ConfigKey.IMAGE_WEB_ROOT_PATH);
 
@@ -125,16 +126,16 @@ public class RedisMessageRepository implements MessageRepository {
 
     @Override
     public void read(MessageReadParam messageRead) {
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserId(messageRead.getSessionKey(), messageRead.getUserId());
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserKey(messageRead.getSessionKey(), messageRead.getUser());
         String sessionReadKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_READ, propertyAccessor);
         redisTemplate.opsForValue().set(sessionReadKey, System.currentTimeMillis() + "");
     }
 
     @Override
-    public Map<String, Long> getLastRead(Integer me, List<String> sessionKeys) {
+    public Map<String, Long> getLastRead(ChatUser me, List<String> sessionKeys) {
         List<String> messageReadKeys = new ArrayList<>(sessionKeys.size());
         for (String sessionKey : sessionKeys) {
-            PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserId(sessionKey, me);
+            PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserKey(sessionKey, me);
             String messageReadKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_READ, propertyAccessor);
             messageReadKeys.add(messageReadKey);
         }

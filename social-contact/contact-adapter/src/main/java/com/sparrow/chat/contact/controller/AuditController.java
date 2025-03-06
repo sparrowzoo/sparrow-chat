@@ -25,6 +25,7 @@ public class AuditController {
     @Inject
     private AuditService auditService;
 
+
     @GetMapping("friend-apply-list")
     @ApiOperation("获取好友申请列表")
     public FriendAuditWrapVO friendApplyList() throws BusinessException {

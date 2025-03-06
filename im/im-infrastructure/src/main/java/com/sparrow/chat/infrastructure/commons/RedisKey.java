@@ -9,12 +9,12 @@ public class RedisKey {
     /**
      * 用户的会话 redis list
      */
-    public static final String USER_SESSION_KEY = "user.session:{userId}";
+    public static final String USER_SESSION_KEY = "user.session:{userKey}";
 
     /**
      * 是否已读
      */
-    public static final String USER_SESSION_READ = "user.read:{userId}:{sessionKey}";
+    public static final String USER_SESSION_READ = "user.read:{userKey}:{sessionKey}";
 
     /**
      * 群内用户

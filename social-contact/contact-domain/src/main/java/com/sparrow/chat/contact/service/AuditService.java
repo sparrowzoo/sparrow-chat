@@ -29,7 +29,6 @@ import java.util.*;
 
 @Named
 public class AuditService {
-    @Inject
     private UserProfileAppService userProfileAppService;
     @Inject
     private AuditRepository auditRepository;

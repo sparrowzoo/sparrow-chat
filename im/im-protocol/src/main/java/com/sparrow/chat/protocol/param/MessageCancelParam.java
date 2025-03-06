@@ -1,7 +1,9 @@
 package com.sparrow.chat.protocol.param;
 
+import com.sparrow.chat.protocol.ChatUser;
+
 public class MessageCancelParam {
-    private Integer sender;
+    private ChatUser sender;
     private String token;
     private Long clientSendTime;
     private String sessionKey;
@@ -23,11 +25,11 @@ public class MessageCancelParam {
         this.chatType = chatType;
     }
 
-    public Integer getSender() {
+    public ChatUser getSender() {
         return sender;
     }
 
-    public void setSender(Integer sender) {
+    public void setSender(ChatUser sender) {
         this.sender = sender;
     }
 
