@@ -12,6 +12,8 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleStateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.List;
  */
 public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProtocolHandler {
 
+    private static Logger logger = LoggerFactory.getLogger(WebSocketServerProtocolSupportHandshake.class);
     // js 不支持ping pong 帧
     // https://stackoverflow.com/questions/10585355/sending-websocket-ping-pong-frame-from-browser
 
@@ -73,6 +76,7 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
                 ctx.channel().writeAndFlush(new TextWebSocketFrame(userInfo));
                 UserContainer.getContainer().online(ctx.channel(), loginUser);
             } catch (Exception e) {
+                logger.error("authenticate error", e);
                 Result result = Result.fail(e);
                 ctx.channel().writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(result))).addListener(future -> {
                     ctx.channel().close();

@@ -2,7 +2,7 @@ package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
-import com.sparrow.chat.repository.QunRepository;
+import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.core.algorithm.collections.KeyCollectionUpsertSplitter;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;

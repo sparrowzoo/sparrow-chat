@@ -1,8 +1,6 @@
 package com.sparrow.chat.protocol.dto;
 
-import com.sparrow.chat.protocol.ChatSession;
-import com.sparrow.chat.protocol.ChatUser;
-import com.sparrow.chat.protocol.MessageKey;
+import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.protocol.POJO;
 
 public class MessageDTO implements POJO {
@@ -13,15 +11,15 @@ public class MessageDTO implements POJO {
     /**
      * 发送者
      */
-    private ChatUser sender;
+    private ChatUserQuery sender;
     /**
      * 接收者
      */
-    private ChatUser receiver;
+    private ChatUserQuery receiver;
     /**
      * 会话
      */
-    private ChatSession session;
+    private SessionDTO session;
     /**
      * 消息内容
      */
@@ -35,10 +33,6 @@ public class MessageDTO implements POJO {
      */
     private Long clientSendTime;
 
-    public String getKey() {
-        return new MessageKey(this.sender, this.clientSendTime).key();
-    }
-
     public int getMessageType() {
         return messageType;
     }
@@ -47,19 +41,19 @@ public class MessageDTO implements POJO {
         this.messageType = messageType;
     }
 
-    public ChatUser getSender() {
+    public ChatUserQuery getSender() {
         return sender;
     }
 
-    public void setSender(ChatUser sender) {
+    public void setSender(ChatUserQuery sender) {
         this.sender = sender;
     }
 
-    public ChatUser getReceiver() {
+    public ChatUserQuery getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(ChatUser receiver) {
+    public void setReceiver(ChatUserQuery receiver) {
         this.receiver = receiver;
     }
 
@@ -87,11 +81,11 @@ public class MessageDTO implements POJO {
         this.clientSendTime = clientSendTime;
     }
 
-    public ChatSession getSession() {
+    public SessionDTO getSession() {
         return session;
     }
 
-    public void setSession(ChatSession session) {
+    public void setSession(SessionDTO session) {
         this.session = session;
     }
 }

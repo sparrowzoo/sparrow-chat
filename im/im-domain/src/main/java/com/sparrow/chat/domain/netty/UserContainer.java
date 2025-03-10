@@ -1,8 +1,8 @@
 package com.sparrow.chat.domain.netty;
 
-import com.sparrow.chat.protocol.ChatSession;
-import com.sparrow.chat.protocol.ChatUser;
-import com.sparrow.chat.repository.QunRepository;
+import com.sparrow.chat.domain.bo.ChatSession;
+import com.sparrow.chat.domain.bo.ChatUser;
+import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.spring.starter.SpringContext;
 import io.netty.channel.Channel;

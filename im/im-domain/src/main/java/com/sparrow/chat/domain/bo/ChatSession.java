@@ -1,5 +1,6 @@
-package com.sparrow.chat.protocol;
+package com.sparrow.chat.domain.bo;
 
+import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.protocol.constant.magic.Symbol;
 
 import static com.sparrow.chat.protocol.constant.Chat.*;
@@ -106,5 +107,9 @@ public class ChatSession {
             return userId1;
         }
         return null;
+    }
+
+    public SessionDTO toSessionDTO() {
+        return new SessionDTO(this.chatType,this.getSessionKey());
     }
 }

@@ -25,7 +25,7 @@ public class SignTest {
     @Test
     public void testSign() {
         LoginUser loginUser = new LoginUser();
-        loginUser.setUserId(0L);
+        loginUser.setUserId(1L);
         loginUser.setNickName("zhangsan");
         loginUser.setUserName("zhangsan");
         loginUser.setAvatar("ddd");

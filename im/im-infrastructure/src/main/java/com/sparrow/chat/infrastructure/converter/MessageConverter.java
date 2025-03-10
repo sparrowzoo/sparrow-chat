@@ -11,9 +11,9 @@ public class MessageConverter {
         MessageDTO message = new MessageDTO();
         message.setMessageType(protocol.getMessageType());
         message.setContent(protocol.getContent());
-        message.setSession(protocol.getChatSession());
-        message.setSender(protocol.getSender());
-        message.setReceiver(protocol.getReceiver());
+        message.setSession(protocol.getChatSession().toSessionDTO());
+        message.setSender(protocol.getSender().toChatUserQuery());
+        message.setReceiver(protocol.getReceiver().toChatUserQuery());
         message.setServerTime(protocol.getServerTime());
         message.setClientSendTime(protocol.getClientSendTime());
         return message;

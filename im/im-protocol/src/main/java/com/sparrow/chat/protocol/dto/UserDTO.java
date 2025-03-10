@@ -1,6 +1,6 @@
 package com.sparrow.chat.protocol.dto;
 
-import com.sparrow.chat.protocol.ChatUser;
+import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.protocol.POJO;
 
 public class UserDTO implements POJO, Comparable<UserDTO> {
@@ -15,7 +15,7 @@ public class UserDTO implements POJO, Comparable<UserDTO> {
     /**
      * 用户
      */
-    private ChatUser chatUser;
+    private ChatUserQuery chatUser;
     /**
      * 用户名
      */
@@ -87,11 +87,11 @@ public class UserDTO implements POJO, Comparable<UserDTO> {
         this.signature = signature;
     }
 
-    public ChatUser getChatUser() {
+    public ChatUserQuery getChatUser() {
         return chatUser;
     }
 
-    public void setChatUser(ChatUser chatUser) {
+    public void setChatUser(ChatUserQuery chatUser) {
         this.chatUser = chatUser;
     }
 }

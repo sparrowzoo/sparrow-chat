@@ -1,18 +1,22 @@
 package com.sparrow.chat.domain.service;
 
+import com.sparrow.chat.domain.bo.ChatSession;
+import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.netty.CancelProtocol;
 import com.sparrow.chat.domain.netty.Protocol;
 import com.sparrow.chat.domain.netty.UserContainer;
-import com.sparrow.chat.protocol.ChatSession;
-import com.sparrow.chat.protocol.ChatUser;
+import com.sparrow.chat.domain.repository.ContactRepository;
+import com.sparrow.chat.domain.repository.MessageRepository;
+import com.sparrow.chat.domain.repository.SessionRepository;
 import com.sparrow.chat.protocol.constant.Chat;
 import com.sparrow.chat.protocol.dto.*;
-import com.sparrow.chat.protocol.param.MessageCancelParam;
-import com.sparrow.chat.protocol.param.MessageReadParam;
-import com.sparrow.chat.repository.ContactRepository;
-import com.sparrow.chat.repository.MessageRepository;
-import com.sparrow.chat.repository.SessionRepository;
+import com.sparrow.chat.protocol.query.MessageCancelQuery;
+import com.sparrow.chat.protocol.query.MessageReadQuery;
+import com.sparrow.exception.Asserts;
 import com.sparrow.protocol.BusinessException;
+import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.ThreadContext;
+import com.sparrow.protocol.constant.SparrowError;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,21 +47,27 @@ public class ChatService {
         this.sessionRepository.saveSession(protocol.getChatSession(),protocol.getSender());
     }
 
-    public void read(MessageReadParam messageRead) throws BusinessException {
-        this.messageRepository.read(messageRead);
+    public void read(MessageReadQuery messageReadQuery) throws BusinessException {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        ChatUser chatUser=ChatUser.longUserId(loginUser.getUserId(),loginUser.getCategory());
+        this.messageRepository.read(messageReadQuery,chatUser);
     }
 
-    public void cancel(MessageCancelParam messageCancel) throws BusinessException {
+    public void cancel(MessageCancelQuery messageCancel) throws BusinessException {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        Asserts.isTrue(loginUser==null, SparrowError.USER_NOT_LOGIN);
+        ChatUser sender=ChatUser.longUserId(loginUser.getUserId(),loginUser.getCategory());
+
         CancelProtocol cancelProtocol = new CancelProtocol(messageCancel.getSessionKey(), messageCancel.getClientSendTime());
         //将会话的消息移除
-        this.messageRepository.cancel(messageCancel);
+        this.messageRepository.cancel(messageCancel,sender);
         List<Channel> channels;
         if (Chat.CHAT_TYPE_1_2_1 == messageCancel.getChatType()) {
-            ChatSession chatSession = ChatSession.create1To1CancelSession(messageCancel.getSender(), messageCancel.getSessionKey());
-            channels = UserContainer.getContainer().getChannels(chatSession,messageCancel.getSender());
+            ChatSession chatSession = ChatSession.create1To1CancelSession(sender, messageCancel.getSessionKey());
+            channels = UserContainer.getContainer().getChannels(chatSession,sender);
         } else {
-            ChatSession chatSession = ChatSession.createQunSession(messageCancel.getSender(), messageCancel.getSessionKey());
-            channels = UserContainer.getContainer().getChannels(chatSession,messageCancel.getSender());
+            ChatSession chatSession = ChatSession.createQunSession(sender, messageCancel.getSessionKey());
+            channels = UserContainer.getContainer().getChannels(chatSession,sender);
         }
         for (Channel channel : channels) {
             if (channel == null || !channel.isOpen() || !channel.isActive()) {
@@ -72,13 +82,12 @@ public class ChatService {
         List<SessionDTO> sessions = new ArrayList<>(chatSessions.size());
         List<String> sessionKeys = new ArrayList<>(chatSessions.size());
         for (ChatSession session : chatSessions) {
-            List<MessageDTO> messages = this.messageRepository.getMessageBySession(session.getSessionKey());
             sessionKeys.add(session.getSessionKey());
-            sessions.add(new SessionDTO(session, messages));
+            sessions.add(new SessionDTO(session.getChatType(),session.getSessionKey()));
         }
         Map<String, Long> lastReadMap = this.messageRepository.getLastRead(user, sessionKeys);
         for (SessionDTO session : sessions) {
-            String sessionKey = session.getChatSession().getSessionKey();
+            String sessionKey = session.getSessionKey();
             if(lastReadMap.containsKey(sessionKey)){
                 session.setLastReadTime(lastReadMap.get(sessionKey));
             }

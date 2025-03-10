@@ -4,7 +4,7 @@ public class RedisKey {
     /**
      * 会话内的消息 redis list
      */
-    public static final String MESSAGE_KEY = "msg:{sessionKey}";
+    public static final String SESSION_MESSAGE_KEY = "session:msg:{sessionKey}";
 
     /**
      * 用户的会话 redis list
@@ -35,5 +35,7 @@ public class RedisKey {
      * 群信息
      */
     public static final String QUN = "qun:{qunId}";
+
+    public static final String VISITOR_ID = "visitor.id.seed";
 
 }

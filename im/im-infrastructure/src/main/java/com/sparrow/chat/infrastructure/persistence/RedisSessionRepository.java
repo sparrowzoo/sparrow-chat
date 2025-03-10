@@ -2,11 +2,11 @@ package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
-import com.sparrow.chat.protocol.ChatSession;
-import com.sparrow.chat.protocol.ChatUser;
-import com.sparrow.chat.repository.ContactRepository;
-import com.sparrow.chat.repository.QunRepository;
-import com.sparrow.chat.repository.SessionRepository;
+import com.sparrow.chat.domain.bo.ChatSession;
+import com.sparrow.chat.domain.bo.ChatUser;
+import com.sparrow.chat.domain.repository.ContactRepository;
+import com.sparrow.chat.domain.repository.QunRepository;
+import com.sparrow.chat.domain.repository.SessionRepository;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.json.Json;
 import com.sparrow.protocol.LoginUser;

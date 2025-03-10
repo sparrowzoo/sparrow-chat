@@ -1,4 +1,4 @@
-package com.sparrow.chat.protocol;
+package com.sparrow.chat.domain.bo;
 
 public class MessageKey {
     public MessageKey(ChatUser fromUser, Long clientSendTime) {

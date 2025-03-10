@@ -1,7 +1,7 @@
-package com.sparrow.chat.repository;
+package com.sparrow.chat.domain.repository;
 
-import com.sparrow.chat.protocol.ChatSession;
-import com.sparrow.chat.protocol.ChatUser;
+import com.sparrow.chat.domain.bo.ChatSession;
+import com.sparrow.chat.domain.bo.ChatUser;
 
 import java.util.List;
 

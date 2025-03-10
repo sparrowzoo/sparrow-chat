@@ -1,7 +1,7 @@
 package com.sparrow.chat.domain.netty;
 
-import com.sparrow.chat.protocol.ChatSession;
-import com.sparrow.chat.protocol.ChatUser;
+import com.sparrow.chat.domain.bo.ChatSession;
+import com.sparrow.chat.domain.bo.ChatUser;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 
@@ -47,7 +47,7 @@ public class Protocol {
         this.messageType = content.readByte();
         this.sender = parseUser(content);
         if (this.chatType == CHAT_TYPE_1_2_1) {
-           this.receiver=this.parseUser(content);
+            this.receiver = this.parseUser(content);
             this.chatSession = ChatSession.create1To1Session(this.sender, this.receiver);
         } else {
             this.sessionLength = content.readByte();
@@ -138,6 +138,9 @@ public class Protocol {
 
     public void setSender(ChatUser sender) {
         this.sender = sender;
+        if (this.isOne2One()) {
+            this.setChatSession(ChatSession.create1To1Session(sender, this.receiver));
+        }
     }
 
     public ChatUser getReceiver() {
@@ -168,7 +171,7 @@ public class Protocol {
         this.contentBytes = contentBytes;
     }
 
-    public ByteBuf encode(ByteBufAllocator allocator,int capacity) {
+    public ByteBuf encode(ByteBufAllocator allocator, int capacity) {
         this.serverTime = System.currentTimeMillis();
         capacity = capacity + this.serverTime.toString().getBytes().length + 1;
         ByteBuf byteBuf = allocator.directBuffer(capacity);

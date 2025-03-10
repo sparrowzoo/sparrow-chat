@@ -83,7 +83,7 @@ public class OutOfMemoryHandler extends ChannelInboundHandlerAdapter {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    ByteBuf resp = allocator.heapBuffer(body.length);
+                    ByteBuf resp = allocator.heapBuffer(body.length,1024*1024);
                     resp.writeBytes(body);
                     ctx.writeAndFlush(resp);
                 }

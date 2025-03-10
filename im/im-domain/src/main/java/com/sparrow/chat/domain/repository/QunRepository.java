@@ -1,4 +1,4 @@
-package com.sparrow.chat.repository;
+package com.sparrow.chat.domain.repository;
 
 import java.util.List;
 

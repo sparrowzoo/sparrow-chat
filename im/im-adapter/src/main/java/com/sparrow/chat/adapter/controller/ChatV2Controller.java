@@ -1,12 +1,14 @@
 package com.sparrow.chat.adapter.controller;
 
+import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.service.ChatService;
-import com.sparrow.chat.protocol.ChatUser;
+import com.sparrow.chat.domain.service.VisitorService;
 import com.sparrow.chat.protocol.dto.ContactsDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
-import com.sparrow.chat.protocol.param.MessageCancelParam;
-import com.sparrow.chat.protocol.param.MessageReadParam;
+import com.sparrow.chat.protocol.query.ChatUserQuery;
+import com.sparrow.chat.protocol.query.MessageCancelQuery;
+import com.sparrow.chat.protocol.query.MessageReadQuery;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.ClientInformation;
 import com.sparrow.protocol.LoginUser;
@@ -29,15 +31,23 @@ public class ChatV2Controller {
     @Autowired
     private Authenticator authenticator;
 
+    @Autowired
+    private VisitorService visitorService;
+
     @PostMapping("/get-user-id")
     public Integer getUserId(String token) throws BusinessException {
         ClientInformation client = ThreadContext.getClientInfo();
         return this.authenticator.authenticate(token, client.getDeviceId()).getUserId().intValue();
     }
 
+    @GetMapping("/get-visitor-token")
+    public String getVisitorToken() {
+        return this.visitorService.generateVisitorToken();
+    }
+
     @PostMapping("/is-online")
-    public Boolean online(ChatUser chatUser) {
-        return UserContainer.getContainer().online(chatUser);
+    public Boolean online(ChatUserQuery chatUser) {
+        return UserContainer.getContainer().online(ChatUser.convertFromQuery(chatUser));
     }
 
     @CrossOrigin(origins = {"*"})
@@ -48,27 +58,21 @@ public class ChatV2Controller {
     }
 
     @PostMapping("/session/read")
-    public Boolean readSession(@RequestBody MessageReadParam messageRead) throws BusinessException {
-        LoginUser loginUser = ThreadContext.getLoginToken();
-        messageRead.setUser(ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory()));
-        chatService.read(messageRead);
+    public Boolean readSession(@RequestBody MessageReadQuery messageReadQuery) throws BusinessException {
+        chatService.read(messageReadQuery);
         return true;
     }
 
     @PostMapping("/sessions")
-    public List<SessionDTO> getSessions() throws BusinessException {
+    public List<SessionDTO> getSessions() {
         LoginUser loginUser = ThreadContext.getLoginToken();
         ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
         return chatService.fetchSessions(chatUser);
     }
 
     @PostMapping("/cancel")
-    public Boolean cancel(@RequestBody MessageCancelParam messageCancel) {
+    public Boolean cancel(@RequestBody MessageCancelQuery messageCancel) {
         try {
-            LoginUser loginUser = ThreadContext.getLoginToken();
-            Long userId = loginUser.getUserId();
-            Integer category = loginUser.getCategory();
-            messageCancel.setSender(ChatUser.longUserId(userId, category));
             chatService.cancel(messageCancel);
         } catch (Exception e) {
             logger.error("cancel error", e);

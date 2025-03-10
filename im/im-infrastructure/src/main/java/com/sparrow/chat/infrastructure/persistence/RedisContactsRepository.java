@@ -1,12 +1,12 @@
 package com.sparrow.chat.infrastructure.persistence;
 
+import com.sparrow.chat.domain.repository.ContactRepository;
+import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
-import com.sparrow.chat.protocol.ChatUser;
 import com.sparrow.chat.protocol.dto.QunDTO;
 import com.sparrow.chat.protocol.dto.UserDTO;
-import com.sparrow.chat.repository.ContactRepository;
-import com.sparrow.chat.repository.QunRepository;
+import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.json.Json;
 import com.sparrow.support.PlaceHolderParser;
@@ -74,9 +74,6 @@ public class RedisContactsRepository implements ContactRepository {
                 continue;
             }
             QunDTO qunDto = this.json.parse(qun, QunDTO.class);
-            List<Long> userIds = qunMembersMap.get(qunDto.getQunId());
-            List<UserDTO> userDtos = this.getUsersByIds(userIds);
-            qunDto.setMembers(userDtos);
             qunDtos.add(qunDto);
         }
         return qunDtos;
@@ -107,8 +104,8 @@ public class RedisContactsRepository implements ContactRepository {
                 logger.error("user dto is null");
                 continue;
             }
-            ChatUser chatUser=userDto.getChatUser();
-            userDto.setAddTime(friendIdAddTimeMap.get(chatUser.getLongUserId()));
+            ChatUserQuery chatUser=userDto.getChatUser();
+            userDto.setAddTime(friendIdAddTimeMap.get(Long.valueOf(chatUser.getId())));
         }
         Collections.sort(userDtos);
         return userDtos;

@@ -1,4 +1,4 @@
-package com.sparrow.chat.repository;
+package com.sparrow.chat.domain.repository;
 
 import com.sparrow.chat.protocol.dto.QunDTO;
 import com.sparrow.chat.protocol.dto.UserDTO;

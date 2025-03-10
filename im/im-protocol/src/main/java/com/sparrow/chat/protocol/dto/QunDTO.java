@@ -2,8 +2,6 @@ package com.sparrow.chat.protocol.dto;
 
 import com.sparrow.protocol.DTO;
 
-import java.util.List;
-
 public class QunDTO implements DTO {
     /**
      * 群id
@@ -33,10 +31,6 @@ public class QunDTO implements DTO {
      * 创建人 群主
      */
     private Integer createUserId;
-    /**
-     * 群成员
-     */
-    private List<UserDTO> members;
 
     public String getQunId() {
         return qunId;
@@ -84,14 +78,6 @@ public class QunDTO implements DTO {
 
     public void setAnnouncement(String announcement) {
         this.announcement = announcement;
-    }
-
-    public List<UserDTO> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<UserDTO> members) {
-        this.members = members;
     }
 
     public Integer getCreateUserId() {
