@@ -61,7 +61,7 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
         //握手有先后顺序
         pipeline.addLast(new WebSocketIndexPageHandler(WEBSOCKET_PATH));
 
-        pipeline.addLast(new OutOfMemoryHandler());
-        //pipeline.addLast(new WebSocketFrameHandler());
+        //pipeline.addLast(new OutOfMemoryHandler());
+        pipeline.addLast(new WebSocketFrameHandler());
     }
 }
