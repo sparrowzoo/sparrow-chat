@@ -1,6 +1,6 @@
 package com.sparrow.chat.contact.test;
 
-import com.sparrow.datasource.DataSourceFactoryImpl;
+import com.sparrow.orm.datasource.DataSourceFactoryImpl;
 import com.sparrow.spring.starter.SparrowDataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
