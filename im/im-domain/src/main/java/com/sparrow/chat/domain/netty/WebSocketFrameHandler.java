@@ -56,10 +56,12 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             // Send the uppercase string back.
             String content = ((TextWebSocketFrame) frame).text();
             if ("ping".equalsIgnoreCase(content)) {
-                frame.retain();
                 ctx.channel().writeAndFlush(new TextWebSocketFrame(Chat.RESPONSE_TEXT_PONG));
             }
-        } else if (frame instanceof BinaryWebSocketFrame) {
+            return;
+        }
+
+        if (frame instanceof BinaryWebSocketFrame) {
             BinaryWebSocketFrame msg = (BinaryWebSocketFrame) frame;
             ByteBuf content = msg.content();
             Protocol protocol = new Protocol(content);
@@ -67,13 +69,15 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             //从发前channel 中获取当前用户id
             protocol.setSender(currentUser);
             ChatService chatService = ApplicationContext.getContainer().getBean("chatService");
-            //chatService.saveMessage(protocol);
+            chatService.saveMessage(protocol);
             if (protocol.getChatType() == Chat.CHAT_TYPE_1_2_1 && protocol.getSender().equals(protocol.getReceiver())) {
                 return;
             }
             List<Channel> channels = UserContainer.getContainer().getChannels(protocol.getChatSession(), currentUser);
             this.writeAndFlush(ctx, protocol.getChatType(), msg, channels);
-        } else if (frame instanceof ContinuationWebSocketFrame) {
+            return;
+        }
+        if (frame instanceof ContinuationWebSocketFrame) {
             ContinuationWebSocketFrame msg = (ContinuationWebSocketFrame) frame;
         }
     }
