@@ -1,6 +1,6 @@
 package com.sparrow.chat.infrastructure.converter;
 
-import com.sparrow.chat.domain.netty.Protocol;
+import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import org.springframework.stereotype.Component;
 

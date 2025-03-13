@@ -1,7 +1,7 @@
 package com.sparrow.chat.domain.repository;
 
 import com.sparrow.chat.domain.bo.ChatUser;
-import com.sparrow.chat.domain.netty.Protocol;
+import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
 import com.sparrow.chat.protocol.query.MessageReadQuery;

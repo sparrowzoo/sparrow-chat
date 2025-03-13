@@ -56,11 +56,15 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
         //handlerAdded
         //ctx.pipeline().addBefore(ctx.name(), WebSocketServerProtocolHandshakeHandler.class.getName(), new WebSocketServerProtocolHandshakeHandler(this.websocketPath, this.subprotocols, this.allowExtensions, this.maxFramePayloadLength, this.allowMaskMismatch, this.checkStartsWith));
 
+        //‌协议层限制‌
+        //在特定协议处理中限制数据帧大小（如WebSocket）：
+        //设置WebSocket帧最大长度为1MB
+        //WebSocketServerProtocolHandler
+        //new WebSocketServerProtocolHandler("/ws", "*", true, 1048576);  // 参数
         pipeline.addLast(new WebSocketServerProtocolSupportHandshake(WEBSOCKET_PATH, 65536 * 10));
         pipeline.addLast(new IdleStateHandler(10, 10, 10));
         //握手有先后顺序
         pipeline.addLast(new WebSocketIndexPageHandler(WEBSOCKET_PATH));
-
         pipeline.addLast(new OutOfMemoryHandler());
         //pipeline.addLast(new WebSocketFrameHandler());
     }

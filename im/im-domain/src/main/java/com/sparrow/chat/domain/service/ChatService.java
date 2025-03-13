@@ -2,8 +2,8 @@ package com.sparrow.chat.domain.service;
 
 import com.sparrow.chat.domain.bo.ChatSession;
 import com.sparrow.chat.domain.bo.ChatUser;
-import com.sparrow.chat.domain.netty.CancelProtocol;
-import com.sparrow.chat.domain.netty.Protocol;
+import com.sparrow.chat.domain.bo.CancelProtocol;
+import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.repository.ContactRepository;
 import com.sparrow.chat.domain.repository.MessageRepository;

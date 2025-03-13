@@ -1,7 +1,5 @@
-package com.sparrow.chat.domain.netty;
+package com.sparrow.chat.domain.bo;
 
-import com.sparrow.chat.domain.bo.ChatSession;
-import com.sparrow.chat.domain.bo.ChatUser;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 

@@ -1,4 +1,4 @@
-package com.sparrow.chat.domain.netty;
+package com.sparrow.chat.domain.bo;
 
 import com.sparrow.chat.protocol.constant.Chat;
 import io.netty.buffer.ByteBuf;

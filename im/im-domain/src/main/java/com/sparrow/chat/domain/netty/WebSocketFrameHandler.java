@@ -15,6 +15,7 @@
  */
 package com.sparrow.chat.domain.netty;
 
+import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.domain.service.ChatService;
 import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.protocol.constant.Chat;

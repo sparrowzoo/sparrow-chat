@@ -2,7 +2,7 @@ package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.bo.MessageKey;
-import com.sparrow.chat.domain.netty.Protocol;
+import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.domain.repository.MessageRepository;
 import com.sparrow.chat.infrastructure.commons.ConfigKey;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
