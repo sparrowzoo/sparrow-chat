@@ -4,7 +4,7 @@ import com.sparrow.chat.contact.bo.QunMemberBO;
 import com.sparrow.chat.contact.service.QunService;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.utility.CollectionsUtility;
-import com.sparrowzoo.chat.contact.QunServiceApi;
+import com.sparrowzoo.chat.dao.sparrow.dao.contact.QunServiceApi;
 
 import javax.inject.Inject;
 import javax.inject.Named;

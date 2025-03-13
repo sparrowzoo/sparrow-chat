@@ -21,5 +21,8 @@
         <module>im-infrastructure</module>
         <module>im-main-spring-boot</module>
         <module>im-protocol</module>
+        <module>im-po</module>
+        <module>im-dao-api</module>
+        <module>im-dao-sparrow</module>
     </modules>
 </project>
