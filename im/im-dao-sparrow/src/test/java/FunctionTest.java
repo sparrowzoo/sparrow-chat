@@ -1,10 +1,8 @@
 import com.sparrowzoo.chat.dao.sparrow.dao.po.Session;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.function.Function;
 
 @FunctionalInterface
@@ -12,7 +10,7 @@ interface SerializableFunction<T, R> extends Function<T, R>, Serializable {}
 
 public class FunctionTest {
     // 接收方法引用作为参数
-    public static void processString(SerializableFunction<Session, String> function, String input) {
+    public static void processString(SerializableFunction<Session,?> function, String input) {
         System.out.println(getMethodName(function));
     }
 

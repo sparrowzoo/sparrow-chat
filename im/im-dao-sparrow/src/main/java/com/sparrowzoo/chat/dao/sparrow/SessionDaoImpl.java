@@ -1,16 +1,12 @@
 package com.sparrowzoo.chat.dao.sparrow;
 
-import com.sparrow.orm.query.BooleanCriteria;
-import com.sparrow.orm.query.Criteria;
-import com.sparrow.orm.query.SearchCriteria;
+import com.sparrow.orm.query.*;
 import com.sparrow.orm.template.impl.ORMStrategy;
 import com.sparrowzoo.chat.dao.sparrow.dao.SessionDao;
 import com.sparrowzoo.chat.dao.sparrow.dao.po.Session;
 
 import javax.inject.Named;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 @Named
 public class SessionDaoImpl extends ORMStrategy<Session, Long> implements SessionDao {
@@ -19,10 +15,25 @@ public class SessionDaoImpl extends ORMStrategy<Session, Long> implements Sessio
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
-                                (Criteria.field("session.userId").equal(userId))
+                                (Criteria.field(Session::getUserId).equal(userId))
                         .and
-                                (Criteria.field("session.category").equal(category)));
+                                (Criteria.field(Session::getCategory).equal(category)));
         return this.getList(searchCriteria);
 
+    }
+
+    @Override
+    public Boolean read(String userId, Integer category, String sessionKey) {
+        UpdateCriteria updateCriteria = new UpdateCriteria();
+        updateCriteria.set(UpdateSetClausePair.field(Session::getLastReadTime).equal(System.currentTimeMillis()));
+        updateCriteria.setWhere(
+                BooleanCriteria.criteria
+                                (Criteria.field(Session::getUserId).equal(userId))
+                        .and
+                                (Criteria.field(Session::getCategory).equal(category))
+                        .and
+                                (Criteria.field(Session::getSessionKey).equal(sessionKey)));
+        this.update(updateCriteria);
+        return true;
     }
 }

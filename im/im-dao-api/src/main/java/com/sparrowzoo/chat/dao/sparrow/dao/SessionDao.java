@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface SessionDao extends DaoSupport<Session, Long> {
     List<Session> findById(String userId, Integer category);
+
+    Boolean read(String userId,Integer category, String sessionKey);
 }

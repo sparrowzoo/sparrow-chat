@@ -10,7 +10,6 @@ import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.MessageConverter;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
-import com.sparrow.chat.protocol.query.MessageReadQuery;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.exception.Asserts;
 import com.sparrow.json.Json;
@@ -21,6 +20,7 @@ import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import com.sparrow.utility.ConfigUtility;
 import com.sparrow.utility.FileUtility;
+import com.sparrowzoo.chat.dao.sparrow.dao.MessageDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,8 @@ public class RedisMessageRepository implements MessageRepository {
     private RedisTemplate redisTemplate;
     @Autowired
     private MessageConverter messageConverter;
-
+    @Autowired
+    private MessageDao messageDao;
     private Json json = JsonFactory.getProvider();
 
     private String generateImageId(ChatUser user) {
@@ -124,12 +125,7 @@ public class RedisMessageRepository implements MessageRepository {
         redisTemplate.expire(messageKey, MESSAGE_EXPIRE_DAYS, TimeUnit.DAYS);
     }
 
-    @Override
-    public void read(MessageReadQuery messageRead, ChatUser chatUser) {
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserKey(messageRead.getSessionKey(),chatUser);
-        String sessionReadKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_READ, propertyAccessor);
-        redisTemplate.opsForValue().set(sessionReadKey, System.currentTimeMillis() + "");
-    }
+
 
     @Override
     public Map<String, Long> getLastRead(ChatUser me, List<String> sessionKeys) {

@@ -1,17 +1,20 @@
 package com.sparrow.chat.infrastructure.persistence;
 
-import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
-import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.domain.bo.ChatSession;
 import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.repository.ContactRepository;
 import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.chat.domain.repository.SessionRepository;
+import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
+import com.sparrow.chat.infrastructure.commons.RedisKey;
+import com.sparrow.chat.protocol.query.MessageReadQuery;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.json.Json;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
+import com.sparrowzoo.chat.dao.sparrow.dao.SessionDao;
+import com.sparrowzoo.chat.dao.sparrow.dao.po.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -34,9 +37,13 @@ public class RedisSessionRepository implements SessionRepository {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private SessionDao sessionDao;
+
     private Json json = JsonFactory.getProvider();
 
-    @Override public void saveSession(ChatSession session, ChatUser currentUser) {
+    @Override
+    public void saveSession(ChatSession session, ChatUser currentUser) {
         this.addNewSessionForUserId(session, currentUser);
         //1 to 1 推送
         if (session.getChatType() == CHAT_TYPE_1_2_1) {
@@ -50,9 +57,26 @@ public class RedisSessionRepository implements SessionRepository {
         }
     }
 
+    private Session convert(ChatSession session, ChatUser owner) {
+        Session s = new Session();
+        s.setUserId(owner.getId());
+        s.setCategory(owner.getCategory());
+        s.setSessionKey(session.getSessionKey());
+        s.setChatType(session.getChatType());
+        s.setGmtCreate(System.currentTimeMillis());
+        s.setLastReadTime(System.currentTimeMillis());
+        return s;
+    }
+
     private void addNewSessionForUserId(ChatSession session, ChatUser chatUser) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
+        Double score = this.redisTemplate.opsForZSet().score(userSessionKey, session.getSessionKey());
+        if (score != null) {
+            // 已经存在，不再添加
+            return;
+        }
+        sessionDao.insert(this.convert(session, chatUser));
         this.redisTemplate.opsForZSet().add(userSessionKey, session.json(), System.currentTimeMillis());
         if (this.redisTemplate.opsForZSet().size(userSessionKey) > MAX_SESSION_OF_USER) {
             this.redisTemplate.opsForZSet().removeRange(userSessionKey, 0, 0);
@@ -60,7 +84,8 @@ public class RedisSessionRepository implements SessionRepository {
         redisTemplate.expire(userSessionKey, MESSAGE_EXPIRE_DAYS, TimeUnit.DAYS);
     }
 
-    @Override public List<ChatSession> getSessions(ChatUser user) {
+    @Override
+    public List<ChatSession> getSessions(ChatUser user) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(user.key());
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
         Set<String> charSessions = this.redisTemplate.opsForZSet().range(userSessionKey, 0, MAX_SESSION_OF_USER);
@@ -70,5 +95,13 @@ public class RedisSessionRepository implements SessionRepository {
             chatSessionList.add(chatSession);
         }
         return chatSessionList;
+    }
+
+    @Override
+    public void read(MessageReadQuery messageRead, ChatUser chatUser) {
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserKey(messageRead.getSessionKey(),chatUser);
+        String sessionReadKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_READ, propertyAccessor);
+        redisTemplate.opsForValue().set(sessionReadKey, System.currentTimeMillis() + "");
+        this.sessionDao.read(chatUser.getId(),chatUser.getCategory(), messageRead.getSessionKey());
     }
 }

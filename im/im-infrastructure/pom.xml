@@ -33,6 +33,11 @@
             <version>1.0.0-SNAPSHOT</version>
             <artifactId>contact-infrastructure</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo.chat</groupId>
+            <version>1.0.0-SNAPSHOT</version>
+            <artifactId>im-dao-sparrow</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
