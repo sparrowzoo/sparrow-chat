@@ -1,4 +1,4 @@
-import com.sparrowzoo.chat.dao.sparrow.dao.po.Session;
+import com.sparrow.chat.im.po.Session;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;

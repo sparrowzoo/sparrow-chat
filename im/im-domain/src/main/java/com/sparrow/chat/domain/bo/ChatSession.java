@@ -110,6 +110,6 @@ public class ChatSession {
     }
 
     public SessionDTO toSessionDTO() {
-        return new SessionDTO(this.chatType,this.getSessionKey());
+        return new SessionDTO(this.chatType, this.getSessionKey(), 0L);
     }
 }

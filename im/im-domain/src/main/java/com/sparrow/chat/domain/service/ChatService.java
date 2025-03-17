@@ -9,12 +9,9 @@ import com.sparrow.chat.domain.repository.ContactRepository;
 import com.sparrow.chat.domain.repository.MessageRepository;
 import com.sparrow.chat.domain.repository.SessionRepository;
 import com.sparrow.chat.protocol.constant.Chat;
-import com.sparrow.chat.protocol.dto.ContactsDTO;
-import com.sparrow.chat.protocol.dto.QunDTO;
-import com.sparrow.chat.protocol.dto.SessionDTO;
-import com.sparrow.chat.protocol.dto.UserDTO;
+import com.sparrow.chat.protocol.dto.*;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
-import com.sparrow.chat.protocol.query.MessageReadQuery;
+import com.sparrow.chat.protocol.query.SessionReadQuery;
 import com.sparrow.exception.Asserts;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
@@ -25,9 +22,7 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class ChatService {
@@ -50,7 +45,7 @@ public class ChatService {
         this.sessionRepository.saveSession(protocol.getChatSession(), protocol.getSender());
     }
 
-    public void read(MessageReadQuery messageReadQuery) throws BusinessException {
+    public void read(SessionReadQuery messageReadQuery) throws BusinessException {
         LoginUser loginUser = ThreadContext.getLoginToken();
         ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
         this.sessionRepository.read(messageReadQuery, chatUser);
@@ -80,21 +75,22 @@ public class ChatService {
         }
     }
 
-    public List<SessionDTO> fetchSessions(ChatUser user) {
-        List<ChatSession> chatSessions = this.sessionRepository.getSessions(user);
-        List<SessionDTO> sessions = new ArrayList<>(chatSessions.size());
-        List<String> sessionKeys = new ArrayList<>(chatSessions.size());
-        for (ChatSession session : chatSessions) {
-            sessionKeys.add(session.getSessionKey());
-            sessions.add(new SessionDTO(session.getChatType(), session.getSessionKey()));
-        }
-        Map<String, Long> lastReadMap = this.messageRepository.getLastRead(user, sessionKeys);
-        for (SessionDTO session : sessions) {
-            String sessionKey = session.getSessionKey();
-            if (lastReadMap.containsKey(sessionKey)) {
-                session.setLastReadTime(lastReadMap.get(sessionKey));
-            }
-        }
-        return sessions;
+    public List<SessionDTO> fetchSessions() throws BusinessException {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        Asserts.isTrue(loginUser == null, SparrowError.USER_NOT_LOGIN);
+        ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
+        return this.sessionRepository.getSessions(chatUser);
+    }
+
+    public List<MessageDTO> fetchMessages(String sessionKey) throws BusinessException {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        Asserts.isTrue(loginUser == null, SparrowError.USER_NOT_LOGIN);
+        ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
+        this.sessionRepository.canAccessSession(sessionKey, chatUser);
+        return this.messageRepository.getMessageBySession(sessionKey);
+    }
+
+    public List<MessageDTO> fetchHistoryMessages(String sessionKey, long lastServerTime) {
+        return this.messageRepository.getHistoryMessage(sessionKey, lastServerTime);
     }
 }

@@ -55,7 +55,7 @@ public class ContactMQPublisher implements MQPublisher, InitializingBean {
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                List<QunBO> qunBOS = qunRepository.queryQunPlaza();
+                List<QunBO> qunBOS =null;// qunRepository.queryQunPlaza();
                 for (QunBO qunBO : qunBOS) {
                     try {
                         publish(new QunMemberEvent(qunBO.getId(), null));

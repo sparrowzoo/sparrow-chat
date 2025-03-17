@@ -15,7 +15,6 @@
  */
 package com.sparrow.chat.domain.netty;
 
-import com.sparrow.chat.domain.demo.OutOfMemoryHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -65,7 +64,7 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
         pipeline.addLast(new IdleStateHandler(10, 10, 10));
         //握手有先后顺序
         pipeline.addLast(new WebSocketIndexPageHandler(WEBSOCKET_PATH));
-        pipeline.addLast(new OutOfMemoryHandler());
-        //pipeline.addLast(new WebSocketFrameHandler());
+        //pipeline.addLast(new OutOfMemoryHandler());
+        pipeline.addLast(new WebSocketFrameHandler());
     }
 }

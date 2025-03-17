@@ -1,4 +1,4 @@
-package com.sparrowzoo.chat.dao.sparrow.dao.contact;
+package com.sparrow.chat.dao.sparrow.contact;
 
 import com.sparrow.protocol.BusinessException;
 

@@ -11,8 +11,8 @@ import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.ThreadContext;
 import com.sparrow.protocol.constant.magic.Symbol;
+import com.sparrow.spring.starter.config.SparrowConfig;
 import com.sparrow.utility.StringUtility;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.inject.Named;
 import java.time.Duration;
@@ -29,11 +29,7 @@ public class SecretServiceImpl implements SecretService {
      */
     private static final String SPARROW_PROD_PROFILE = "prod";
 
-    @Value("${sparrow.user.identify_secret_key}")
-    private String secretKey;
-
-    @Value("${sparrow.profile}")
-    private String profile;
+    private SparrowConfig sparrowConfig;
 
     private static final long TIMEOUT = Duration.ofHours(24).toMillis();
 
@@ -71,9 +67,9 @@ public class SecretServiceImpl implements SecretService {
 
     private String getSecretKey() {
         //如果当前是生产环境，我在生产环境的服务器上通过环境变量来获取，保证安全性
-        if (this.profile.equalsIgnoreCase(SPARROW_PROD_PROFILE)) {
+        if (this.sparrowConfig.getProfile().equalsIgnoreCase(SPARROW_PROD_PROFILE)) {
             return System.getenv(USER_IDENTIFY_SECRET_KEY);
         }
-        return this.secretKey;
+        return this.sparrowConfig.getEncryptKey();
     }
 }

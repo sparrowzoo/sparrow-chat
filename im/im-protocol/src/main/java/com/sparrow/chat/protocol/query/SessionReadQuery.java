@@ -1,6 +1,6 @@
 package com.sparrow.chat.protocol.query;
 
-public class MessageReadQuery {
+public class SessionReadQuery {
     private String sessionKey;
 
     public String getSessionKey() {

@@ -1,5 +1,6 @@
-package com.sparrowzoo.chat.dao.sparrow.dao.po;
+package com.sparrow.chat.im.po;
 
+import com.sparrow.protocol.POJO;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -8,13 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Data
-public class Session {
+public class Session implements POJO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int(11) UNSIGNED AUTO_INCREMENT")
+    @Column(name = "id", columnDefinition = "int UNSIGNED")
     private Long id;
 
-    @Column(name = "user_id", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '用户id")
+    @Column(name = "user_id", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '用户id'")
     private String userId;
 
 
@@ -27,10 +28,10 @@ public class Session {
     @Column(name = "chat_type", columnDefinition = "tinyint(2) NOT NULL DEFAULT 0 COMMENT '聊天类型 0 1v1 1 1vn'")
     private Integer chatType;
 
-    @Column(name = "gmt_create", columnDefinition = "bigint(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间'")
+    @Column(name = "gmt_create", columnDefinition = "bigint UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间'")
     private Long gmtCreate;
 
-    @Column(name = "last_read_time", columnDefinition = "bigint(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '最后阅读时间'")
+    @Column(name = "last_read_time", columnDefinition = "bigint UNSIGNED NOT NULL DEFAULT 0 COMMENT '最后阅读时间'")
     private Long lastReadTime;
 
 }

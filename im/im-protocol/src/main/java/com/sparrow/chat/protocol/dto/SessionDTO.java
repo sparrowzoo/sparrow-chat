@@ -5,8 +5,12 @@ import com.sparrow.protocol.VO;
 public class SessionDTO implements VO {
 
     public SessionDTO(int chatType, String sessionKey) {
+        this(chatType, sessionKey,0L);
+    }
+    public SessionDTO(int chatType, String sessionKey,Long lastReadTime) {
         this.chatType = chatType;
         this.sessionKey = sessionKey;
+        this.lastReadTime = lastReadTime;
     }
 
     private int chatType;

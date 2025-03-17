@@ -20,9 +20,9 @@ fi
 options_array=(${options//,/ })
 for option in ${options_array[@]}
 do
-  echo java  -classpath $SPARROW_CODER_HOME/$sparrow_coder_name:$class_path  com.sparrow.coding.JavaMain $option $2 $3
+#  echo   java  -classpath $SPARROW_CODER_HOME/$sparrow_coder_name:$class_path  com.sparrow.coding.JavaMain $option $2 $3
 
-  #java  -classpath $SPARROW_CODER_HOME/$sparrow_coder_name:$class_path  com.sparrow.coding.JavaMain $option $2 $3
+  java  -classpath $SPARROW_CODER_HOME/$sparrow_coder_name:$class_path  com.sparrow.coding.JavaMain $option $2 $3
 done
 
 

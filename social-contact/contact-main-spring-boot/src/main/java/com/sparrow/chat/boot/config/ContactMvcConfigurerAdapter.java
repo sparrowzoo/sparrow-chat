@@ -6,6 +6,7 @@ import com.sparrow.file.servlet.FileUpload;
 import com.sparrow.mq.DefaultQueueHandlerMappingContainer;
 import com.sparrow.mq.EventHandlerMappingContainer;
 import com.sparrow.spring.starter.SpringServletContainer;
+import com.sparrow.spring.starter.config.SparrowConfig;
 import com.sparrow.spring.starter.filter.AccessMonitorFilter;
 import com.sparrow.spring.starter.filter.ClientInformationFilter;
 import com.sparrow.spring.starter.monitor.Monitor;
@@ -17,7 +18,7 @@ import com.sparrow.support.web.GlobalAttributeFilter;
 import com.sparrow.support.web.MonolithicLoginUserFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -33,12 +34,10 @@ import java.util.List;
 @Configuration
 public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
     private static Logger logger = LoggerFactory.getLogger(WebMvcConfigurer.class);
-    @Value("${mock_login_user}")
-    private Boolean mockUser;
     @Inject
     private IpSupport ipSupport;
-    @Value("${authenticator.white.list}")
-    private List<String> whiteList;
+    @Autowired
+    private SparrowConfig sparrowConfig;
 
     @Inject
     private SpringServletContainer springServletContainer;
@@ -91,15 +90,22 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
 
     @Bean
     MonolithicLoginUserFilter loginTokenFilter() {
-        return new MonolithicLoginUserFilter(authenticator, this.mockUser, this.whiteList, null);
+        return new MonolithicLoginUserFilter(
+                authenticator,
+                this.sparrowConfig.getMockUser(),
+                null,
+                this.sparrowConfig.getSupportTemplate(),
+                this.sparrowConfig.getApiPrefix());
     }
 
     @Bean
     public FilterRegistrationBean<Filter> loginTokenFilterBean() {
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(loginTokenFilter());
+        // 一个* 不允许多个***
         filterRegistrationBean.addUrlPatterns("/*");
         filterRegistrationBean.setName("loginTokenFilter");
+        filterRegistrationBean.addInitParameter("excludePatterns", this.sparrowConfig.getExcludePatterns());
         filterRegistrationBean.setOrder(1);
         //多个filter的时候order的数值越小 则优先级越高
         return filterRegistrationBean;

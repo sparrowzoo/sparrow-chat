@@ -19,4 +19,6 @@ public interface MessageRepository {
     Map<String, Long> getLastRead(ChatUser me, List<String> sessionKeys);
 
     List<MessageDTO> getMessageBySession(String session);
+
+    List<MessageDTO>  getHistoryMessage(String session, long lastServerTime);
 }

@@ -1,5 +1,6 @@
-package com.sparrowzoo.chat.dao.sparrow.dao.po;
+package com.sparrow.chat.im.po;
 
+import com.sparrow.protocol.POJO;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -8,10 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Data
-public class Message {
+public class Message implements POJO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int(11) UNSIGNED AUTO_INCREMENT")
+    @Column(name = "id", columnDefinition = "int UNSIGNED")
     /**
      * ID 主键自增
      */
@@ -42,8 +43,8 @@ public class Message {
     /**
      * 接收者类型
      */
-    @Column(name = "receiver_type", columnDefinition = "tinyint(2) not null default 0 comment '接收者类型 0-游客 1-用户'")
-    private Integer receiverType;
+    @Column(name = "receiver_category", columnDefinition = "tinyint not null default 0 comment '接收者类型 0-游客 1-用户'")
+    private Integer receiverCategory;
 
     /**
      * 会话key
@@ -53,7 +54,7 @@ public class Message {
     /**
      * 会话 0-单聊 1-群聊
      */
-    @Column(name = "chat_type", columnDefinition = "tinyint(2) not null default 0 comment '会话 0-单聊 1-群聊'")
+    @Column(name = "chat_type", columnDefinition = "tinyint not null default 0 comment '会话 0-单聊 1-群聊'")
     private Integer chatType;
     /**
      * 消息内容
@@ -63,14 +64,14 @@ public class Message {
     /**
      * 服务器时间
      */
-    @Column(name = "server_time", columnDefinition = "bigint(20) not null default 0 comment '服务器时间'")
+    @Column(name = "server_time", columnDefinition = "bigint not null default 0 comment '服务器时间'")
     private Long serverTime;
     /**
      * 客户端发送时间
      */
-    @Column(name = "client_send_time", columnDefinition = "bigint(20) not null default 0 comment '客户端发送时间'")
+    @Column(name = "client_send_time", columnDefinition = "bigint not null default 0 comment '客户端发送时间'")
     private Long clientSendTime;
 
-    @Column(name = "ip", columnDefinition = "int(11) UNSIGNED not null default 0 comment 'ip地址'")
+    @Column(name = "ip", columnDefinition = "int UNSIGNED not null default 0 comment 'ip地址'")
     private Integer ip;
 }
