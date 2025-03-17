@@ -22,8 +22,6 @@ import javax.servlet.Filter;
 public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
     private static Logger logger = LoggerFactory.getLogger(WebMvcConfigurer.class);
 
-    @Value("${mock_login_user}")
-    private Boolean mockLoginUser;
 
     @Autowired
     private SparrowConfig sparrowConfig;
@@ -38,7 +36,7 @@ public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
     @Bean
     MonolithicLoginUserFilter loginTokenFilter() {
         return new MonolithicLoginUserFilter(authenticator(),
-                this.mockLoginUser,
+                this.sparrowConfig.getMockUser(),
                 null,
                 this.sparrowConfig.getSupportTemplate(),
                 this.sparrowConfig.getApiPrefix());

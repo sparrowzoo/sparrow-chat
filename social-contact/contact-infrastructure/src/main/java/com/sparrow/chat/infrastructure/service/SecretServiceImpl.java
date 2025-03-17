@@ -14,6 +14,7 @@ import com.sparrow.protocol.constant.magic.Symbol;
 import com.sparrow.spring.starter.config.SparrowConfig;
 import com.sparrow.utility.StringUtility;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.time.Duration;
 
@@ -29,6 +30,7 @@ public class SecretServiceImpl implements SecretService {
      */
     private static final String SPARROW_PROD_PROFILE = "prod";
 
+    @Inject
     private SparrowConfig sparrowConfig;
 
     private static final long TIMEOUT = Duration.ofHours(24).toMillis();

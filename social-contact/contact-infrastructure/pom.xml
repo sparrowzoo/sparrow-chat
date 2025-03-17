@@ -44,6 +44,5 @@
             <groupId>com.sparrowzoo</groupId>
             <artifactId>sparrow-starter</artifactId>
         </dependency>
-
     </dependencies>
 </project>
