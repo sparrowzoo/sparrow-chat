@@ -77,7 +77,7 @@ public class UserContainer {
             return Collections.singletonList(targetChannel);
         }
         QunRepository qunRepository = SpringContext.getContext().getBean(QunRepository.class);
-        String sessionKey = chatSession.getSessionKey();
+        String sessionKey = chatSession.getId();
         List<Long> userIds = qunRepository.getUserIdList(sessionKey);
         List<Channel> channels = new ArrayList<>(userIds.size());
         Long currentUserId = Long.parseLong(currentUser.getId());
@@ -88,7 +88,7 @@ public class UserContainer {
             ChatUser chatUser = ChatUser.longUserId(userId, LoginUser.CATEGORY_REGISTER);
             Channel channel = this.getChannel(chatUser);
             if (channel != null) {
-                logger.info("fetch user channel,session-key {},user-id {},channel {}", chatSession.getSessionKey(), userId, channel);
+                logger.info("fetch user channel,session-key {},user-id {},channel {}", chatSession.getId(), userId, channel);
                 channels.add(channel);
                 continue;
             }

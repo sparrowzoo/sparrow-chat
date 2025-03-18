@@ -1,10 +1,10 @@
 package com.sparrow.chat.domain.bo;
 
 import com.sparrow.chat.protocol.dto.SessionDTO;
-import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.protocol.constant.magic.Symbol;
 
-import static com.sparrow.chat.protocol.constant.Chat.*;
+import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_1;
+import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_N;
 
 /**
  * 会话不应该与用户相关
@@ -27,31 +27,31 @@ public class ChatSession {
         return new ChatSession(CHAT_TYPE_1_2_1, sender, null, sessionKey);
     }
 
-    public static ChatSession createSession(Integer chatType,String sessionKey) {
-        return new ChatSession(chatType, null,null, sessionKey);
+    public static ChatSession createSession(Integer chatType,String id) {
+        return new ChatSession(chatType, null,null, id);
     }
 
     public static ChatSession create1To1Session(ChatUser sender, ChatUser receiver) {
         return new ChatSession(CHAT_TYPE_1_2_1, sender, receiver, null);
     }
 
-    public static ChatSession createQunSession(ChatUser sender, String sessionKey) {
-        return new ChatSession(CHAT_TYPE_1_2_N, sender, null, sessionKey);
+    public static ChatSession createQunSession(ChatUser sender, String id) {
+        return new ChatSession(CHAT_TYPE_1_2_N, sender, null, id);
     }
 
-    private ChatSession(int chatType, ChatUser sender, ChatUser receiver, String sessionKey) {
+    private ChatSession(int chatType, ChatUser sender, ChatUser receiver, String id) {
         this.chatType = chatType;
-        if (sessionKey != null) {
-            this.sessionKey = sessionKey;
+        if (id != null) {
+            this.id = id;
             return;
         }
         if (chatType == CHAT_TYPE_1_2_1) {
-            this.sessionKey = this.generateKey(sender, receiver);
+            this.id = this.generateId(sender, receiver);
         }
     }
 
     private int chatType;
-    private String sessionKey;
+    private String id;
 
     public int getChatType() {
         return chatType;
@@ -61,26 +61,23 @@ public class ChatSession {
         this.chatType = chatType;
     }
 
-    public String getSessionKey() {
-        return sessionKey;
+    public String getId() {
+        return id;
     }
 
-    public void setSessionKey(String sessionKey) {
-        this.sessionKey = sessionKey;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String json() {
-        return "{" +
-                "'chatType':" + chatType +
-                ",'sessionKey':'" + sessionKey + '\'' +
-                '}';
+    public String key() {
+        return chatType+ id;
     }
 
     public boolean isOne2One() {
         return this.chatType == CHAT_TYPE_1_2_1;
     }
 
-    private String generateKey(ChatUser sender, ChatUser receiver) {
+    private String generateId(ChatUser sender, ChatUser receiver) {
         if (sender == null || receiver == null) {
             return "";
         }
@@ -91,6 +88,15 @@ public class ChatSession {
         return receiver.key() + "-" + sender.key();
     }
 
+    public ChatSession parse(String sessionKey) {
+        if (sessionKey == null) {
+            return null;
+        }
+        int chatType = Integer.parseInt(sessionKey.substring(0, 1));
+        String id = sessionKey.substring(1);
+        return ChatSession.createSession(chatType, id);
+    }
+
     public ChatUser getOppositeUser(ChatUser currentUser) {
         if (currentUser == null) {
             return null;
@@ -99,7 +105,7 @@ public class ChatSession {
             return null;
         }
 
-        String[] userIdArray = this.sessionKey.split(Symbol.HORIZON_LINE);
+        String[] userIdArray = this.id.split(Symbol.HORIZON_LINE);
         if (userIdArray.length != 2) {
             return null;
         }
@@ -115,6 +121,6 @@ public class ChatSession {
     }
 
     public SessionDTO toSessionDTO() {
-        return new SessionDTO(this.chatType, this.getSessionKey(), 0L);
+        return new SessionDTO(this.chatType, this.getId(), 0L);
     }
 }

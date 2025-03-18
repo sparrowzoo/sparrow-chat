@@ -32,7 +32,7 @@ public class SessionConverter {
         Session s = new Session();
         s.setUserId(owner.getId());
         s.setCategory(owner.getCategory());
-        s.setSessionKey(session.getSessionKey());
+        s.setSessionKey(session.getId());
         s.setChatType(session.getChatType());
         s.setGmtCreate(System.currentTimeMillis());
         s.setLastReadTime(System.currentTimeMillis());

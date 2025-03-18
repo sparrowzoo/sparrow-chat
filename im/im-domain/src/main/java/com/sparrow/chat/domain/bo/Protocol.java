@@ -180,7 +180,7 @@ public class Protocol {
         if (this.chatType == CHAT_TYPE_1_2_1) {
             byteBuf.writeBytes(this.receiver.toBytes());
         } else {
-            byte[] sessionBytes = this.chatSession.getSessionKey().getBytes();
+            byte[] sessionBytes = this.chatSession.getId().getBytes();
             byteBuf.writeByte(sessionBytes.length);
             byteBuf.writeBytes(sessionBytes);
         }

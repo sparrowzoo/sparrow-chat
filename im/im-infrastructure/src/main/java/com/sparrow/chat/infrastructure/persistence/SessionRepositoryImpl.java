@@ -11,7 +11,6 @@ import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.SessionConverter;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.params.SessionReadParams;
-import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.exception.Asserts;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
@@ -51,7 +50,7 @@ public class SessionRepositoryImpl implements SessionRepository {
             addNewSessionForUserId(session, oppositeUser);
             return;
         }
-        List<Long> userIdList = this.qunRepository.getUserIdList(session.getSessionKey());
+        List<Long> userIdList = this.qunRepository.getUserIdList(session.getId());
         for (Long userId : userIdList) {
             addNewSessionForUserId(session, ChatUser.longUserId(userId, LoginUser.CATEGORY_REGISTER));
         }
@@ -61,15 +60,15 @@ public class SessionRepositoryImpl implements SessionRepository {
     private void addNewSessionForUserId(ChatSession session, ChatUser chatUser) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
-        Double score = this.redisTemplate.opsForZSet().score(userSessionKey, session.json());
+        Double score = this.redisTemplate.opsForZSet().score(userSessionKey, session.key());
         if (score != null) {
             // 已经存在，不再添加
             return;
         }
-        if (!sessionDao.exist(chatUser.getId(), chatUser.getCategory(), session.getSessionKey())) {
+        if (!sessionDao.exist(chatUser.getId(), chatUser.getCategory(), session.getId())) {
             sessionDao.insert(this.sessionConverter.convert(session, chatUser));
         }
-        this.redisTemplate.opsForZSet().add(userSessionKey, session.json(), System.currentTimeMillis());
+        this.redisTemplate.opsForZSet().add(userSessionKey, session.key(), System.currentTimeMillis());
         if (this.redisTemplate.opsForZSet().size(userSessionKey) > MAX_SESSION_OF_USER) {
             this.redisTemplate.opsForZSet().removeRange(userSessionKey, 0, 0);
         }
@@ -88,7 +87,7 @@ public class SessionRepositoryImpl implements SessionRepository {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
         ChatSession chatSession =ChatSession.createSession(chatType,sessionKey);
-        Double score = this.redisTemplate.opsForZSet().score(userSessionKey, chatSession.json());
+        Double score = this.redisTemplate.opsForZSet().score(userSessionKey, chatSession.key());
         Asserts.isTrue(score == null, SparrowError.SYSTEM_ILLEGAL_REQUEST);
     }
 
