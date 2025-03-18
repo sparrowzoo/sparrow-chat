@@ -10,10 +10,12 @@ import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.SessionConverter;
 import com.sparrow.chat.protocol.dto.SessionDTO;
-import com.sparrow.chat.protocol.query.SessionReadQuery;
+import com.sparrow.chat.protocol.params.SessionReadParams;
+import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.exception.Asserts;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.ThreadContext;
 import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
@@ -59,7 +61,7 @@ public class SessionRepositoryImpl implements SessionRepository {
     private void addNewSessionForUserId(ChatSession session, ChatUser chatUser) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
-        Double score = this.redisTemplate.opsForZSet().score(userSessionKey, session.getSessionKey());
+        Double score = this.redisTemplate.opsForZSet().score(userSessionKey, session.json());
         if (score != null) {
             // 已经存在，不再添加
             return;
@@ -80,16 +82,21 @@ public class SessionRepositoryImpl implements SessionRepository {
         return this.sessionConverter.convert(sessions);
     }
 
-    public void canAccessSession(String sessionKey, ChatUser chatUser) throws BusinessException {
+    public void canAccessSession(String sessionKey,int chatType) throws BusinessException {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
-        Double score = this.redisTemplate.opsForZSet().score(userSessionKey, sessionKey);
+        ChatSession chatSession =ChatSession.createSession(chatType,sessionKey);
+        Double score = this.redisTemplate.opsForZSet().score(userSessionKey, chatSession.json());
         Asserts.isTrue(score == null, SparrowError.SYSTEM_ILLEGAL_REQUEST);
     }
 
     @Override
-    public void read(SessionReadQuery messageRead, ChatUser chatUser) throws BusinessException {
-        this.canAccessSession(messageRead.getSessionKey(), chatUser);
+    public void read(SessionReadParams messageRead) throws BusinessException {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
+        this.canAccessSession(messageRead.getSessionKey(), messageRead.getChatType());
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserKey(messageRead.getSessionKey(), chatUser);
         String sessionReadKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_READ, propertyAccessor);
         redisTemplate.opsForValue().set(sessionReadKey, System.currentTimeMillis() + "");

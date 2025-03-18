@@ -8,9 +8,10 @@ import com.sparrow.chat.domain.service.VisitorService;
 import com.sparrow.chat.protocol.dto.ContactsDTO;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
+import com.sparrow.chat.protocol.params.SessionReadParams;
 import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
-import com.sparrow.chat.protocol.query.SessionReadQuery;
+import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.ClientInformation;
 import com.sparrow.protocol.LoginUser;
@@ -91,8 +92,8 @@ public class ChatV2Controller {
 
     @ApiOperation(value = "会话已读状态")
     @PostMapping("/session/read")
-    public Boolean readSession(@RequestBody SessionReadQuery messageReadQuery) throws BusinessException {
-        chatService.read(messageReadQuery);
+    public Boolean readSession(@RequestBody SessionReadParams sessionReadParams) throws BusinessException {
+        chatService.read(sessionReadParams);
         return true;
     }
 
@@ -104,14 +105,14 @@ public class ChatV2Controller {
 
     @ApiOperation(value = "获取消息列表")
     @PostMapping("/messages")
-    public List<MessageDTO> getMessages(String sessionKey) throws BusinessException {
-        return chatService.fetchMessages(sessionKey);
+    public List<MessageDTO> getMessages(MessageQuery messageQuery) throws BusinessException {
+        return chatService.fetchMessages(messageQuery);
     }
 
-    @ApiOperation(value = "获取消息列表")
-    @GetMapping("/messages")
-    public List<MessageDTO> getHistoryMessages(String sessionKey, Long lastServiceTime) throws BusinessException {
-        return chatService.fetchHistoryMessages(sessionKey, lastServiceTime);
+    @ApiOperation(value = "获取历史消息列表")
+    @PostMapping("/history-messages")
+    public List<MessageDTO> getHistoryMessages(MessageQuery messageQuery) throws BusinessException {
+        return chatService.fetchHistoryMessages(messageQuery);
     }
 
     @ApiIgnore

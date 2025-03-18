@@ -20,5 +20,5 @@ public interface MessageRepository {
 
     List<MessageDTO> getMessageBySession(String session);
 
-    List<MessageDTO>  getHistoryMessage(String session, long lastServerTime);
+    List<MessageDTO>  getHistoryMessage(String session, long timestamp);
 }

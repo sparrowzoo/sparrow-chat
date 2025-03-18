@@ -1,6 +1,7 @@
 package com.sparrow.chat.domain.bo;
 
 import com.sparrow.chat.protocol.dto.SessionDTO;
+import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.protocol.constant.magic.Symbol;
 
 import static com.sparrow.chat.protocol.constant.Chat.*;
@@ -24,6 +25,10 @@ public class ChatSession {
      */
     public static ChatSession create1To1CancelSession(ChatUser sender, String sessionKey) {
         return new ChatSession(CHAT_TYPE_1_2_1, sender, null, sessionKey);
+    }
+
+    public static ChatSession createSession(Integer chatType,String sessionKey) {
+        return new ChatSession(chatType, null,null, sessionKey);
     }
 
     public static ChatSession create1To1Session(ChatUser sender, ChatUser receiver) {

@@ -112,6 +112,7 @@ public class MessageRepositoryImpl implements MessageRepository {
     public void saveMessage(Protocol protocol) {
         this.saveImageContent(protocol);
         MessageDTO message = this.messageConverter.convertMessage(protocol);
+        this.messageDao.insert(this.messageConverter.convertPo(protocol));
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(protocol.getChatSession().getSessionKey());
         String messageKey = PlaceHolderParser.parse(RedisKey.SESSION_MESSAGE_KEY, propertyAccessor);
         //保证消息的顺序，先进先出

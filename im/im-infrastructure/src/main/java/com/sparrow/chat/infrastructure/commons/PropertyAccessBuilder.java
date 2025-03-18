@@ -11,6 +11,7 @@ public class PropertyAccessBuilder {
             this.qunId = builder.qunId;
             this.chatType = builder.chatType;
             this.time = builder.time;
+            this.userKey = builder.userKey;
         }
 
         private String session;

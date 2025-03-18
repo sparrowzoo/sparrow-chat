@@ -1,10 +1,13 @@
 package com.sparrow.chat.infrastructure.converter;
 
+import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.im.po.Message;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.query.ChatUserQuery;
+import com.sparrow.support.IpSupport;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,6 +15,9 @@ import java.util.List;
 
 @Component
 public class MessageConverter {
+
+    @Autowired
+    private IpSupport support;
 
     public MessageDTO convertMessage(Protocol protocol) {
         MessageDTO message = new MessageDTO();
@@ -44,4 +50,23 @@ public class MessageConverter {
         }
         return messageDTOs;
     }
+
+    public Message convertPo(Protocol protocol) {
+        ChatUser sender = protocol.getSender();
+        ChatUser receiver = protocol.getReceiver();
+        Message message = new Message();
+        message.setMessageType(protocol.getMessageType());
+        message.setContent(protocol.getContent());
+        message.setSender(sender.getId());
+        message.setSenderCategory(sender.getCategory());
+        message.setReceiver(receiver.getId());
+        message.setReceiverCategory(receiver.getCategory());
+        message.setServerTime(protocol.getServerTime());
+        message.setClientSendTime(protocol.getClientSendTime());
+        message.setChatType(protocol.getChatSession().getChatType());
+        message.setSessionKey(protocol.getChatSession().getSessionKey());
+        message.setIp(1);
+        return message;
+    }
+
 }

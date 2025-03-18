@@ -10,8 +10,9 @@ import com.sparrow.chat.domain.repository.MessageRepository;
 import com.sparrow.chat.domain.repository.SessionRepository;
 import com.sparrow.chat.protocol.constant.Chat;
 import com.sparrow.chat.protocol.dto.*;
+import com.sparrow.chat.protocol.params.SessionReadParams;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
-import com.sparrow.chat.protocol.query.SessionReadQuery;
+import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.exception.Asserts;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
@@ -45,16 +46,15 @@ public class ChatService {
         this.sessionRepository.saveSession(protocol.getChatSession(), protocol.getSender());
     }
 
-    public void read(SessionReadQuery messageReadQuery) throws BusinessException {
-        LoginUser loginUser = ThreadContext.getLoginToken();
-        ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
-        this.sessionRepository.read(messageReadQuery, chatUser);
+    public void read(SessionReadParams sessionReadParams) throws BusinessException {
+        this.sessionRepository.read(sessionReadParams);
     }
 
     public void cancel(MessageCancelQuery messageCancel) throws BusinessException {
         LoginUser loginUser = ThreadContext.getLoginToken();
         Asserts.isTrue(loginUser == null, SparrowError.USER_NOT_LOGIN);
         ChatUser sender = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
+
 
         CancelProtocol cancelProtocol = new CancelProtocol(messageCancel.getSessionKey(), messageCancel.getClientSendTime());
         //将会话的消息移除
@@ -82,15 +82,14 @@ public class ChatService {
         return this.sessionRepository.getSessions(chatUser);
     }
 
-    public List<MessageDTO> fetchMessages(String sessionKey) throws BusinessException {
-        LoginUser loginUser = ThreadContext.getLoginToken();
-        Asserts.isTrue(loginUser == null, SparrowError.USER_NOT_LOGIN);
-        ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
-        this.sessionRepository.canAccessSession(sessionKey, chatUser);
-        return this.messageRepository.getMessageBySession(sessionKey);
+    public List<MessageDTO> fetchMessages(MessageQuery messageQuery) throws BusinessException {
+        this.sessionRepository.canAccessSession(messageQuery.getSessionKey(),messageQuery.getChatType());
+        return this.messageRepository.getMessageBySession(messageQuery.getSessionKey());
     }
 
-    public List<MessageDTO> fetchHistoryMessages(String sessionKey, long lastServerTime) {
-        return this.messageRepository.getHistoryMessage(sessionKey, lastServerTime);
+    public List<MessageDTO> fetchHistoryMessages(MessageQuery messageQuery) throws BusinessException {
+
+        this.sessionRepository.canAccessSession(messageQuery.getSessionKey(),messageQuery.getChatType());
+        return this.messageRepository.getHistoryMessage(messageQuery.getSessionKey(), messageQuery.getLastReadTime());
     }
 }
