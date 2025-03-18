@@ -1,6 +1,9 @@
 package com.sparrow.chat.protocol.query;
 
 public class ChatUserQuery {
+    public ChatUserQuery() {
+    }
+
     public ChatUserQuery(String id, Integer category) {
         this.id = id;
         this.category = category;

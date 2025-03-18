@@ -3,6 +3,7 @@ package com.sparrow.chat.adapter.controller;
 import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.service.ChatService;
+import com.sparrow.chat.domain.service.UserLoginService;
 import com.sparrow.chat.domain.service.VisitorService;
 import com.sparrow.chat.protocol.dto.ContactsDTO;
 import com.sparrow.chat.protocol.dto.MessageDTO;
@@ -39,6 +40,9 @@ public class ChatV2Controller {
     @Autowired
     private VisitorService visitorService;
 
+    @Autowired
+    private UserLoginService loginService;
+
     @ApiOperation(value = "解析登录Token")
     @PostMapping("/parse-token")
     public LoginUser parseToken(String token) throws BusinessException {
@@ -56,6 +60,18 @@ public class ChatV2Controller {
     @GetMapping("/get-visitor-token")
     public String getVisitorToken() {
         return this.visitorService.generateVisitorToken();
+    }
+
+    @ApiOperation(value = "登录")
+    @PostMapping("/login")
+    public String login(@RequestBody ChatUserQuery userQuery) {
+        return this.loginService.login(Long.parseLong(userQuery.getId()));
+    }
+
+    @ApiOperation(value = "登录")
+    @PostMapping("/long-login")
+    public String login2(@RequestBody Long userId) {
+        return this.loginService.login(userId);
     }
 
     @ApiOperation(value = "获取用户在线状态")
@@ -94,8 +110,8 @@ public class ChatV2Controller {
 
     @ApiOperation(value = "获取消息列表")
     @GetMapping("/messages")
-    public List<MessageDTO> getHistoryMessages(String sessionKey,Long lastServiceTime) throws BusinessException {
-        return chatService.fetchHistoryMessages(sessionKey,lastServiceTime);
+    public List<MessageDTO> getHistoryMessages(String sessionKey, Long lastServiceTime) throws BusinessException {
+        return chatService.fetchHistoryMessages(sessionKey, lastServiceTime);
     }
 
     @ApiIgnore
