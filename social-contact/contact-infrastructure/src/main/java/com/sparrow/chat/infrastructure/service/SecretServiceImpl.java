@@ -72,6 +72,6 @@ public class SecretServiceImpl implements SecretService {
         if (this.sparrowConfig.getProfile().equalsIgnoreCase(SPARROW_PROD_PROFILE)) {
             return System.getenv(USER_IDENTIFY_SECRET_KEY);
         }
-        return this.sparrowConfig.getEncryptKey();
+        return this.sparrowConfig.getAuthenticator().getEncryptKey();
     }
 }

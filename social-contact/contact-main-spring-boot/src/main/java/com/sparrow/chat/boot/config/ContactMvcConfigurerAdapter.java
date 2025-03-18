@@ -90,12 +90,14 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
 
     @Bean
     MonolithicLoginUserFilter loginTokenFilter() {
+        SparrowConfig.Authenticator authenticatorConfig = this.sparrowConfig.getAuthenticator();
+        SparrowConfig.Exception exceptionConfig = this.sparrowConfig.getException();
         return new MonolithicLoginUserFilter(
                 authenticator,
-                this.sparrowConfig.getMockUser(),
+                authenticatorConfig.getMockLoginUser(),
                 null,
-                this.sparrowConfig.getSupportTemplate(),
-                this.sparrowConfig.getApiPrefix());
+                exceptionConfig.getSupportTemplate(),
+                exceptionConfig.getApiPrefix());
     }
 
     @Bean
@@ -105,7 +107,7 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
         // 一个* 不允许多个***
         filterRegistrationBean.addUrlPatterns("/*");
         filterRegistrationBean.setName("loginTokenFilter");
-        filterRegistrationBean.addInitParameter("excludePatterns", this.sparrowConfig.getExcludePatterns());
+        filterRegistrationBean.addInitParameter("excludePatterns", this.sparrowConfig.getAuthenticator().getExcludePatterns());
         filterRegistrationBean.setOrder(1);
         //多个filter的时候order的数值越小 则优先级越高
         return filterRegistrationBean;

@@ -9,7 +9,6 @@ import com.sparrow.support.web.MonolithicLoginUserFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,18 +27,21 @@ public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
 
     @Bean
     Authenticator authenticator() {
-        return new DefaultAuthenticatorService(this.sparrowConfig.getEncryptKey(),
-                this.sparrowConfig.getValidateDeviceId(),
-                this.sparrowConfig.getValidateStatus());
+        SparrowConfig.Authenticator authenticatorConfig=this.sparrowConfig.getAuthenticator();
+        return new DefaultAuthenticatorService(authenticatorConfig.getEncryptKey(),
+                authenticatorConfig.getValidateDeviceId(),
+                authenticatorConfig.getValidateStatus());
     }
 
     @Bean
     MonolithicLoginUserFilter loginTokenFilter() {
+        SparrowConfig.Authenticator authenticatorConfig=this.sparrowConfig.getAuthenticator();
+        SparrowConfig.Exception exceptionConfig=this.sparrowConfig.getException();
         return new MonolithicLoginUserFilter(authenticator(),
-                this.sparrowConfig.getMockUser(),
+                authenticatorConfig.getMockLoginUser(),
                 null,
-                this.sparrowConfig.getSupportTemplate(),
-                this.sparrowConfig.getApiPrefix());
+                exceptionConfig.getSupportTemplate(),
+                exceptionConfig.getApiPrefix());
     }
 
     @Override
@@ -58,7 +60,7 @@ public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
         filterRegistrationBean.addUrlPatterns("/*");
         filterRegistrationBean.setName("loginTokenFilter");
         filterRegistrationBean.addInitParameter("excludePatterns",
-                this.sparrowConfig.getExcludePatterns());
+                this.sparrowConfig.getAuthenticator().getExcludePatterns());
         filterRegistrationBean.setOrder(1);
         return filterRegistrationBean;
     }
