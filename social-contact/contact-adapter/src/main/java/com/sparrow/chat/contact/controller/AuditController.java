@@ -26,33 +26,33 @@ public class AuditController {
     private AuditService auditService;
 
 
-    @GetMapping("friend-apply-list")
+    @GetMapping("friend-apply-list.json")
     @ApiOperation("获取好友申请列表")
     public FriendAuditWrapVO friendApplyList() throws BusinessException {
         AuditWrapBO friendAuditBO = this.auditService.friendApplyList();
         return this.contactAssembler.toUserFriendApplyVoList(friendAuditBO);
     }
 
-    @PostMapping("qun-member-apply-list")
+    @PostMapping("qun-member-apply-list.json")
     @ApiOperation("群成员申请列表")
     public FriendAuditWrapVO qunMemberApplyList(Long qunId) throws BusinessException {
         AuditWrapBO friendAuditBO = this.auditService.qunMemberApplyList(qunId);
         return this.contactAssembler.toUserFriendApplyVoList(friendAuditBO);
     }
 
-    @PostMapping("apply-friend")
+    @PostMapping("apply-friend.json")
     @ApiOperation("申请好友")
     public Long applyFriend(@RequestBody FriendApplyParam friendApplyParam) throws BusinessException {
         return this.auditService.applyFriend(friendApplyParam);
     }
 
-    @PostMapping("audit-friend-apply")
+    @PostMapping("audit-friend-apply.json")
     @ApiOperation("对好友申请进行审核")
     public void auditFriendApply(@RequestBody FriendAuditParam friendAuditParam) throws BusinessException {
         this.auditService.auditFriendApply(friendAuditParam);
     }
 
-    @PostMapping("audit-qun-apply")
+    @PostMapping("audit-qun-apply.json")
     @ApiOperation("对加群进行审核")
     public void auditQunApply(@RequestBody QunAuditParam qunAuditParam) throws Throwable {
         this.auditService.auditQunApply(qunAuditParam);
@@ -67,7 +67,7 @@ public class AuditController {
      * @throws BusinessException
      */
     @ApiOperation("加群")
-    @PostMapping("join-qun")
+    @PostMapping("join-qun.json")
     public void applyJoinQun(@RequestBody JoinQunParam joinQunParam) throws BusinessException {
         this.auditService.applyJoinQun(joinQunParam);
     }

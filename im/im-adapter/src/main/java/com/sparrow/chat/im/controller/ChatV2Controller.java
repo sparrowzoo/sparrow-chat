@@ -45,38 +45,38 @@ public class ChatV2Controller {
     private UserLoginService loginService;
 
     @ApiOperation(value = "解析登录Token")
-    @PostMapping("/parse-token")
+    @PostMapping("/parse-token.json")
     public LoginUser parseToken(String token) throws BusinessException {
         ClientInformation client = ThreadContext.getClientInfo();
         return this.authenticator.authenticate(token, client.getDeviceId());
     }
 
     @ApiOperation(value = "获取当前用户信息")
-    @GetMapping("/get-current-user")
+    @GetMapping("/get-current-user.json")
     public LoginUser getCurrentUser() {
         return ThreadContext.getLoginToken();
     }
 
     @ApiOperation(value = "获取访客Token")
-    @GetMapping("/get-visitor-token")
+    @GetMapping("/get-visitor-token.json")
     public String getVisitorToken() {
         return this.visitorService.generateVisitorToken();
     }
 
     @ApiOperation(value = "登录")
-    @PostMapping("/login")
+    @PostMapping("/login.json")
     public String login(@RequestBody ChatUserQuery userQuery) {
         return this.loginService.login(Long.parseLong(userQuery.getId()));
     }
 
     @ApiOperation(value = "登录")
-    @PostMapping("/long-login")
+    @PostMapping("/long-login.json")
     public String login2(@RequestBody Long userId) {
         return this.loginService.login(userId);
     }
 
     @ApiOperation(value = "获取用户在线状态")
-    @PostMapping("/is-online")
+    @PostMapping("/is-online.json")
     public Boolean online(ChatUserQuery chatUser) {
         return UserContainer.getContainer().online(ChatUser.convertFromQuery(chatUser));
     }
@@ -84,39 +84,39 @@ public class ChatV2Controller {
     @ApiIgnore
     @ApiOperation(value = "获取用户联系人列表")
     @CrossOrigin(origins = {"*"})
-    @GetMapping("/contacts")
+    @GetMapping("/contacts.json")
     public ContactsDTO getContactsList() {
         LoginUser loginUser = ThreadContext.getLoginToken();
         return chatService.getContacts(loginUser.getUserId());
     }
 
     @ApiOperation(value = "会话已读状态")
-    @PostMapping("/session/read")
+    @PostMapping("/session/read.json")
     public Boolean readSession(@RequestBody SessionReadParams sessionReadParams) throws BusinessException {
         chatService.read(sessionReadParams);
         return true;
     }
 
     @ApiOperation(value = "获取会话列表")
-    @GetMapping("/sessions")
+    @GetMapping("/sessions.json")
     public List<SessionDTO> getSessions() throws BusinessException {
         return chatService.fetchSessions();
     }
 
     @ApiOperation(value = "获取消息列表")
-    @PostMapping("/messages")
+    @PostMapping("/messages.json")
     public List<MessageDTO> getMessages(String sessionKey) throws BusinessException {
         return chatService.fetchMessages(sessionKey);
     }
 
     @ApiOperation(value = "获取历史消息列表")
-    @PostMapping("/history-messages")
+    @PostMapping("/history-messages.json")
     public List<MessageDTO> getHistoryMessages(MessageQuery messageQuery) throws BusinessException {
         return chatService.fetchHistoryMessages(messageQuery);
     }
 
     @ApiIgnore
-    @PostMapping("/cancel")
+    @PostMapping("/cancel.json")
     public Boolean cancel(@RequestBody MessageCancelQuery messageCancel) {
         try {
             chatService.cancel(messageCancel);

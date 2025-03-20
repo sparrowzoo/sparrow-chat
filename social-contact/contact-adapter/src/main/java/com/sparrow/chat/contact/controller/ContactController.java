@@ -38,14 +38,14 @@ public class ContactController {
      * @param findUserSecretParam
      * @return
      */
-    @PostMapping("/find-friend")
+    @PostMapping("/find-friend.json")
     @ApiOperation("通过用户标识（Email）查找用户")
     public UserFriendApplyVO findFriend(@RequestBody FindUserSecretParam findUserSecretParam) throws BusinessException {
         UserProfileBO contactBO = this.contactService.findFriend(findUserSecretParam.getUserIdentify());
         return this.contactAssembler.toUserFriendApplyVO(contactBO);
     }
 
-    @PostMapping("/contacts")
+    @PostMapping("/contacts.json")
     @ApiOperation("联系人接口")
     public ContactVO getContacts() throws BusinessException {
         ContactsWrapBO contactsWrapBO = this.contactService.getContacts();
@@ -53,7 +53,7 @@ public class ContactController {
     }
 
 
-    @PostMapping("/get-users-by-ids")
+    @PostMapping("/get-users-by-ids.json")
     @ApiOperation("通过用户ID获取用户列表")
     public List<UserVO> getUsersByIds(@RequestBody List<Long> userIds) throws BusinessException {
         Map<Long, UserProfileDTO> userProfileDTOMap = this.contactService.getUserMap(userIds);
