@@ -26,7 +26,7 @@ public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
 
     @Bean
     Authenticator authenticator() {
-        SparrowConfig.Authenticator authenticatorConfig=this.sparrowConfig.getAuthenticator();
+        SparrowConfig.Authenticator authenticatorConfig = this.sparrowConfig.getAuthenticator();
         return new DefaultAuthenticatorService(authenticatorConfig.getEncryptKey(),
                 authenticatorConfig.getValidateDeviceId(),
                 authenticatorConfig.getValidateStatus());
@@ -34,13 +34,14 @@ public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
 
     @Bean
     MonolithicLoginUserFilter loginTokenFilter() {
-        SparrowConfig.Authenticator authenticatorConfig=this.sparrowConfig.getAuthenticator();
-        SparrowConfig.Exception exceptionConfig=this.sparrowConfig.getException();
+        SparrowConfig.Authenticator authenticatorConfig = this.sparrowConfig.getAuthenticator();
+        SparrowConfig.Mvc mvn = this.sparrowConfig.getMvc();
         return new MonolithicLoginUserFilter(authenticator(),
                 authenticatorConfig.getMockLoginUser(),
-                null,
-                exceptionConfig.getSupportTemplate(),
-                exceptionConfig.getApiPrefix());
+                authenticatorConfig.getTokenKey(),
+                mvn.getSupportTemplateEngine(),
+                authenticatorConfig.getExcludePatterns(),
+                mvn.getAjaxPattens());
     }
 
     @Bean
@@ -49,8 +50,6 @@ public class MvcChatConfigurerAdapter implements WebMvcConfigurer {
         filterRegistrationBean.setFilter(loginTokenFilter());
         filterRegistrationBean.addUrlPatterns("/*");
         filterRegistrationBean.setName("loginTokenFilter");
-        filterRegistrationBean.addInitParameter("excludePatterns",
-                this.sparrowConfig.getAuthenticator().getExcludePatterns());
         filterRegistrationBean.setOrder(1);
         return filterRegistrationBean;
     }

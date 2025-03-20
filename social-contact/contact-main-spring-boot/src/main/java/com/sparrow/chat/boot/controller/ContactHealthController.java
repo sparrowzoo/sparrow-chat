@@ -2,12 +2,12 @@ package com.sparrow.chat.boot.controller;
 
 import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.datasource.DataSourceValidChecker;
-import com.sparrow.datasource.checker.ConnectionValidCheckerAdapter;
 import com.sparrow.passport.api.UserProfileAppService;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.spring.starter.monitor.Monitor;
 import com.sparrow.spring.starter.monitor.MonitorResult;
+import com.sparrow.support.checker.ConnectionValidCheckerAdapter;
 import com.sparrow.utility.StringUtility;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RestController
 public class ContactHealthController {
 
-    @Autowired
+//    @Autowired
     private DataSource dataSource;
 
     @Autowired

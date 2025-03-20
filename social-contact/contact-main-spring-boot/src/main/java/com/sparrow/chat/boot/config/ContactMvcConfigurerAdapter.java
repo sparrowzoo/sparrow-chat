@@ -1,20 +1,15 @@
 package com.sparrow.chat.boot.config;
 
-import com.sparrow.chat.boot.ValidateCode;
 import com.sparrow.file.servlet.FileDownLoad;
 import com.sparrow.file.servlet.FileUpload;
 import com.sparrow.mq.DefaultQueueHandlerMappingContainer;
 import com.sparrow.mq.EventHandlerMappingContainer;
-import com.sparrow.spring.starter.SpringServletContainer;
 import com.sparrow.spring.starter.config.SparrowConfig;
 import com.sparrow.spring.starter.filter.AccessMonitorFilter;
-import com.sparrow.spring.starter.filter.ClientInformationFilter;
 import com.sparrow.spring.starter.monitor.Monitor;
-import com.sparrow.spring.starter.resolver.ClientInfoArgumentResolvers;
-import com.sparrow.spring.starter.resolver.LoginUserArgumentResolvers;
 import com.sparrow.support.Authenticator;
+import com.sparrow.support.DefaultAuthenticatorService;
 import com.sparrow.support.IpSupport;
-import com.sparrow.support.web.GlobalAttributeFilter;
 import com.sparrow.support.web.MonolithicLoginUserFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,36 +19,19 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.inject.Inject;
 import javax.servlet.Filter;
-import java.util.List;
 
 @Configuration
-public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
+public class ContactMvcConfigurerAdapter implements WebMvcConfigurer {
     private static Logger logger = LoggerFactory.getLogger(WebMvcConfigurer.class);
     @Inject
     private IpSupport ipSupport;
     @Autowired
     private SparrowConfig sparrowConfig;
-
-    @Inject
-    private SpringServletContainer springServletContainer;
-
-
-    @Inject
-    private ClientInfoArgumentResolvers clientInfoArgumentResolvers;
-
-    @Inject
-    private LoginUserArgumentResolvers loginTokenArgumentResolvers;
-
-
-    @Bean
-    public EventHandlerMappingContainer eventHandlerMappingContainer() {
-        return new DefaultQueueHandlerMappingContainer();
-    }
 
     @Bean
     public Monitor monitor() {
@@ -62,18 +40,9 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
 
     @Bean
     public AccessMonitorFilter accessMonitorFilter() {
-        return new AccessMonitorFilter(monitor(), -99, springServletContainer);
+        return new AccessMonitorFilter(monitor(), -99);
     }
 
-    @Bean
-    public ClientInformationFilter clientInformationFilter() {
-        return new ClientInformationFilter(-98, springServletContainer);
-    }
-
-    @Bean
-    public ServletRegistrationBean validateCode() {
-        return new ServletRegistrationBean(new ValidateCode(), "/validate-code");
-    }
 
     @Bean
     public ServletRegistrationBean fileUpload() {
@@ -85,19 +54,26 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
         return new ServletRegistrationBean(new FileDownLoad(), "/file-download");
     }
 
-    @Inject
-    private Authenticator authenticator;
+    @Bean
+    Authenticator authenticator() {
+        SparrowConfig.Authenticator authenticatorConfig = this.sparrowConfig.getAuthenticator();
+        return new DefaultAuthenticatorService(authenticatorConfig.getEncryptKey(),
+                authenticatorConfig.getValidateDeviceId(),
+                authenticatorConfig.getValidateStatus());
+    }
 
     @Bean
     MonolithicLoginUserFilter loginTokenFilter() {
         SparrowConfig.Authenticator authenticatorConfig = this.sparrowConfig.getAuthenticator();
-        SparrowConfig.Exception exceptionConfig = this.sparrowConfig.getException();
+        SparrowConfig.Mvc mvc = this.sparrowConfig.getMvc();
         return new MonolithicLoginUserFilter(
-                authenticator,
+                authenticator(),
                 authenticatorConfig.getMockLoginUser(),
-                null,
-                exceptionConfig.getSupportTemplate(),
-                exceptionConfig.getApiPrefix());
+                authenticatorConfig.getTokenKey(),
+                mvc.getSupportTemplateEngine(),
+                authenticatorConfig.getExcludePatterns(),
+                mvc.getAjaxPattens()
+        );
     }
 
     @Bean
@@ -107,40 +83,11 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
         // 一个* 不允许多个***
         filterRegistrationBean.addUrlPatterns("/*");
         filterRegistrationBean.setName("loginTokenFilter");
-        filterRegistrationBean.addInitParameter("excludePatterns", this.sparrowConfig.getAuthenticator().getExcludePatterns());
         filterRegistrationBean.setOrder(1);
         //多个filter的时候order的数值越小 则优先级越高
         return filterRegistrationBean;
     }
 
-    @Bean
-    public GlobalAttributeFilter globalAttributeFilter() {
-        return new GlobalAttributeFilter();
-    }
-
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
-                .maxAge(3600)
-                .allowCredentials(true);
-    }
-
-    /**
-     * 兼容swagger 配置
-     *
-     * @param registry
-     */
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
-        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
-        registry.setOrder(-1);
-    }
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
@@ -148,10 +95,8 @@ public class ContactMvcConfigurerAdapter extends WebMvcConfigurationSupport {
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(this.clientInfoArgumentResolvers);
-        argumentResolvers.add(this.loginTokenArgumentResolvers);
+    @Bean
+    public EventHandlerMappingContainer eventHandlerMappingContainer() {
+        return new DefaultQueueHandlerMappingContainer();
     }
-
 }

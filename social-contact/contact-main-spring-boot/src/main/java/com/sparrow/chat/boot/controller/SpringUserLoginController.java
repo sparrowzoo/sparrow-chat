@@ -19,6 +19,11 @@ public class SpringUserLoginController {
     @Autowired
     private UserLoginController userLoginController;
 
+    @GetMapping("/login")
+    public ModelAndView all(HttpServletRequest request) {
+        return new ModelAndView(request.getServletPath());
+    }
+
     @GetMapping("/session-id")
     public String sessionId(HttpServletRequest request) {
         return request.getSession().getId();

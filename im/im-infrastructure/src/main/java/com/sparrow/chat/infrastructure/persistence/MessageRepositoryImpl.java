@@ -113,10 +113,11 @@ public class MessageRepositoryImpl implements MessageRepository {
         this.saveImageContent(protocol);
         MessageDTO message = this.messageConverter.convertMessage(protocol);
         this.messageDao.insert(this.messageConverter.convertPo(protocol));
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(protocol.getChatSession().getId());
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(protocol.getChatSession().key());
         String messageKey = PlaceHolderParser.parse(RedisKey.SESSION_MESSAGE_KEY, propertyAccessor);
         //保证消息的顺序，先进先出
-        String lkey = "l" + messageKey;
+        //这里用LIST 方便通过key 取消移除 zset 的score 只能是double 可能会重复
+        String lkey = "L:" + messageKey;
         MessageKey msgKey = new MessageKey(protocol.getSender(), protocol.getClientSendTime());
         redisTemplate.opsForList().rightPush(lkey, msgKey.key());
         redisTemplate.opsForHash().put(messageKey, msgKey.key(), this.json.toString(message));

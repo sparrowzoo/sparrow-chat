@@ -1,4 +1,4 @@
-package com.sparrow.chat.adapter.controller;
+package com.sparrow.chat.im.controller;
 
 import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.netty.UserContainer;
@@ -105,8 +105,8 @@ public class ChatV2Controller {
 
     @ApiOperation(value = "获取消息列表")
     @PostMapping("/messages")
-    public List<MessageDTO> getMessages(MessageQuery messageQuery) throws BusinessException {
-        return chatService.fetchMessages(messageQuery);
+    public List<MessageDTO> getMessages(String sessionKey) throws BusinessException {
+        return chatService.fetchMessages(sessionKey);
     }
 
     @ApiOperation(value = "获取历史消息列表")

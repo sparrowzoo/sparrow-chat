@@ -1,18 +1,122 @@
 [INFO] Scanning for projects...
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/sparrow-bom/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/sparrow-bom/1.0.5-SNAPSHOT/maven-metadata.xml
 [INFO] 
 [INFO] ------------< com.sparrowzoo.chat:contact-main-spring-boot >------------
 [INFO] Building contact-main-spring-boot 1.0.0-SNAPSHOT
 [INFO] --------------------------------[ jar ]---------------------------------
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/passport/passport-adapter/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/passport/passport-adapter/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/sparrow-passport-ddd/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/sparrow-passport-ddd/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/sparrow/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/sparrow/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/sparrow-protocol/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/sparrow-protocol/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/sparrow-protocol-dao/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/sparrow-protocol-dao/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/sparrow-protocol-mq/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/sparrow-protocol-mq/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/passport/passport-application/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/passport/passport-application/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/passport/passport-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/passport/passport-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/passport/passport-protocol/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/passport/passport-protocol/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/passport/passport-domain/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/passport/passport-domain/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/file/file-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/file/file-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/file/file-protocol/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/file/file-protocol/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/passport/passport-infrastructure/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/passport/passport-infrastructure/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/passport/passport-authenticator/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/passport/passport-authenticator/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/passport/passport-dao-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/passport/passport-dao-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/sparrow-json/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/sparrow-json/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/passport/passport-sparrow-dao/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/passport/passport-sparrow-dao/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/sparrow-orm/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/sparrow-orm/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/sparrow-loader/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/sparrow-loader/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/contact-infrastructure/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/contact-infrastructure/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/social-contact/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/social-contact/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/contact-dao-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/contact-dao-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/contact-po/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/contact-po/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/contact-domain/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/contact-domain/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/contact-protocol/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/contact-protocol/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/sparrow-starter/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/sparrow-starter/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/sparrow-container/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/sparrow-container/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/contact-adapter/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/contact-adapter/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/contact-client-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/contact-client-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/contact-dao-sparrow/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/contact-dao-sparrow/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/sparrow-data-source/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/sparrow-data-source/1.0.5-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/passport-main-webapp/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/passport-main-webapp/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/im-adapter/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/im-adapter/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/im/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/im/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/im-domain/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/im-domain/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/im-protocol/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/im-protocol/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/im-infrastructure/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/im-infrastructure/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/im-dao-sparrow/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/im-dao-sparrow/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/im-dao-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/im-dao-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/chat/im-po/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/chat/im-po/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/file-gateway/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/file-gateway/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/file/file-service/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/file/file-service/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/file/file-dao-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/file/file-dao-api/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from snapshots: https://maven.aliyun.com/nexus/content/groups/public/com/sparrowzoo/file/file-sparrow-dao/1.0.0-SNAPSHOT/maven-metadata.xml
+Downloading from rdc-snapshots: https://packages.aliyun.com/maven/repository/2056915-snapshot-mpd0lJ/com/sparrowzoo/file/file-sparrow-dao/1.0.0-SNAPSHOT/maven-metadata.xml
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ contact-main-spring-boot ---
 [INFO] com.sparrowzoo.chat:contact-main-spring-boot:jar:1.0.0-SNAPSHOT
+[INFO] +- com.alibaba:druid-spring-boot-starter:jar:1.2.8:compile
+[INFO] |  +- com.alibaba:druid:jar:1.2.8:compile
+[INFO] |  +- org.slf4j:slf4j-api:jar:1.7.12:compile
+[INFO] |  \- org.springframework.boot:spring-boot-autoconfigure:jar:2.3.2.RELEASE:compile
+[INFO] |     \- org.springframework.boot:spring-boot:jar:2.3.2.RELEASE:compile
+[INFO] |        \- org.springframework:spring-context:jar:5.2.8.RELEASE:compile
+[INFO] +- org.springframework:spring-jdbc:jar:5.2.8.RELEASE:compile
+[INFO] |  +- org.springframework:spring-beans:jar:5.2.8.RELEASE:compile
+[INFO] |  +- org.springframework:spring-core:jar:5.2.8.RELEASE:compile
+[INFO] |  |  \- org.springframework:spring-jcl:jar:5.2.8.RELEASE:compile
+[INFO] |  \- org.springframework:spring-tx:jar:5.2.8.RELEASE:compile
 [INFO] +- com.sparrowzoo.passport:passport-adapter:jar:1.0.0-SNAPSHOT:compile
-[INFO] |  +- com.sparrowzoo:sparrow:jar:1.0.3.1-RELEASE:compile
+[INFO] |  +- com.sparrowzoo:sparrow:jar:1.0.5-SNAPSHOT:compile
 [INFO] |  |  +- javax.mail:mail:jar:1.4.7:compile
 [INFO] |  |  |  \- javax.activation:activation:jar:1.1:compile
 [INFO] |  |  +- javax.persistence:persistence-api:jar:1.0:compile
-[INFO] |  |  +- com.sparrowzoo:sparrow-protocol:jar:1.0.3.1-RELEASE:compile
-[INFO] |  |  \- com.sparrowzoo:sparrow-protocol-dao:jar:1.0.3.1-RELEASE:compile
+[INFO] |  |  +- com.sparrowzoo:sparrow-protocol-dao:jar:1.0.5-SNAPSHOT:compile
+[INFO] |  |  \- io.jsonwebtoken:jjwt:jar:0.9.1:compile
+[INFO] |  |     \- com.fasterxml.jackson.core:jackson-databind:jar:2.11.1:compile
+[INFO] |  |        +- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.1:compile
+[INFO] |  |        \- com.fasterxml.jackson.core:jackson-core:jar:2.11.1:compile
 [INFO] |  \- com.sparrowzoo.passport:passport-application:jar:1.0.0-SNAPSHOT:compile
 [INFO] |     \- com.sparrowzoo.passport:passport-api:jar:1.0.0-SNAPSHOT:compile
 [INFO] +- com.sparrowzoo.passport:passport-infrastructure:jar:1.0.0-SNAPSHOT:compile
@@ -25,8 +129,7 @@
 [INFO] +- com.sparrowzoo.passport:passport-sparrow-dao:jar:1.0.0-SNAPSHOT:compile
 [INFO] |  +- mysql:mysql-connector-java:jar:8.0.29:compile
 [INFO] |  |  \- com.google.protobuf:protobuf-java:jar:3.13.0:compile
-[INFO] |  +- com.sparrowzoo:sparrow-data-source:jar:1.0.3.1-RELEASE:compile
-[INFO] |  \- com.sparrowzoo:sparrow-orm:jar:1.0.3.1-RELEASE:compile
+[INFO] |  \- com.sparrowzoo:sparrow-orm:jar:1.0.5-SNAPSHOT:compile
 [INFO] +- com.github.xiaoymin:knife4j-spring-boot-starter:jar:2.0.9:compile
 [INFO] |  +- com.github.xiaoymin:knife4j-spring-boot-autoconfigure:jar:2.0.9:compile
 [INFO] |  |  \- com.github.xiaoymin:knife4j-spring:jar:2.0.9:compile
@@ -34,7 +137,6 @@
 [INFO] |  |     +- com.github.xiaoymin:knife4j-core:jar:2.0.9:compile
 [INFO] |  |     +- org.javassist:javassist:jar:3.25.0-GA:compile
 [INFO] |  |     +- io.swagger:swagger-models:jar:1.5.22:compile
-[INFO] |  |     |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.1:compile
 [INFO] |  |     |  \- io.swagger:swagger-annotations:jar:1.5.22:compile
 [INFO] |  |     +- io.springfox:springfox-swagger2:jar:2.10.5:compile
 [INFO] |  |     |  +- io.springfox:springfox-spi:jar:2.10.5:compile
@@ -52,9 +154,6 @@
 [INFO] |  \- com.github.xiaoymin:knife4j-spring-ui:jar:2.0.9:compile
 [INFO] +- org.springframework.boot:spring-boot-starter-test:jar:2.3.2.RELEASE:test
 [INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.3.2.RELEASE:compile
-[INFO] |  |  +- org.springframework.boot:spring-boot:jar:2.3.2.RELEASE:compile
-[INFO] |  |  |  \- org.springframework:spring-context:jar:5.2.8.RELEASE:compile
-[INFO] |  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.3.2.RELEASE:compile
 [INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.3.2.RELEASE:compile
 [INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.13.3:compile
 [INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.13.3:compile
@@ -88,8 +187,6 @@
 [INFO] |  +- org.mockito:mockito-junit-jupiter:jar:3.3.3:test
 [INFO] |  +- org.skyscreamer:jsonassert:jar:1.5.0:test
 [INFO] |  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
-[INFO] |  +- org.springframework:spring-core:jar:5.2.8.RELEASE:compile
-[INFO] |  |  \- org.springframework:spring-jcl:jar:5.2.8.RELEASE:compile
 [INFO] |  +- org.springframework:spring-test:jar:5.2.8.RELEASE:compile
 [INFO] |  \- org.xmlunit:xmlunit-core:jar:2.7.0:test
 [INFO] +- com.sparrowzoo.chat:contact-infrastructure:jar:1.0.0-SNAPSHOT:compile
@@ -97,27 +194,35 @@
 [INFO] |  |  \- ch.qos.logback:logback-core:jar:1.2.3:compile
 [INFO] |  +- com.sparrowzoo.chat:contact-dao-api:jar:1.0.0-SNAPSHOT:compile
 [INFO] |  |  \- com.sparrowzoo.chat:contact-po:jar:1.0.0-SNAPSHOT:compile
-[INFO] |  +- org.springframework:spring-beans:jar:5.2.8.RELEASE:compile
-[INFO] |  \- com.sparrowzoo.chat:contact-domain:jar:1.0.0-SNAPSHOT:compile
-[INFO] +- com.sparrowzoo:sparrow-json:jar:1.0.3.1-RELEASE:compile
+[INFO] |  +- com.sparrowzoo.chat:contact-domain:jar:1.0.0-SNAPSHOT:compile
+[INFO] |  \- com.sparrowzoo:sparrow-starter:jar:1.0.5-SNAPSHOT:compile
+[INFO] |     +- org.springframework:spring-aop:jar:5.2.8.RELEASE:compile
+[INFO] |     +- org.aspectj:aspectjrt:jar:1.9.6:compile
+[INFO] |     +- net.agkn:hll:jar:1.6.0:compile
+[INFO] |     |  \- it.unimi.dsi:fastutil:jar:6.5.11:compile
+[INFO] |     +- org.roaringbitmap:RoaringBitmap:jar:0.9.44:compile
+[INFO] |     |  \- org.roaringbitmap:shims:jar:0.9.44:runtime
+[INFO] |     \- org.projectlombok:lombok:jar:1.18.36:compile
+[INFO] +- com.sparrowzoo:sparrow-json:jar:1.0.5-SNAPSHOT:compile
 [INFO] |  \- com.alibaba:fastjson:jar:1.2.83:compile
 [INFO] +- com.sparrowzoo.chat:contact-adapter:jar:1.0.0-SNAPSHOT:compile
-[INFO] |  +- com.sparrowzoo:sparrow-starter:jar:1.0.3.1-RELEASE:compile
-[INFO] |  |  +- org.springframework.boot:spring-boot-configuration-processor:jar:2.3.2.RELEASE:compile
-[INFO] |  |  +- org.springframework:spring-aop:jar:5.2.8.RELEASE:compile
-[INFO] |  |  +- org.aspectj:aspectjrt:jar:1.9.6:compile
-[INFO] |  |  +- net.agkn:hll:jar:1.6.0:compile
-[INFO] |  |  |  \- it.unimi.dsi:fastutil:jar:6.5.11:compile
-[INFO] |  |  \- org.roaringbitmap:RoaringBitmap:jar:0.9.44:compile
-[INFO] |  |     \- org.roaringbitmap:shims:jar:0.9.44:runtime
+[INFO] |  +- org.springframework.boot:spring-boot-starter-web:jar:2.3.2.RELEASE:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-json:jar:2.3.2.RELEASE:compile
+[INFO] |  |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.11.1:compile
+[INFO] |  |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.11.1:compile
+[INFO] |  |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.11.1:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-tomcat:jar:2.3.2.RELEASE:compile
+[INFO] |  |  |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:9.0.37:compile
+[INFO] |  |  |  +- org.glassfish:jakarta.el:jar:3.0.3:compile
+[INFO] |  |  |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:9.0.37:compile
+[INFO] |  |  +- org.springframework:spring-web:jar:5.2.8.RELEASE:compile
+[INFO] |  |  \- org.springframework:spring-webmvc:jar:5.2.8.RELEASE:compile
+[INFO] |  |     \- org.springframework:spring-expression:jar:5.2.8.RELEASE:compile
 [INFO] |  \- com.sparrowzoo.chat:contact-client-api:jar:1.0.0-SNAPSHOT:compile
 [INFO] +- com.sparrowzoo.chat:contact-dao-sparrow:jar:1.0.0-SNAPSHOT:compile
-[INFO] |  +- com.alibaba:druid-spring-boot-starter:jar:1.1.10:compile
-[INFO] |  |  \- com.alibaba:druid:jar:1.1.10:compile
-[INFO] |  +- org.springframework:spring-jdbc:jar:5.2.8.RELEASE:compile
-[INFO] |  |  \- org.springframework:spring-tx:jar:5.2.8.RELEASE:compile
+[INFO] |  +- com.sparrowzoo:sparrow-data-source:jar:1.0.5-SNAPSHOT:compile
 [INFO] |  \- com.sparrowzoo.chat:contact-protocol:jar:1.0.0-SNAPSHOT:compile
-[INFO] +- com.sparrowzoo:sparrow-container:jar:1.0.3.1-RELEASE:compile
+[INFO] +- com.sparrowzoo:sparrow-container:jar:1.0.5-SNAPSHOT:compile
 [INFO] |  \- javax.inject:javax.inject:jar:1:compile
 [INFO] +- eu.bitwalker:UserAgentUtils:jar:1.21:compile
 [INFO] +- org.springframework.boot:spring-boot-starter-thymeleaf:jar:2.3.2.RELEASE:compile
@@ -126,11 +231,10 @@
 [INFO] |  |     +- org.attoparser:attoparser:jar:2.0.5.RELEASE:compile
 [INFO] |  |     \- org.unbescape:unbescape:jar:1.1.6.RELEASE:compile
 [INFO] |  \- org.thymeleaf.extras:thymeleaf-extras-java8time:jar:3.0.4.RELEASE:compile
-[INFO] +- com.sparrowzoo:sparrow-loader:jar:1.0.3.1-RELEASE:compile
+[INFO] +- com.sparrowzoo:sparrow-loader:jar:1.0.5-SNAPSHOT:compile
 [INFO] +- com.sparrowzoo:passport-main-webapp:jar:1.0.0-SNAPSHOT:compile
-[INFO] +- com.sparrowzoo:sparrow-protocol-mq:jar:1.0.3.1-RELEASE:compile
-[INFO] |  +- com.sparrowzoo:sparrow-protocol-redis:jar:1.0.3.1-RELEASE:compile
-[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.12:compile
+[INFO] +- com.sparrowzoo:sparrow-protocol-mq:jar:1.0.5-SNAPSHOT:compile
+[INFO] |  \- com.sparrowzoo:sparrow-protocol:jar:1.0.5-SNAPSHOT:compile
 [INFO] +- com.sparrowzoo.chat:im-adapter:jar:1.0.0-SNAPSHOT:compile
 [INFO] |  \- com.sparrowzoo.chat:im-domain:jar:1.0.0-SNAPSHOT:compile
 [INFO] |     +- io.netty:netty-all:jar:4.1.51.Final:compile
@@ -153,27 +257,16 @@
 [INFO] |     |        \- org.reactivestreams:reactive-streams:jar:1.0.3:compile
 [INFO] |     \- com.sparrowzoo.chat:im-protocol:jar:1.0.0-SNAPSHOT:compile
 [INFO] +- com.sparrowzoo.chat:im-infrastructure:jar:1.0.0-SNAPSHOT:compile
+[INFO] |  \- com.sparrowzoo.chat:im-dao-sparrow:jar:1.0.0-SNAPSHOT:compile
+[INFO] |     \- com.sparrowzoo.chat:im-dao-api:jar:1.0.0-SNAPSHOT:compile
+[INFO] |        \- com.sparrowzoo.chat:im-po:jar:1.0.0-SNAPSHOT:compile
 [INFO] \- com.sparrowzoo:file-gateway:jar:1.0.0-SNAPSHOT:compile
-[INFO]    +- org.springframework.boot:spring-boot-starter-web:jar:2.3.2.RELEASE:compile
-[INFO]    |  +- org.springframework.boot:spring-boot-starter-json:jar:2.3.2.RELEASE:compile
-[INFO]    |  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.11.1:compile
-[INFO]    |  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.11.1:compile
-[INFO]    |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.11.1:compile
-[INFO]    |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.11.1:compile
-[INFO]    |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.11.1:compile
-[INFO]    |  +- org.springframework.boot:spring-boot-starter-tomcat:jar:2.3.2.RELEASE:compile
-[INFO]    |  |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:9.0.37:compile
-[INFO]    |  |  +- org.glassfish:jakarta.el:jar:3.0.3:compile
-[INFO]    |  |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:9.0.37:compile
-[INFO]    |  +- org.springframework:spring-web:jar:5.2.8.RELEASE:compile
-[INFO]    |  \- org.springframework:spring-webmvc:jar:5.2.8.RELEASE:compile
-[INFO]    |     \- org.springframework:spring-expression:jar:5.2.8.RELEASE:compile
 [INFO]    \- com.sparrowzoo.file:file-service:jar:1.0.0-SNAPSHOT:compile
 [INFO]       +- com.sparrowzoo.file:file-dao-api:jar:1.0.0-SNAPSHOT:compile
 [INFO]       \- com.sparrowzoo.file:file-sparrow-dao:jar:1.0.0-SNAPSHOT:compile
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  4.125 s
-[INFO] Finished at: 2023-10-16T16:17:41+08:00
+[INFO] Total time:  17.681 s
+[INFO] Finished at: 2025-03-19T13:51:55+08:00
 [INFO] ------------------------------------------------------------------------

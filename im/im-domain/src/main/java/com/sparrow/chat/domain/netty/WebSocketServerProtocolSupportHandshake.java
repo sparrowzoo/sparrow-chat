@@ -5,7 +5,6 @@ import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.Result;
 import com.sparrow.spring.starter.SpringContext;
 import com.sparrow.support.Authenticator;
-import com.sparrow.utility.JSUtility;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -65,8 +64,8 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
         if (evt instanceof HandshakeComplete) {
             HandshakeComplete serverHandshakeComplete = (HandshakeComplete) evt;
             //token 必须要url编码 否则会报invalid token
-
-            String token = JSUtility.decodeURIComponent(serverHandshakeComplete.requestHeaders().get("sec-websocket-protocol"));
+            //编解码移至Authenticator
+            String token = serverHandshakeComplete.requestHeaders().get("sec-websocket-protocol");
             InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
             String ip = address.getAddress().getHostAddress();
             try {

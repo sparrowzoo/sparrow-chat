@@ -1,4 +1,4 @@
-package com.sparrow.chat.adapter.controller;
+package com.sparrow.chat.im.controller;
 
 import com.sparrow.spring.starter.config.SparrowConfig;
 import io.swagger.annotations.Api;

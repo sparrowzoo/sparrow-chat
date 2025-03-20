@@ -4,6 +4,5 @@ import lombok.Data;
 
 @Data
 public class SessionReadParams {
-    private Integer chatType;
     private String sessionKey;
 }

@@ -12,6 +12,6 @@ public class MessageKey {
     private Long clientSendTime;
 
     public String key() {
-        return fromUserId + "-" + this.clientSendTime + "-" + this.userRole;
+        return this.clientSendTime + "-" + this.userRole + fromUserId;
     }
 }

@@ -4,7 +4,6 @@ import com.sparrow.chat.domain.bo.ChatSession;
 import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.params.SessionReadParams;
-import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.protocol.BusinessException;
 
 import java.util.List;
@@ -18,5 +17,5 @@ public interface SessionRepository {
     void read(SessionReadParams sessionReadParams) throws BusinessException;
 
 
-    void canAccessSession(String sessionKey,int chatType) throws BusinessException;
+    void canAccessSession(String sessionKey) throws BusinessException;
 }

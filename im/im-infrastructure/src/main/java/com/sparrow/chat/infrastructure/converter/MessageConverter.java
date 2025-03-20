@@ -64,7 +64,7 @@ public class MessageConverter {
         message.setServerTime(protocol.getServerTime());
         message.setClientSendTime(protocol.getClientSendTime());
         message.setChatType(protocol.getChatSession().getChatType());
-        message.setSessionKey(protocol.getChatSession().getId());
+        message.setSessionKey(protocol.getChatSession().key());
         message.setIp(1);
         return message;
     }

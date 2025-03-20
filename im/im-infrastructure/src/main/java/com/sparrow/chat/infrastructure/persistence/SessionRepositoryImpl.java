@@ -65,7 +65,7 @@ public class SessionRepositoryImpl implements SessionRepository {
             // 已经存在，不再添加
             return;
         }
-        if (!sessionDao.exist(chatUser.getId(), chatUser.getCategory(), session.getId())) {
+        if (!sessionDao.exist(chatUser.getId(), chatUser.getCategory(), session.key())) {
             sessionDao.insert(this.sessionConverter.convert(session, chatUser));
         }
         this.redisTemplate.opsForZSet().add(userSessionKey, session.key(), System.currentTimeMillis());
@@ -81,12 +81,12 @@ public class SessionRepositoryImpl implements SessionRepository {
         return this.sessionConverter.convert(sessions);
     }
 
-    public void canAccessSession(String sessionKey,int chatType) throws BusinessException {
+    public void canAccessSession(String sessionKey) throws BusinessException {
         LoginUser loginUser = ThreadContext.getLoginToken();
         ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
-        ChatSession chatSession =ChatSession.createSession(chatType,sessionKey);
+        ChatSession chatSession =ChatSession.parse(sessionKey);
         Double score = this.redisTemplate.opsForZSet().score(userSessionKey, chatSession.key());
         Asserts.isTrue(score == null, SparrowError.SYSTEM_ILLEGAL_REQUEST);
     }
@@ -95,7 +95,7 @@ public class SessionRepositoryImpl implements SessionRepository {
     public void read(SessionReadParams messageRead) throws BusinessException {
         LoginUser loginUser = ThreadContext.getLoginToken();
         ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
-        this.canAccessSession(messageRead.getSessionKey(), messageRead.getChatType());
+        this.canAccessSession(messageRead.getSessionKey());
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserKey(messageRead.getSessionKey(), chatUser);
         String sessionReadKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_READ, propertyAccessor);
         redisTemplate.opsForValue().set(sessionReadKey, System.currentTimeMillis() + "");

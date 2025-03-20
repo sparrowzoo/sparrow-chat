@@ -8,7 +8,6 @@ import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.repository.ContactRepository;
 import com.sparrow.chat.domain.repository.MessageRepository;
 import com.sparrow.chat.domain.repository.SessionRepository;
-import com.sparrow.chat.protocol.constant.Chat;
 import com.sparrow.chat.protocol.dto.*;
 import com.sparrow.chat.protocol.params.SessionReadParams;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
@@ -54,19 +53,11 @@ public class ChatService {
         LoginUser loginUser = ThreadContext.getLoginToken();
         Asserts.isTrue(loginUser == null, SparrowError.USER_NOT_LOGIN);
         ChatUser sender = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
-
-
+        ChatSession chatSession = ChatSession.parse(messageCancel.getSessionKey());
         CancelProtocol cancelProtocol = new CancelProtocol(messageCancel.getSessionKey(), messageCancel.getClientSendTime());
         //将会话的消息移除
         this.messageRepository.cancel(messageCancel, sender);
-        List<Channel> channels;
-        if (Chat.CHAT_TYPE_1_2_1 == messageCancel.getChatType()) {
-            ChatSession chatSession = ChatSession.create1To1CancelSession(sender, messageCancel.getSessionKey());
-            channels = UserContainer.getContainer().getChannels(chatSession, sender);
-        } else {
-            ChatSession chatSession = ChatSession.createQunSession(sender, messageCancel.getSessionKey());
-            channels = UserContainer.getContainer().getChannels(chatSession, sender);
-        }
+        List<Channel> channels= UserContainer.getContainer().getChannels(chatSession, sender);
         for (Channel channel : channels) {
             if (channel == null || !channel.isOpen() || !channel.isActive()) {
                 continue;
@@ -82,14 +73,13 @@ public class ChatService {
         return this.sessionRepository.getSessions(chatUser);
     }
 
-    public List<MessageDTO> fetchMessages(MessageQuery messageQuery) throws BusinessException {
-        this.sessionRepository.canAccessSession(messageQuery.getSessionKey(),messageQuery.getChatType());
-        return this.messageRepository.getMessageBySession(messageQuery.getSessionKey());
+    public List<MessageDTO> fetchMessages(String sessionKey) throws BusinessException {
+        this.sessionRepository.canAccessSession(sessionKey);
+        return this.messageRepository.getMessageBySession(sessionKey);
     }
 
     public List<MessageDTO> fetchHistoryMessages(MessageQuery messageQuery) throws BusinessException {
-
-        this.sessionRepository.canAccessSession(messageQuery.getSessionKey(),messageQuery.getChatType());
+        this.sessionRepository.canAccessSession(messageQuery.getSessionKey());
         return this.messageRepository.getHistoryMessage(messageQuery.getSessionKey(), messageQuery.getLastReadTime());
     }
 }

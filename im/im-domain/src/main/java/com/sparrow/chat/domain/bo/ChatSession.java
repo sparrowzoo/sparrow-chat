@@ -88,7 +88,7 @@ public class ChatSession {
         return receiver.key() + "-" + sender.key();
     }
 
-    public ChatSession parse(String sessionKey) {
+    public static ChatSession parse(String sessionKey) {
         if (sessionKey == null) {
             return null;
         }

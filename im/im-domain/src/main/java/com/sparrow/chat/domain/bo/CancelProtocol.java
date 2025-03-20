@@ -3,20 +3,15 @@ package com.sparrow.chat.domain.bo;
 import com.sparrow.chat.protocol.constant.Chat;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import lombok.Data;
+
 import java.nio.charset.StandardCharsets;
 
+@Data
 public class CancelProtocol {
     public CancelProtocol(String sessionKey, Long clientSendTime) {
         this.sessionKey = sessionKey;
         this.clientSendTime = clientSendTime;
-    }
-
-    public String getSessionKey() {
-        return sessionKey;
-    }
-
-    public Long getClientSendTime() {
-        return clientSendTime;
     }
 
     private String sessionKey;

@@ -49,7 +49,8 @@ public class Knife4jConfiguration {
                 .apiInfo(apiInfo)
                 .groupName("sparrow")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.sparrow.chat.contact.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.sparrow.chat.contact.controller")
+                        .or(RequestHandlerSelectors.basePackage("com.sparrow.chat.im.controller")))
                 .paths(PathSelectors.any())
                 .build();
     }

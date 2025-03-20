@@ -1,4 +1,4 @@
-package com.sparrow.chat.adapter.controller;
+package com.sparrow.chat.im.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

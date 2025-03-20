@@ -64,6 +64,7 @@
             <artifactId>druid-spring-boot-starter</artifactId>
             <version>${druid.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>im-dao-sparrow</artifactId>
