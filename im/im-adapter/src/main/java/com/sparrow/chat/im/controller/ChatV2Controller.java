@@ -64,13 +64,13 @@ public class ChatV2Controller {
     }
 
     @ApiOperation(value = "登录")
-    @PostMapping("/login.json")
+    @PostMapping("/login.do")
     public String login(@RequestBody ChatUserQuery userQuery) {
         return this.loginService.login(Long.parseLong(userQuery.getId()));
     }
 
     @ApiOperation(value = "登录")
-    @PostMapping("/long-login.json")
+    @PostMapping("/long-login.do")
     public String login2(@RequestBody Long userId) {
         return this.loginService.login(userId);
     }
