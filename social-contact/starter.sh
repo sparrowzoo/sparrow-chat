@@ -1,4 +1,8 @@
-systemctl daemon-reload  #(重新reload开机启动所有配置)
-systemctl enable supervisord #（允许supervisord服务开机自启动）
-systemctl restart supervisord #（启动supervisord）
-systemctl status supervisord #（查看状态）
+echo "reload systemctl config"
+systemctl daemon-reload
+echo "enable supervisord boot when system start"
+systemctl enable supervisord
+echo "restart supervisord"
+systemctl restart supervisord
+echo "check supervisord status"
+systemctl status supervisord
