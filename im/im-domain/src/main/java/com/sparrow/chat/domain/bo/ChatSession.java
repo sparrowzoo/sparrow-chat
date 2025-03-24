@@ -2,6 +2,7 @@ package com.sparrow.chat.domain.bo;
 
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.protocol.constant.magic.Symbol;
+import com.sparrow.utility.StringUtility;
 
 import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_1;
 import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_N;
@@ -16,16 +17,6 @@ public class ChatSession {
     public ChatSession() {
     }
 
-    /**
-     * 生成会话key
-     *
-     * @param sender
-     * @param sessionKey
-     * @return
-     */
-    public static ChatSession create1To1CancelSession(ChatUser sender, String sessionKey) {
-        return new ChatSession(CHAT_TYPE_1_2_1, sender, null, sessionKey);
-    }
 
     public static ChatSession createSession(Integer chatType,String id) {
         return new ChatSession(chatType, null,null, id);
@@ -81,11 +72,15 @@ public class ChatSession {
         if (sender == null || receiver == null) {
             return "";
         }
-        //保证从小到大排序
+        ChatUser bigUser = sender;
+        ChatUser smallUser = receiver;
         if (sender.getId().compareTo(receiver.getId()) <= 0) {
-            return sender.key() + "-" + receiver.key();
+            bigUser = receiver;
+            smallUser = sender;
         }
-        return receiver.key() + "-" + sender.key();
+        int length= bigUser.getId().length();
+        String len= StringUtility.leftPad(Integer.toString(length),'0',2);
+        return bigUser.getCategory()+""+smallUser.getCategory()+""+len+""+bigUser.getId()+smallUser.getId();
     }
 
     public static ChatSession parse(String sessionKey) {
@@ -105,19 +100,19 @@ public class ChatSession {
             return null;
         }
 
-        String[] userIdArray = this.id.split(Symbol.HORIZON_LINE);
-        if (userIdArray.length != 2) {
-            return null;
+        String bigUserCategory=this.id.substring(0,1);
+        String smallUserCategory=this.id.substring(1,2);
+        int bitUserLength=Integer.parseInt(this.id.substring(2,4));
+        String bigUserId=this.id.substring(4, 4+bitUserLength);
+        String smallUserId=this.id.substring(4+bitUserLength);
+
+        ChatUser bigUser=ChatUser.stringUserId(bigUserId,Integer.valueOf(bigUserCategory));
+        ChatUser smallUser=ChatUser.stringUserId(smallUserId,Integer.valueOf(smallUserCategory));
+
+        if(bigUser.equals(currentUser)){
+            return smallUser;
         }
-        ChatUser userId1 = ChatUser.parse(userIdArray[0]);
-        ChatUser userId2 = ChatUser.parse(userIdArray[1]);
-        if (currentUser.equals(userId1)) {
-            return userId2;
-        }
-        if (currentUser.equals(userId2)) {
-            return userId1;
-        }
-        return null;
+        return bigUser;
     }
 
     public SessionDTO toSessionDTO() {
