@@ -105,7 +105,7 @@ public class ChatV2Controller {
 
     @ApiOperation(value = "获取消息列表")
     @PostMapping("/messages.json")
-    public List<MessageDTO> getMessages(String sessionKey) throws BusinessException {
+    public List<MessageDTO> getMessages(@RequestBody String sessionKey) throws BusinessException {
         return chatService.fetchMessages(sessionKey);
     }
 
