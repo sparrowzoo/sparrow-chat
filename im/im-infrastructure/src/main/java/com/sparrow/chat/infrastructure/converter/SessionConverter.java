@@ -13,7 +13,7 @@ import java.util.List;
 @Named
 public class SessionConverter {
     public SessionDTO convert(Session session) {
-        return new SessionDTO(session.getChatType(), session.getSessionKey(), session.getLastReadTime());
+        return SessionDTO.parse(session.getSessionKey(), session.getLastReadTime());
     }
 
     public List<SessionDTO> convert(List<Session> sessions) {
