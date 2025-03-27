@@ -43,7 +43,7 @@ public class Qun extends PO {
     }
 
     @MethodOrder(order = 2.1F)
-    @Column(name = "avatar", columnDefinition = "varchar(256)  DEFAULT '' COMMENT '群名称'", nullable = false)
+    @Column(name = "avatar", columnDefinition = "varchar(256)  DEFAULT '' COMMENT '群头象'", nullable = false)
     public String getAvatar() {
         return avatar;
     }

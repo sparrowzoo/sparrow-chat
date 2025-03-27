@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS `qun`;
 CREATE TABLE `qun` (
                        `id` int(11) UNSIGNED  NOT NULL AUTO_INCREMENT,
                        `name` varchar(32)  DEFAULT '' COMMENT '群名称'  NOT NULL,
-                       `avatar` varchar(256)  DEFAULT '' COMMENT '群名称'  NOT NULL,
+                       `avatar` varchar(256)  DEFAULT '' COMMENT '群头象'  NOT NULL,
                        `announcement` varchar(255)  DEFAULT '' COMMENT '群公告'  NOT NULL,
                        `nationality_id` int(11)  DEFAULT 0 COMMENT '国籍id'  NOT NULL,
                        `organization_id` int(11) UNSIGNED  DEFAULT 0 COMMENT '机构ID'  NOT NULL,
