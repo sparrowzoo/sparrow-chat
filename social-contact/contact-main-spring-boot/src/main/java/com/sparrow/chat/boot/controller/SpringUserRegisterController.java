@@ -7,10 +7,7 @@ import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.ClientInformation;
 import com.sparrow.protocol.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -21,8 +18,8 @@ public class SpringUserRegisterController {
     @Autowired
     private UserRegisterController userRegisterController;
 
-    @PostMapping("/email/shortcut")
-    public Result<Boolean> shortcut(EmailRegisterParam user,
+    @PostMapping("/email/shortcut.json")
+    public Result<Boolean> shortcut(@RequestBody EmailRegisterParam user,
                                     ClientInformation client) throws BusinessException {
         userRegisterController.emailRegister(user, client);
         return new Result<>(true, "激活邮件发送成功！！");

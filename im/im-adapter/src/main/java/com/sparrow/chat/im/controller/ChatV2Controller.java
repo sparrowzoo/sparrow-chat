@@ -5,7 +5,6 @@ import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.service.ChatService;
 import com.sparrow.chat.domain.service.UserLoginService;
 import com.sparrow.chat.domain.service.VisitorService;
-import com.sparrow.chat.protocol.dto.ContactsDTO;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.params.SessionReadParams;
@@ -81,14 +80,6 @@ public class ChatV2Controller {
         return UserContainer.getContainer().online(ChatUser.convertFromQuery(chatUser));
     }
 
-    @ApiIgnore
-    @ApiOperation(value = "获取用户联系人列表")
-    @CrossOrigin(origins = {"*"})
-    @GetMapping("/contacts.json")
-    public ContactsDTO getContactsList() {
-        LoginUser loginUser = ThreadContext.getLoginToken();
-        return chatService.getContacts(loginUser.getUserId());
-    }
 
     @ApiOperation(value = "会话已读状态")
     @PostMapping("/session/read.json")

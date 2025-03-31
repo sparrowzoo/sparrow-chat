@@ -8,8 +8,12 @@ import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.repository.ContactRepository;
 import com.sparrow.chat.domain.repository.MessageRepository;
 import com.sparrow.chat.domain.repository.SessionRepository;
-import com.sparrow.chat.protocol.dto.*;
+import com.sparrow.chat.protocol.dto.ContactStatusDTO;
+import com.sparrow.chat.protocol.dto.MessageDTO;
+import com.sparrow.chat.protocol.dto.SessionDTO;
+import com.sparrow.chat.protocol.dto.UserDTO;
 import com.sparrow.chat.protocol.params.SessionReadParams;
+import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
 import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.exception.Asserts;
@@ -21,7 +25,9 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -33,10 +39,31 @@ public class ChatService {
     @Autowired
     private ContactRepository contactsRepository;
 
-    public ContactsDTO getContacts(Long userId) {
-        List<QunDTO> groups = this.contactsRepository.getQunsByUserId(userId);
-        List<UserDTO> users = this.contactsRepository.getFriendsByUserId(userId);
-        return new ContactsDTO(groups, users);
+
+    public List<ContactStatusDTO> getContactsStatus(Long userId, List<ChatUserQuery> userQueries) {
+            if (CollectionUtils.isEmpty(userQueries)) {
+                List<UserDTO> users = this.contactsRepository.getFriendsByUserId(userId);
+                userQueries = new ArrayList<>();
+                for (UserDTO user : users) {
+                    userQueries.add(user.getChatUser());
+                }
+            }
+
+            List<ContactStatusDTO> contacts = new ArrayList<>();
+            UserContainer userContainer = UserContainer.getContainer();
+            for (ChatUserQuery userQuery : userQueries) {
+                boolean online = UserContainer.getContainer().online(ChatUser.convertFromQuery(userQuery));
+                if (!online) {
+                    continue;
+                }
+                ContactStatusDTO contactStatus = new ContactStatusDTO();
+                contactStatus.setOnline(online);
+                contactStatus.setId(userQuery.getId());
+                contactStatus.setCategory(userQuery.getCategory());
+                contactStatus.setLastActiveTime(userContainer.getLastActiveTime(ChatUser.convertFromQuery(userQuery)));
+                contacts.add(contactStatus);
+            }
+            return contacts;
     }
 
     public void saveMessage(Protocol protocol) {
@@ -57,7 +84,7 @@ public class ChatService {
         CancelProtocol cancelProtocol = new CancelProtocol(messageCancel.getSessionKey(), messageCancel.getClientSendTime());
         //将会话的消息移除
         this.messageRepository.cancel(messageCancel, sender);
-        List<Channel> channels= UserContainer.getContainer().getChannels(chatSession, sender);
+        List<Channel> channels = UserContainer.getContainer().getChannels(chatSession, sender);
         for (Channel channel : channels) {
             if (channel == null || !channel.isOpen() || !channel.isActive()) {
                 continue;

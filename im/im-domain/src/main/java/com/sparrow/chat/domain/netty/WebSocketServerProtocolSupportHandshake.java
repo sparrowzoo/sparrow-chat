@@ -3,6 +3,7 @@ package com.sparrow.chat.domain.netty;
 import com.alibaba.fastjson.JSON;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.Result;
+import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.spring.starter.SpringContext;
 import com.sparrow.support.Authenticator;
 import io.netty.channel.ChannelHandlerContext;
@@ -70,13 +71,14 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
             String ip = address.getAddress().getHostAddress();
             try {
                 LoginUser loginUser = SpringContext.getContext().getBean(Authenticator.class).authenticate(token, ip);
-                Result<LoginUser> result = new Result<>(loginUser);
+                Result<LoginUser> result = Result.success(loginUser, Instruction.AUTH);
                 String userInfo = JSON.toJSONString(result);
                 ctx.channel().writeAndFlush(new TextWebSocketFrame(userInfo));
                 UserContainer.getContainer().online(ctx.channel(), loginUser);
             } catch (Exception e) {
                 logger.error("authenticate error", e);
-                Result result = Result.fail(e);
+                Result result = Result.fail(SparrowError.USER_TOKEN_ABNORMAL);
+                result.setInstruction(Instruction.AUTH);
                 ctx.channel().writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(result))).addListener(future -> {
                     ctx.channel().close();
                 });

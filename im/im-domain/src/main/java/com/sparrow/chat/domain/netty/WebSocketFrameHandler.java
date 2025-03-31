@@ -15,11 +15,16 @@
  */
 package com.sparrow.chat.domain.netty;
 
+import com.alibaba.fastjson.JSON;
 import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.domain.service.ChatService;
 import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.protocol.constant.Chat;
+import com.sparrow.chat.protocol.dto.ContactStatusDTO;
+import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.core.spi.ApplicationContext;
+import com.sparrow.protocol.Result;
+import com.sparrow.protocol.constant.SparrowError;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufHolder;
@@ -49,6 +54,8 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
 
+        ChatService chatService = ApplicationContext.getContainer().getBean("chatService");
+
         // ping and pong frames already handled js 不支持PingFrame 需要手动处理
         if (frame instanceof TextWebSocketFrame) {
             TextWebSocketFrame text = (TextWebSocketFrame) frame;
@@ -56,20 +63,47 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             logger.info("ping pong content address hashcode {},capacity {}", byteBuf.hashCode(), byteBuf.capacity());
             // Send the uppercase string back.
             String content = ((TextWebSocketFrame) frame).text();
-            if ("ping".equalsIgnoreCase(content)) {
-                ctx.channel().writeAndFlush(new TextWebSocketFrame(Chat.RESPONSE_TEXT_PONG));
+            if (Instruction.PING.equalsIgnoreCase(content)) {
+                ctx.channel().writeAndFlush(new TextWebSocketFrame(Instruction.PONG));
+                return;
+            }
+            if (content.startsWith(Instruction.USER_STATUS)) {
+                long lastMonitorTime = UserContainer.getContainer().getLastMonitorStatusTime(ctx.channel());
+                if (System.currentTimeMillis() - lastMonitorTime < 10000) {
+                    Result result = Result.fail(SparrowError.GLOBAL_REQUEST_REPEAT);
+                    result.setInstruction(Instruction.USER_STATUS);
+                    ctx.channel().writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(result)));
+                    return;
+                }
+                String contacts = content.substring(Instruction.USER_STATUS.length());
+                List<ChatUserQuery> userQueries = JSON.parseArray(contacts, ChatUserQuery.class);
+                Result<List<ContactStatusDTO>> result;
+                try {
+                    ChatUser currentUser = UserContainer.getContainer().hasUser(ctx.channel());
+                    List<ContactStatusDTO> contactStatus = chatService.getContactsStatus(currentUser.getLongUserId(), userQueries);
+                    result = Result.success(contactStatus, Instruction.USER_STATUS);
+                } catch (Exception e) {
+                    result = Result.fail(SparrowError.SYSTEM_SERVER_ERROR);
+                    result.setInstruction(Instruction.USER_STATUS);
+                }
+                ctx.channel().writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(result))).addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture future) {
+                        UserContainer.getContainer().refreshLastMonitorStatusTime(ctx.channel());
+                    }
+                });
             }
             return;
         }
 
         if (frame instanceof BinaryWebSocketFrame) {
+            UserContainer.getContainer().refreshLastActiveTime(ctx.channel());
             BinaryWebSocketFrame msg = (BinaryWebSocketFrame) frame;
             ByteBuf content = msg.content();
             Protocol protocol = new Protocol(content);
             ChatUser currentUser = UserContainer.getContainer().hasUser(ctx.channel());
-            //从发前channel 中获取当前用户id
+            //从当前channel 中获取当前用户id
             protocol.setSender(currentUser);
-            ChatService chatService = ApplicationContext.getContainer().getBean("chatService");
             chatService.saveMessage(protocol);
             if (protocol.getChatType() == Chat.CHAT_TYPE_1_2_1 && protocol.getSender().equals(protocol.getReceiver())) {
                 return;
@@ -143,7 +177,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
                 if (chatType == Chat.CHAT_TYPE_1_2_1) {
 //                    ByteBuf offline = Unpooled.directBuffer(1);
 //                    offline.writeByte(0);
-                    ctx.channel().writeAndFlush(new TextWebSocketFrame(Chat.RESPONSE_TEXT_OFFLINE));
+                    ctx.channel().writeAndFlush(new TextWebSocketFrame(Instruction.OFFLINE));
                 }
                 continue;
             }

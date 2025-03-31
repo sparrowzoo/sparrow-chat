@@ -34,24 +34,16 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 public class Knife4jConfiguration {
     @Bean
     public ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("Sparrow Developer Community IM")
-                .description("Sparrow Developer Community IM")
-                .termsOfServiceUrl("www.sparrowzoo.com")
-                .contact(new Contact("harry", "http://www.sparrowzoo.com", "zh_harry@163.com"))
-                .version("1.0")
-                .build();
+        return new ApiInfoBuilder().title("Sparrow Developer Community IM").description("Sparrow Developer Community IM").termsOfServiceUrl("www.sparrowzoo.com").contact(new Contact("harry", "http://www.sparrowzoo.com", "zh_harry@163.com")).version("1.0").build();
     }
 
     @Bean
     public Docket createRestApi(ApiInfo apiInfo) {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo)
-                .groupName("sparrow")
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.sparrow.chat.contact.controller")
-                        .or(RequestHandlerSelectors.basePackage("com.sparrow.chat.im.controller")))
-                .paths(PathSelectors.any())
-                .build();
+        return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo).groupName("sparrow").select().apis(
+                RequestHandlerSelectors.basePackage("com.sparrow.chat.contact.controller")
+                        .or(RequestHandlerSelectors.basePackage("com.sparrow.chat.im.controller"))
+                        .or(RequestHandlerSelectors.basePackage("com.sparrow.chat.boot.controller"))
+
+        ).paths(PathSelectors.any()).build();
     }
 }

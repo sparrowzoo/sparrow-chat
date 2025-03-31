@@ -16,6 +16,7 @@ import java.util.*;
 public class ContactAssembler {
     private static final String STATUS_BUSINESS = "audit";
 
+
     public UserFriendApplyVO toUserFriendApplyVO(UserProfileBO contactBO) {
         UserFriendApplyVO userFriendApply = new UserFriendApplyVO();
         userFriendApply.setUserSecretIdentify(contactBO.getSecretIdentify());

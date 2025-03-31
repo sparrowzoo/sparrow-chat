@@ -1,9 +1,6 @@
 package com.sparrow.chat.protocol.constant;
 
 public class Chat {
-    public static final String RESPONSE_TEXT_OFFLINE = "OFFLINE";
-
-    public static final String RESPONSE_TEXT_PONG = "PONG";
 
     public static final int USER_NOT_FOUND = -1;
     public static final int TEXT_MESSAGE = 0;

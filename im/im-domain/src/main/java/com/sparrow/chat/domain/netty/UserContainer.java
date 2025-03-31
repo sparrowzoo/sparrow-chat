@@ -24,6 +24,12 @@ public class UserContainer {
      */
     public static final AttributeKey<String> USER_ID_KEY = AttributeKey.newInstance("userId");
 
+    public static final AttributeKey<Long> LAST_ACTIVE_TIME = AttributeKey.newInstance("lastActiveTime");
+
+    public static final AttributeKey<Long> LAST_STATUS_MONITOR_TIME = AttributeKey.newInstance("lastMonitorTime");
+
+
+
     private UserContainer() {
     }
 
@@ -34,6 +40,31 @@ public class UserContainer {
     }
 
     private static final Map<String, Channel> channelMap = new ConcurrentHashMap<String, Channel>();
+
+    public void refreshLastActiveTime(Channel channel) {
+        channel.attr(LAST_ACTIVE_TIME).set(System.currentTimeMillis());
+    }
+
+    public void refreshLastMonitorStatusTime(Channel channel) {
+        channel.attr(LAST_STATUS_MONITOR_TIME).set(System.currentTimeMillis());
+    }
+
+    public long getLastMonitorStatusTime(Channel channel) {
+        Long lastMonitorTime= channel.attr(LAST_STATUS_MONITOR_TIME).get();
+        if(lastMonitorTime == null){
+            return 0L;
+        }
+        return lastMonitorTime;
+    }
+
+    public long getLastActiveTime(ChatUser chatUser) {
+        Channel channel = channelMap.get(chatUser.key());
+        Long lastActiveTime= channel.attr(LAST_ACTIVE_TIME).get();
+        if(lastActiveTime == null){
+            return 0L;
+        }
+        return lastActiveTime;
+    }
 
     public ChatUser hasUser(Channel channel) {
         if (!channel.hasAttr(USER_ID_KEY)) {
