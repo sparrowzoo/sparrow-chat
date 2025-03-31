@@ -8,6 +8,7 @@ import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.repository.ContactRepository;
 import com.sparrow.chat.domain.repository.MessageRepository;
 import com.sparrow.chat.domain.repository.SessionRepository;
+import com.sparrow.chat.protocol.constant.Chat;
 import com.sparrow.chat.protocol.dto.ContactStatusDTO;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
@@ -101,12 +102,19 @@ public class ChatService {
     }
 
     public List<MessageDTO> fetchMessages(String sessionKey) throws BusinessException {
-        this.sessionRepository.canAccessSession(sessionKey);
+        this.isOne2OneMember(sessionKey);
         return this.messageRepository.getMessageBySession(sessionKey);
     }
 
     public List<MessageDTO> fetchHistoryMessages(MessageQuery messageQuery) throws BusinessException {
-        this.sessionRepository.canAccessSession(messageQuery.getSessionKey());
+        this.isOne2OneMember(messageQuery.getSessionKey());
         return this.messageRepository.getHistoryMessage(messageQuery.getSessionKey(), messageQuery.getLastReadTime());
+    }
+
+    public void isOne2OneMember(String sessionKey) throws BusinessException {
+        ChatSession chatSession = ChatSession.parse(sessionKey);
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
+        Asserts.isTrue(!chatSession.isOne2OneMember(chatUser), SparrowError.SYSTEM_ILLEGAL_REQUEST);
     }
 }

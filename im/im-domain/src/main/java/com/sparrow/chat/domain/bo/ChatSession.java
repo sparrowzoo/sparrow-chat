@@ -1,6 +1,8 @@
 package com.sparrow.chat.domain.bo;
 
 import com.sparrow.chat.protocol.dto.SessionDTO;
+import com.sparrow.exception.Asserts;
+import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.protocol.constant.magic.Symbol;
 import com.sparrow.utility.StringUtility;
 
@@ -117,5 +119,13 @@ public class ChatSession {
 
     public SessionDTO toSessionDTO() {
         return new SessionDTO(this.chatType, this.getId(), 0L);
+    }
+
+    public boolean isOne2OneMember(ChatUser user) {
+        if(!this.isOne2One()){
+            return false;
+        }
+        ChatUser oppositeUser=this.getOppositeUser(user);
+        return oppositeUser!= null;
     }
 }

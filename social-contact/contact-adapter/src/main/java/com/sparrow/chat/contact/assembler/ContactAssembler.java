@@ -68,13 +68,13 @@ public class ContactAssembler {
         return qunVOS;
     }
 
-    private List<UserVO> assembleMyContact(ContactsWrapBO contactsWrap) {
+    private List<ContactVO> assembleMyContact(ContactsWrapBO contactsWrap) {
         if (CollectionsUtility.isNullOrEmpty(contactsWrap.getUsers())) {
             return null;
         }
-        List<UserVO> userVOS = new ArrayList<>(contactsWrap.getUsers().size());
+        List<ContactVO> userVOS = new ArrayList<>(contactsWrap.getUsers().size());
         for (UserProfileDTO userProfileDTO : contactsWrap.getUsers()) {
-            UserVO userVO = new UserVO();
+            ContactVO userVO = new ContactVO();
             BeanUtility.copyProperties(userProfileDTO, userVO);
             userVOS.add(userVO);
         }
@@ -82,19 +82,19 @@ public class ContactAssembler {
     }
 
 
-    public ContactVO assembleVO(ContactsWrapBO contactsWrap) {
+    public ContactGroupVO assembleVO(ContactsWrapBO contactsWrap) {
         List<QunVO> qunVOS = this.assembleMyQun(contactsWrap);
-        List<UserVO> userVOS = this.assembleMyContact(contactsWrap);
-        return new ContactVO(qunVOS, userVOS);
+        List<ContactVO> userVOS = this.assembleMyContact(contactsWrap);
+        return new ContactGroupVO(qunVOS, userVOS);
     }
 
-    public List<UserVO> assembleUserListVO(Collection<UserProfileDTO> profileDTOS) {
+    public List<ContactVO> assembleUserListVO(Collection<UserProfileDTO> profileDTOS) {
         if (CollectionsUtility.isNullOrEmpty(profileDTOS)) {
             return Collections.emptyList();
         }
-        List<UserVO> userVOS = new ArrayList<>(profileDTOS.size());
+        List<ContactVO> userVOS = new ArrayList<>(profileDTOS.size());
         for (UserProfileDTO userProfile : profileDTOS) {
-            UserVO userVO = new UserVO();
+            ContactVO userVO = new ContactVO();
             BeanUtility.copyProperties(userProfile, userVO);
             userVO.setFlagUrl(Nationality.CHINA.getFlag());
             userVOS.add(userVO);

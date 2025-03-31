@@ -4,19 +4,16 @@ import com.sparrow.chat.contact.assembler.ContactAssembler;
 import com.sparrow.chat.contact.bo.ContactsWrapBO;
 import com.sparrow.chat.contact.bo.UserProfileBO;
 import com.sparrow.chat.contact.protocol.FindUserSecretParam;
-import com.sparrow.chat.contact.protocol.vo.ContactVO;
+import com.sparrow.chat.contact.protocol.vo.ContactGroupVO;
 import com.sparrow.chat.contact.protocol.vo.UserFriendApplyVO;
-import com.sparrow.chat.contact.protocol.vo.UserVO;
+import com.sparrow.chat.contact.protocol.vo.ContactVO;
 import com.sparrow.chat.contact.service.ContactService;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -45,9 +42,9 @@ public class ContactController {
         return this.contactAssembler.toUserFriendApplyVO(contactBO);
     }
 
-    @PostMapping("/contacts.json")
+    @GetMapping("/contacts.json")
     @ApiOperation("联系人接口")
-    public ContactVO getContacts() throws BusinessException {
+    public ContactGroupVO getContacts() throws BusinessException {
         ContactsWrapBO contactsWrapBO = this.contactService.getContacts();
         return this.contactAssembler.assembleVO(contactsWrapBO);
     }
@@ -55,7 +52,7 @@ public class ContactController {
 
     @PostMapping("/get-users-by-ids.json")
     @ApiOperation("通过用户ID获取用户列表")
-    public List<UserVO> getUsersByIds(@RequestBody List<Long> userIds) throws BusinessException {
+    public List<ContactVO> getUsersByIds(@RequestBody List<Long> userIds) throws BusinessException {
         Map<Long, UserProfileDTO> userProfileDTOMap = this.contactService.getUserMap(userIds);
         return this.contactAssembler.assembleUserListVO(userProfileDTOMap.values());
     }

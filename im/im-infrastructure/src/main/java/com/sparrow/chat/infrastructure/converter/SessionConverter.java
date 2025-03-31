@@ -18,7 +18,7 @@ public class SessionConverter {
 
     public List<SessionDTO> convert(List<Session> sessions) {
         if (CollectionUtils.isEmpty(sessions)) {
-            return null;
+            return new ArrayList<>();
         }
         List<SessionDTO> sessionDTOs = new ArrayList<>(sessions.size());
         for (Session session : sessions) {
