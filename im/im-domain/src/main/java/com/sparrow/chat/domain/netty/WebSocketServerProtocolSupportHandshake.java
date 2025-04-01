@@ -65,16 +65,17 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
     public String getClientIp(HandshakeComplete serverHandshakeComplete, Channel channel) {
         HttpHeaders httpHeaders = serverHandshakeComplete.requestHeaders();
         String clientIp = httpHeaders.get("X-Real-IP");
-        if (clientIp == null) {
-            String xff = httpHeaders.get("X-Forwarded-For");
-            if (xff != null && !xff.isEmpty()) {
-                String[] ips = xff.split(",");
-                clientIp = ips[0];
-            } else {
-                // 直接连接的客户端 IP（无代理）
-                InetSocketAddress addr = (InetSocketAddress) channel.remoteAddress();
-                clientIp = addr.getAddress().getHostAddress();
-            }
+        if (clientIp != null) {
+            return clientIp;
+        }
+        String xff = httpHeaders.get("X-Forwarded-For");
+        if (xff != null && !xff.isEmpty()) {
+            String[] ips = xff.split(",");
+            clientIp = ips[0];
+        } else {
+            // 直接连接的客户端 IP（无代理）
+            InetSocketAddress addr = (InetSocketAddress) channel.remoteAddress();
+            clientIp = addr.getAddress().getHostAddress();
         }
         return clientIp;
     }
@@ -102,12 +103,12 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
                 });
             }
             super.userEventTriggered(ctx, evt);
-        } else {
-            if (evt instanceof IdleStateEvent) {
-                UserContainer.getContainer().offline(ctx.channel());
-            }
-            super.userEventTriggered(ctx, evt);
+            return;
         }
+        if (evt instanceof IdleStateEvent) {
+            UserContainer.getContainer().offline(ctx.channel());
+        }
+        super.userEventTriggered(ctx, evt);
     }
 
     @Override
