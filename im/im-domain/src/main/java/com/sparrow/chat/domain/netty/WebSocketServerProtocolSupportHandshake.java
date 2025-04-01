@@ -6,7 +6,9 @@ import com.sparrow.protocol.Result;
 import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.spring.starter.SpringContext;
 import com.sparrow.support.Authenticator;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
@@ -60,6 +62,23 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
         super(websocketPath, "*", true, maxLength);
     }
 
+    public String getClientIp(HandshakeComplete serverHandshakeComplete, Channel channel) {
+        HttpHeaders httpHeaders = serverHandshakeComplete.requestHeaders();
+        String clientIp = httpHeaders.get("X-Real-IP");
+        if (clientIp == null) {
+            String xff = httpHeaders.get("X-Forwarded-For");
+            if (xff != null && !xff.isEmpty()) {
+                String[] ips = xff.split(",");
+                clientIp = ips[0];
+            } else {
+                // 直接连接的客户端 IP（无代理）
+                InetSocketAddress addr = (InetSocketAddress) channel.remoteAddress();
+                clientIp = addr.getAddress().getHostAddress();
+            }
+        }
+        return clientIp;
+    }
+
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof HandshakeComplete) {
@@ -67,8 +86,7 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
             //token 必须要url编码 否则会报invalid token
             //编解码移至Authenticator
             String token = serverHandshakeComplete.requestHeaders().get("sec-websocket-protocol");
-            InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-            String ip = address.getAddress().getHostAddress();
+            String ip = this.getClientIp(serverHandshakeComplete, ctx.channel());
             try {
                 LoginUser loginUser = SpringContext.getContext().getBean(Authenticator.class).authenticate(token, ip);
                 Result<LoginUser> result = Result.success(loginUser, Instruction.AUTH);
