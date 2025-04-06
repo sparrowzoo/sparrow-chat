@@ -6,12 +6,12 @@ import com.sparrow.chat.domain.bo.MessageKey;
 import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.domain.repository.MessageRepository;
 import com.sparrow.chat.im.po.Message;
-import com.sparrow.chat.infrastructure.commons.ConfigKey;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.MessageConverter;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
+import com.sparrow.core.spi.ApplicationContext;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.exception.Asserts;
 import com.sparrow.json.Json;
@@ -20,7 +20,7 @@ import com.sparrow.protocol.constant.Extension;
 import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
-import com.sparrow.utility.ConfigUtility;
+import com.sparrow.support.web.WebConfigReader;
 import com.sparrow.utility.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,15 +52,16 @@ public class MessageRepositoryImpl implements MessageRepository {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        String rootPhysicalPath = ConfigUtility.getValue(ConfigKey.IMAGE_PHYSICAL_ROOT_PATH);
-        String physicalUrl = rootPhysicalPath +
+        WebConfigReader webConfigReader = ApplicationContext.getContainer().getBean(WebConfigReader.class);
+
+        String rootPhysicalPath = webConfigReader.getPhysicalUpload();
+        return rootPhysicalPath +
                 File.separator +
                 year + File.separator +
                 month + File.separator +
                 day + File.separator +
                 user.key() + File.separator +
                 calendar.getTimeInMillis() + Extension.JPG;
-        return physicalUrl;
     }
 
     @Override
@@ -84,9 +85,9 @@ public class MessageRepositoryImpl implements MessageRepository {
         }
         String physicalUrl = this.generateImageId(protocol.getSender());
         FileUtility.getInstance().generateImage(protocol.getContentBytes(), physicalUrl);
-        String rootPhysicalPath = ConfigUtility.getValue(ConfigKey.IMAGE_PHYSICAL_ROOT_PATH);
-        String rootWebPath = ConfigUtility.getValue(ConfigKey.IMAGE_WEB_ROOT_PATH);
-
+        WebConfigReader webConfigReader = ApplicationContext.getContainer().getBean(WebConfigReader.class);
+        String rootPhysicalPath = webConfigReader.getPhysicalUpload();
+        String rootWebPath = webConfigReader.getUpload();
         String webUrl = physicalUrl.replace(rootPhysicalPath, rootWebPath);
         //转换成 msg id
         protocol.setContent(webUrl);
