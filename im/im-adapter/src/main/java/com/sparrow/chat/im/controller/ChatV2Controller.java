@@ -4,7 +4,6 @@ import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.service.ChatService;
 import com.sparrow.chat.domain.service.UserLoginService;
-import com.sparrow.chat.domain.service.VisitorService;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.params.SessionReadParams;
@@ -38,9 +37,6 @@ public class ChatV2Controller {
     private Authenticator authenticator;
 
     @Autowired
-    private VisitorService visitorService;
-
-    @Autowired
     private UserLoginService loginService;
 
     @ApiOperation(value = "解析登录Token")
@@ -56,11 +52,7 @@ public class ChatV2Controller {
         return ThreadContext.getLoginToken();
     }
 
-    @ApiOperation(value = "获取访客Token")
-    @GetMapping("/get-visitor-token.json")
-    public String getVisitorToken() {
-        return this.visitorService.generateVisitorToken();
-    }
+
 
     @ApiOperation(value = "登录")
     @PostMapping("/login.json")

@@ -6,6 +6,8 @@ import com.sparrow.passport.protocol.enums.PassportError;
 import com.sparrow.passport.protocol.query.login.LoginQuery;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.ClientInformation;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
+@Api(value = "login", tags = "登录")
 public class SpringUserLoginController {
     @Autowired
     private UserLoginController userLoginController;
@@ -51,6 +54,12 @@ public class SpringUserLoginController {
     @PostMapping("/shortcut-login.json")
     public LoginDTO shortcut(@RequestBody LoginQuery login, ClientInformation client) throws BusinessException {
         return this.userLoginController.shortcut(login, client);
+    }
+
+    @ApiOperation(value = "获取访客Token")
+    @GetMapping("/chat/v2/get-visitor-token.json")
+    public String getVisitorToken(ClientInformation client) {
+        return this.userLoginController.getVisitorToken(client).getToken();
     }
 
     public void logout() {
