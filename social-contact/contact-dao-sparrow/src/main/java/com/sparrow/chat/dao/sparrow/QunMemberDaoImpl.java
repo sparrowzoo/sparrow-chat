@@ -10,7 +10,7 @@ import com.sparrow.orm.template.impl.ORMStrategy;
 
 import javax.inject.Named;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 @Named
 public class QunMemberDaoImpl extends ORMStrategy<QunMember, Long> implements QunMemberDao {
@@ -54,13 +54,13 @@ public class QunMemberDaoImpl extends ORMStrategy<QunMember, Long> implements Qu
     }
 
     @Override
-    public Map<Long, Long> getQunsByMemberId(Long memberId) {
+    public Set<Long> getQunsByMemberId(Long memberId) {
         SearchCriteria searchCriteria = new SearchCriteria();
-        searchCriteria.setFields("qunMember.memberId,qunMember.qunId");
+        searchCriteria.setFields("qunMember.qunId");
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
-                        (Criteria.field("qunMember.memberId").equal(memberId)));
+                        (Criteria.field(QunMember::getMemberId).equal(memberId)));
         searchCriteria.addOrderCriteria(OrderCriteria.asc("qunMember.applyTime"));
-        return this.getMap(searchCriteria);
+        return this.firstList(searchCriteria);
     }
 }

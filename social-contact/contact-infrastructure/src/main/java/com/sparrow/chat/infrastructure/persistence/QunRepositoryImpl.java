@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 @Named
 public class QunRepositoryImpl implements QunRepository {
@@ -115,11 +115,11 @@ public class QunRepositoryImpl implements QunRepository {
     @Override
     public List<QunBO> getMyQunList() {
         LoginUser loginUser = ThreadContext.getLoginToken();
-        Map<Long, Long> myQunIds = this.qunMemberDao.getQunsByMemberId(loginUser.getUserId());
+        Set<Long> myQunIds = this.qunMemberDao.getQunsByMemberId(loginUser.getUserId());
         if (myQunIds == null || myQunIds.isEmpty()) {
             return new ArrayList<>();
         }
-        List<Qun> myQuns = this.qunDao.getQuns(myQunIds.values());
+        List<Qun> myQuns = this.qunDao.getQuns(myQunIds);
         return this.qunConverter.poList2BoList(myQuns);
     }
 }
