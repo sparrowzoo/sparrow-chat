@@ -1,19 +1,25 @@
 package com.sparrow.chat.contact.rpc;
 
+import com.sparrow.chat.contact.QunServiceApi;
 import com.sparrow.chat.contact.bo.QunMemberBO;
 import com.sparrow.chat.contact.service.QunService;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.utility.CollectionsUtility;
-import com.sparrow.chat.dao.sparrow.contact.QunServiceApi;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Named
+@Component
+@Slf4j
 public class QunRpcService implements QunServiceApi {
+    public QunRpcService() {
+        log.info("QunRpcService init");
+    }
+
     @Inject
     private QunService qunService;
 

@@ -64,4 +64,11 @@ public class RedisQunRepository implements QunRepository {
             this.redisTemplate.opsForSet().remove(userOfQunKey, deletingIds);
         }
     }
+
+    @Override
+    public boolean isQunMember(Long qunId, Long userId) {
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByQunId(qunId + "");
+        String userOfQunKey = PlaceHolderParser.parse(RedisKey.USER_ID_OF_QUN, propertyAccessor);
+        return this.redisTemplate.opsForSet().isMember(userOfQunKey,userId.toString());
+    }
 }

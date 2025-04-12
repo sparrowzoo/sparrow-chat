@@ -14,7 +14,7 @@ public interface MessageRepository {
 
     String saveImageContent(Protocol content);
 
-    void saveMessage(Protocol message);
+    void saveMessage(Protocol message,Long ip);
 
     Map<String, Long> getLastRead(ChatUser me, List<String> sessionKeys);
 

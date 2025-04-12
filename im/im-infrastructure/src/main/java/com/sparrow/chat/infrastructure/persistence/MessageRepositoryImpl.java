@@ -110,10 +110,10 @@ public class MessageRepositoryImpl implements MessageRepository {
     }
 
     @Override
-    public void saveMessage(Protocol protocol) {
+    public void saveMessage(Protocol protocol,Long ip) {
         this.saveImageContent(protocol);
         MessageDTO message = this.messageConverter.convertMessage(protocol);
-        this.messageDao.insert(this.messageConverter.convertPo(protocol));
+        this.messageDao.insert(this.messageConverter.convertPo(protocol,ip));
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(protocol.getChatSession().key());
         String messageKey = PlaceHolderParser.parse(RedisKey.SESSION_MESSAGE_KEY, propertyAccessor);
         //保证消息的顺序，先进先出

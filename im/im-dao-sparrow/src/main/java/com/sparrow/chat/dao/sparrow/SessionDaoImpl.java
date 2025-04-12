@@ -21,6 +21,7 @@ public class SessionDaoImpl extends ORMStrategy<Session, Long> implements Sessio
                                 (Criteria.field(Session::getUserId).equal(userId))
                         .and
                                 (Criteria.field(Session::getCategory).equal(category)));
+        searchCriteria.addOrderCriteria(OrderCriteria.desc(Session::getLastReadTime));
         return this.getList(searchCriteria);
     }
 

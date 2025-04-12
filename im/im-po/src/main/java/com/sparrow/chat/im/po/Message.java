@@ -73,5 +73,5 @@ public class Message implements POJO {
     private Long clientSendTime;
 
     @Column(name = "ip", columnDefinition = "int UNSIGNED not null default 0 comment 'ip地址'")
-    private Integer ip;
+    private Long ip;
 }

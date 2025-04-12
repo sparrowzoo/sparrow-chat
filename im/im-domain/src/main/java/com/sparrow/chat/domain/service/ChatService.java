@@ -7,8 +7,8 @@ import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.repository.ContactRepository;
 import com.sparrow.chat.domain.repository.MessageRepository;
+import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.chat.domain.repository.SessionRepository;
-import com.sparrow.chat.protocol.constant.Chat;
 import com.sparrow.chat.protocol.dto.ContactStatusDTO;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,37 +40,39 @@ public class ChatService {
     private SessionRepository sessionRepository;
     @Autowired
     private ContactRepository contactsRepository;
+    @Inject
+    private QunRepository qunRepository;
 
 
     public List<ContactStatusDTO> getContactsStatus(Long userId, List<ChatUserQuery> userQueries) {
-            if (CollectionUtils.isEmpty(userQueries)) {
-                List<UserDTO> users = this.contactsRepository.getFriendsByUserId(userId);
-                userQueries = new ArrayList<>();
-                for (UserDTO user : users) {
-                    userQueries.add(user.getChatUser());
-                }
+        if (CollectionUtils.isEmpty(userQueries)) {
+            List<UserDTO> users = this.contactsRepository.getFriendsByUserId(userId);
+            userQueries = new ArrayList<>();
+            for (UserDTO user : users) {
+                userQueries.add(user.getChatUser());
             }
+        }
 
-            List<ContactStatusDTO> contacts = new ArrayList<>();
-            UserContainer userContainer = UserContainer.getContainer();
-            for (ChatUserQuery userQuery : userQueries) {
-                boolean online = UserContainer.getContainer().online(ChatUser.convertFromQuery(userQuery));
-                if (!online) {
-                    continue;
-                }
-                ContactStatusDTO contactStatus = new ContactStatusDTO();
-                contactStatus.setOnline(online);
-                contactStatus.setId(userQuery.getId());
-                contactStatus.setCategory(userQuery.getCategory());
-                contactStatus.setLastActiveTime(userContainer.getLastActiveTime(ChatUser.convertFromQuery(userQuery)));
-                contacts.add(contactStatus);
+        List<ContactStatusDTO> contacts = new ArrayList<>();
+        UserContainer userContainer = UserContainer.getContainer();
+        for (ChatUserQuery userQuery : userQueries) {
+            boolean online = UserContainer.getContainer().online(ChatUser.convertFromQuery(userQuery));
+            if (!online) {
+                continue;
             }
-            return contacts;
+            ContactStatusDTO contactStatus = new ContactStatusDTO();
+            contactStatus.setOnline(online);
+            contactStatus.setId(userQuery.getId());
+            contactStatus.setCategory(userQuery.getCategory());
+            contactStatus.setLastActiveTime(userContainer.getLastActiveTime(ChatUser.convertFromQuery(userQuery)));
+            contacts.add(contactStatus);
+        }
+        return contacts;
     }
 
-    public void saveMessage(Protocol protocol) {
+    public void saveMessage(Protocol protocol,Long ip) {
         //将消息保存至session 每个消息只存留一份，只保留最近100条
-        this.messageRepository.saveMessage(protocol);
+        this.messageRepository.saveMessage(protocol,ip);
         this.sessionRepository.saveSession(protocol.getChatSession(), protocol.getSender());
     }
 
@@ -102,19 +105,26 @@ public class ChatService {
     }
 
     public List<MessageDTO> fetchMessages(String sessionKey) throws BusinessException {
-        this.isOne2OneMember(sessionKey);
+        this.isMember(sessionKey);
+        this.sessionRepository.read(new SessionReadParams(sessionKey));
         return this.messageRepository.getMessageBySession(sessionKey);
+
     }
 
     public List<MessageDTO> fetchHistoryMessages(MessageQuery messageQuery) throws BusinessException {
-        this.isOne2OneMember(messageQuery.getSessionKey());
+        this.isMember(messageQuery.getSessionKey());
         return this.messageRepository.getHistoryMessage(messageQuery.getSessionKey(), messageQuery.getLastReadTime());
     }
 
-    public void isOne2OneMember(String sessionKey) throws BusinessException {
+    public void isMember(String sessionKey) throws BusinessException {
         ChatSession chatSession = ChatSession.parse(sessionKey);
-        LoginUser loginUser = ThreadContext.getLoginToken();
-        ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
-        Asserts.isTrue(!chatSession.isOne2OneMember(chatUser), SparrowError.SYSTEM_ILLEGAL_REQUEST);
+        if (chatSession.isOne2One()) {
+            LoginUser loginUser = ThreadContext.getLoginToken();
+            ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
+            Asserts.isTrue(!chatSession.isOne2OneMember(chatUser), SparrowError.SYSTEM_ILLEGAL_REQUEST);
+            return;
+        }
+        boolean isMember = qunRepository.isQunMember(Long.parseLong(chatSession.getId()), ThreadContext.getLoginToken().getUserId());
+        Asserts.isTrue(!isMember, SparrowError.SYSTEM_ILLEGAL_REQUEST);
     }
 }

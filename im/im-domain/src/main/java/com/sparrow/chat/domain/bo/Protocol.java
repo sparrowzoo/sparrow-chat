@@ -52,7 +52,7 @@ public class Protocol {
             byte[] sessionBytes = new byte[sessionLength];
             content.readBytes(sessionBytes);
             String sessionKey = new String(sessionBytes);
-            this.chatSession = ChatSession.createQunSession(this.sender, sessionKey);
+            this.chatSession = ChatSession.parse(sessionKey);
         }
         int contentLength = content.readInt();
         byte[] contentBytes = new byte[contentLength];

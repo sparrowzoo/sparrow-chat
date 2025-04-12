@@ -1,6 +1,7 @@
 package com.sparrow.chat.boot;
 
 import com.sparrow.chat.domain.netty.WebSocketServer;
+import com.sparrow.chat.infrastructure.mq.ContactMQPublisher;
 import com.sparrow.container.Container;
 import com.sparrow.container.ContainerBuilder;
 import com.sparrow.core.spi.ApplicationContext;
@@ -17,6 +18,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 @SpringBootApplication(scanBasePackages = "com.sparrow.*")
 public class ApplicationBoot {
     private static Logger log = LoggerFactory.getLogger(ApplicationBoot.class);
+
 
     public static void main(String[] args) {
         SpringApplication springApplication = new SpringApplication(ApplicationBoot.class);
@@ -37,12 +39,14 @@ public class ApplicationBoot {
         springApplication.addListeners(new ApplicationListener<ContextRefreshedEvent>() {
             @Override
             public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+                contextRefreshedEvent.getApplicationContext().getBean(ContactMQPublisher.class).start();
+                log.info("application startup at {}", contextRefreshedEvent.getTimestamp());
                 try {
+                    log.info("start web socket server");
                     WebSocketServer.start(args);
                 } catch (Exception e) {
                     log.error("start error", e);
                 }
-                log.info("application startup at {}", contextRefreshedEvent.getTimestamp());
             }
         });
         springApplication.addListeners(new ApplicationListener<ContextClosedEvent>() {

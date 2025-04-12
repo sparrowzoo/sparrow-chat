@@ -1,13 +1,9 @@
 package com.sparrow.chat.domain.bo;
 
 import com.sparrow.chat.protocol.dto.SessionDTO;
-import com.sparrow.exception.Asserts;
-import com.sparrow.protocol.constant.SparrowError;
-import com.sparrow.protocol.constant.magic.Symbol;
 import com.sparrow.utility.StringUtility;
 
 import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_1;
-import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_N;
 
 /**
  * 会话不应该与用户相关
@@ -26,10 +22,6 @@ public class ChatSession {
 
     public static ChatSession create1To1Session(ChatUser sender, ChatUser receiver) {
         return new ChatSession(CHAT_TYPE_1_2_1, sender, receiver, null);
-    }
-
-    public static ChatSession createQunSession(ChatUser sender, String id) {
-        return new ChatSession(CHAT_TYPE_1_2_N, sender, null, id);
     }
 
     private ChatSession(int chatType, ChatUser sender, ChatUser receiver, String id) {

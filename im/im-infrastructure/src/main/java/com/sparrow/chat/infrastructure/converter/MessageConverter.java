@@ -25,7 +25,9 @@ public class MessageConverter {
         message.setContent(protocol.getContent());
         message.setSession(protocol.getChatSession().toSessionDTO());
         message.setSender(protocol.getSender().toChatUserQuery());
-        message.setReceiver(protocol.getReceiver().toChatUserQuery());
+        if (protocol.isOne2One()) {
+            message.setReceiver(protocol.getReceiver().toChatUserQuery());
+        }
         message.setServerTime(protocol.getServerTime());
         message.setClientSendTime(protocol.getClientSendTime());
         return message;
@@ -51,21 +53,26 @@ public class MessageConverter {
         return messageDTOs;
     }
 
-    public Message convertPo(Protocol protocol) {
+    public Message convertPo(Protocol protocol,Long ip) {
         ChatUser sender = protocol.getSender();
         ChatUser receiver = protocol.getReceiver();
         Message message = new Message();
         message.setMessageType(protocol.getMessageType());
-        message.setContent(protocol.getContent());
+        message.setContent(protocol.getContent().trim());
         message.setSender(sender.getId());
         message.setSenderCategory(sender.getCategory());
-        message.setReceiver(receiver.getId());
-        message.setReceiverCategory(receiver.getCategory());
+        if (protocol.isOne2One()) {
+            message.setReceiver(receiver.getId());
+            message.setReceiverCategory(receiver.getCategory());
+        } else {
+            message.setReceiver("");
+            message.setReceiverCategory(0);
+        }
         message.setServerTime(protocol.getServerTime());
         message.setClientSendTime(protocol.getClientSendTime());
         message.setChatType(protocol.getChatSession().getChatType());
         message.setSessionKey(protocol.getChatSession().key());
-        message.setIp(1);
+        message.setIp(ip);
         return message;
     }
 

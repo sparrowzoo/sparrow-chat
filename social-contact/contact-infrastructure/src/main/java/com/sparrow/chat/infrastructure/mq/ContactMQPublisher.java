@@ -27,7 +27,6 @@ public class ContactMQPublisher implements MQPublisher, InitializingBean {
 
     private ScheduledExecutorService scheduledExecutorService;
 
-
     @Inject
     private EventHandlerMappingContainer queueHandlerMappingContainer;
 
@@ -52,10 +51,14 @@ public class ContactMQPublisher implements MQPublisher, InitializingBean {
         this.qunMemberSyncExecutorService = new ThreadPoolExecutor(1, 1, 10, TimeUnit.MINUTES, new ArrayBlockingQueue<>(128), new SparrowThreadFactory.Builder().daemon(true).namingPattern("qun-sync-thread-%d").build(), new ThreadPoolExecutor.DiscardOldestPolicy());
         this.scheduledExecutorService = new ScheduledThreadPoolExecutor(1,
                 new SparrowThreadFactory.Builder().namingPattern("qun-member-all-sync-%d").daemon(true).build());
+
+    }
+
+    public void start() {
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                List<QunBO> qunBOS =null;// qunRepository.queryQunPlaza();
+                List<QunBO> qunBOS = qunRepository.queryQunPlaza();
                 for (QunBO qunBO : qunBOS) {
                     try {
                         publish(new QunMemberEvent(qunBO.getId(), null));
@@ -64,6 +67,6 @@ public class ContactMQPublisher implements MQPublisher, InitializingBean {
                     }
                 }
             }
-        }, 60, 5, TimeUnit.SECONDS);
+        }, 0, 5, TimeUnit.MINUTES);
     }
 }

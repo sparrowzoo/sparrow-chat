@@ -11,11 +11,8 @@ import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.SessionConverter;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.params.SessionReadParams;
-import com.sparrow.exception.Asserts;
-import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.ThreadContext;
-import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +41,7 @@ public class SessionRepositoryImpl implements SessionRepository {
     @Override
     public void saveSession(ChatSession session, ChatUser currentUser) {
         this.addNewSessionForUserId(session, currentUser);
+        this.read(new SessionReadParams(session.key()));
         //1 to 1 推送
         if (session.getChatType() == CHAT_TYPE_1_2_1) {
             ChatUser oppositeUser = session.getOppositeUser(currentUser);
@@ -81,21 +79,10 @@ public class SessionRepositoryImpl implements SessionRepository {
         return this.sessionConverter.convert(sessions);
     }
 
-    public void canAccessSession(String sessionKey) throws BusinessException {
-        LoginUser loginUser = ThreadContext.getLoginToken();
-        ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
-        String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
-        ChatSession chatSession =ChatSession.parse(sessionKey);
-        Double score = this.redisTemplate.opsForZSet().score(userSessionKey, chatSession.key());
-        Asserts.isTrue(score == null, SparrowError.SYSTEM_ILLEGAL_REQUEST);
-    }
-
     @Override
-    public void read(SessionReadParams messageRead) throws BusinessException {
+    public void read(SessionReadParams messageRead){
         LoginUser loginUser = ThreadContext.getLoginToken();
         ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
-        this.canAccessSession(messageRead.getSessionKey());
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserKey(messageRead.getSessionKey(), chatUser);
         String sessionReadKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_READ, propertyAccessor);
         redisTemplate.opsForValue().set(sessionReadKey, System.currentTimeMillis() + "");

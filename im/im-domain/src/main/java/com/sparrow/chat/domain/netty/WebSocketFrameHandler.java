@@ -16,15 +16,18 @@
 package com.sparrow.chat.domain.netty;
 
 import com.alibaba.fastjson.JSON;
+import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.domain.service.ChatService;
-import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.protocol.constant.Chat;
 import com.sparrow.chat.protocol.dto.ContactStatusDTO;
 import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.core.spi.ApplicationContext;
+import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.Result;
+import com.sparrow.protocol.ThreadContext;
 import com.sparrow.protocol.constant.SparrowError;
+import com.sparrow.support.IpSupport;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufHolder;
@@ -37,6 +40,7 @@ import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
 import java.util.List;
 
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
@@ -97,14 +101,22 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         }
 
         if (frame instanceof BinaryWebSocketFrame) {
+
             UserContainer.getContainer().refreshLastActiveTime(ctx.channel());
             BinaryWebSocketFrame msg = (BinaryWebSocketFrame) frame;
             ByteBuf content = msg.content();
             Protocol protocol = new Protocol(content);
             ChatUser currentUser = UserContainer.getContainer().hasUser(ctx.channel());
+            LoginUser loginUser = new LoginUser();
+            loginUser.setUserId(currentUser.getLongUserId());
+            loginUser.setCategory(currentUser.getCategory());
+            ThreadContext.bindLoginToken(loginUser);
             //从当前channel 中获取当前用户id
             protocol.setSender(currentUser);
-            chatService.saveMessage(protocol);
+            InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+            String clientIP = remoteAddress.getAddress().getHostAddress();
+            IpSupport ipSupport = ApplicationContext.getContainer().getBean(IpSupport.class);
+            chatService.saveMessage(protocol, ipSupport.toLong(clientIP));
             if (protocol.getChatType() == Chat.CHAT_TYPE_1_2_1 && protocol.getSender().equals(protocol.getReceiver())) {
                 return;
             }
