@@ -2,6 +2,7 @@ package com.sparrow.chat.contact.test;
 
 import com.sparrow.chat.boot.ApplicationBoot;
 import com.sparrow.chat.contact.service.SecretService;
+import com.sparrow.passport.domain.DomainRegistry;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.enums.StatusRecord;
@@ -13,8 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-
-import javax.sql.DataSource;
 
 
 /**
@@ -32,6 +31,10 @@ public class SecurityTest {
     @Autowired
     private SecretService secretService;
 
+    @Autowired
+    private DomainRegistry domainRegistry;
+
+
     @Test
     public void testUserSecret() throws BusinessException {
         UserProfileDTO userProfile = new UserProfileDTO();
@@ -48,6 +51,11 @@ public class SecurityTest {
         String secretUserId = this.secretService.encryptUserIdentify(userProfile);
         Long userId = this.secretService.parseUserSecretIdentify(secretUserId);
         System.out.println(userId);
+    }
+
+    @Test
+    public void passwordTest() {
+        System.out.println(domainRegistry.getEncryptionService().encryptPassword("WOOONLIGHT1!"));
     }
 }
 
