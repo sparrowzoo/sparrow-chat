@@ -16,8 +16,8 @@ public class ChatSession {
     }
 
 
-    public static ChatSession createSession(Integer chatType,String id) {
-        return new ChatSession(chatType, null,null, id);
+    public static ChatSession createSession(Integer chatType, String id) {
+        return new ChatSession(chatType, null, null, id);
     }
 
     public static ChatSession create1To1Session(ChatUser sender, ChatUser receiver) {
@@ -55,7 +55,7 @@ public class ChatSession {
     }
 
     public String key() {
-        return chatType+ id;
+        return chatType + id;
     }
 
     public boolean isOne2One() {
@@ -72,9 +72,9 @@ public class ChatSession {
             bigUser = receiver;
             smallUser = sender;
         }
-        int length= bigUser.getId().length();
-        String len= StringUtility.leftPad(Integer.toString(length),'0',2);
-        return bigUser.getCategory()+""+smallUser.getCategory()+""+len+""+bigUser.getId()+smallUser.getId();
+        int length = bigUser.getId().length();
+        String len = StringUtility.leftPad(Integer.toString(length), '0', 2);
+        return bigUser.getCategory() + "" + smallUser.getCategory() + "" + len + "" + bigUser.getId() + smallUser.getId();
     }
 
     public static ChatSession parse(String sessionKey) {
@@ -94,30 +94,30 @@ public class ChatSession {
             return null;
         }
 
-        String bigUserCategory=this.id.substring(0,1);
-        String smallUserCategory=this.id.substring(1,2);
-        int bitUserLength=Integer.parseInt(this.id.substring(2,4));
-        String bigUserId=this.id.substring(4, 4+bitUserLength);
-        String smallUserId=this.id.substring(4+bitUserLength);
+        String bigUserCategory = this.id.substring(0, 1);
+        String smallUserCategory = this.id.substring(1, 2);
+        int bitUserLength = Integer.parseInt(this.id.substring(2, 4));
+        String bigUserId = this.id.substring(4, 4 + bitUserLength);
+        String smallUserId = this.id.substring(4 + bitUserLength);
 
-        ChatUser bigUser=ChatUser.stringUserId(bigUserId,Integer.valueOf(bigUserCategory));
-        ChatUser smallUser=ChatUser.stringUserId(smallUserId,Integer.valueOf(smallUserCategory));
+        ChatUser bigUser = ChatUser.stringUserId(bigUserId, Integer.valueOf(bigUserCategory));
+        ChatUser smallUser = ChatUser.stringUserId(smallUserId, Integer.valueOf(smallUserCategory));
 
-        if(bigUser.equals(currentUser)){
+        if (bigUser.equals(currentUser)) {
             return smallUser;
         }
         return bigUser;
     }
 
     public SessionDTO toSessionDTO() {
-        return new SessionDTO(this.chatType, this.getId(), 0L);
+        return SessionDTO.parse(this.key(), 0L);
     }
 
     public boolean isOne2OneMember(ChatUser user) {
-        if(!this.isOne2One()){
+        if (!this.isOne2One()) {
             return false;
         }
-        ChatUser oppositeUser=this.getOppositeUser(user);
-        return oppositeUser!= null;
+        ChatUser oppositeUser = this.getOppositeUser(user);
+        return oppositeUser != null;
     }
 }

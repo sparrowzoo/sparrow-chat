@@ -76,6 +76,7 @@ public class ContactAssembler {
         for (UserProfileDTO userProfileDTO : contactsWrap.getUsers()) {
             ContactVO userVO = new ContactVO();
             BeanUtility.copyProperties(userProfileDTO, userVO);
+            userVO.setSignature(userProfileDTO.getPersonalSignature());
             userVOS.add(userVO);
         }
         return userVOS;

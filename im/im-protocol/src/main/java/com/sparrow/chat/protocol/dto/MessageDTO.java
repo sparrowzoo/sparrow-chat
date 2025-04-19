@@ -19,10 +19,6 @@ public class MessageDTO implements POJO {
      */
     private ChatUserQuery receiver;
     /**
-     * 会话
-     */
-    private SessionDTO session;
-    /**
      * 消息内容
      */
     private String content;

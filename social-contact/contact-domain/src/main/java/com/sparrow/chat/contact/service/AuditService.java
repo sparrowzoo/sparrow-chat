@@ -10,6 +10,7 @@ import com.sparrow.chat.contact.protocol.audit.JoinQunParam;
 import com.sparrow.chat.contact.protocol.audit.QunAuditParam;
 import com.sparrow.chat.contact.protocol.enums.AuditBusiness;
 import com.sparrow.chat.contact.protocol.enums.ContactError;
+import com.sparrow.chat.contact.protocol.event.ContactEvent;
 import com.sparrow.chat.contact.protocol.event.QunMemberEvent;
 import com.sparrow.chat.contact.repository.AuditRepository;
 import com.sparrow.chat.contact.repository.ContactRepository;
@@ -97,7 +98,7 @@ public class AuditService {
         return new AuditWrapBO(auditBOS, userProfiles);
     }
 
-    public void auditFriendApply(FriendAuditParam friendAuditParam) throws BusinessException {
+    public void auditFriendApply(FriendAuditParam friendAuditParam) throws Throwable {
         AuditBO auditBO = this.auditRepository.getAudit(friendAuditParam.getAuditId());
         Asserts.isTrue(AuditBusiness.FRIEND != auditBO.getAuditBusiness(), ContactError.AUDIT_BUSINESS_TYPE_NOT_MATCH);
         LoginUser loginUser = ThreadContext.getLoginToken();
@@ -105,6 +106,7 @@ public class AuditService {
         this.auditRepository.auditFriend(auditBO, friendAuditParam);
         if (friendAuditParam.getAgree()) {
             this.contactRepository.addContact(auditBO);
+            this.mqPublisher.publish(new ContactEvent(loginUser.getUserId(), auditBO.getApplyUserId()));
         }
     }
 

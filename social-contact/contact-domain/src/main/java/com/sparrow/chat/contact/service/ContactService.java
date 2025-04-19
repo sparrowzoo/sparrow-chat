@@ -50,8 +50,9 @@ public class ContactService {
          * 	at java.util.AbstractList.add(AbstractList.java:108) ~[na:1.8.0_281]
          * 	at com.sparrow.chat.contact.service.ContactService.getContacts
          */
-        contactUserIds.add(ThreadContext.getLoginToken().getUserId());
-        List<Long> otherContacts = this.contactRepository.getContacts();
+        Long userId = ThreadContext.getLoginToken().getUserId();
+        contactUserIds.add(userId);
+        List<Long> otherContacts = this.contactRepository.getContacts(userId);
         if (!CollectionsUtility.isNullOrEmpty(otherContacts)) {
             contactUserIds.addAll(otherContacts);
         }

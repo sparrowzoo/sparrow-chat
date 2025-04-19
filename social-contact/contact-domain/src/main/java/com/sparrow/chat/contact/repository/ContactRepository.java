@@ -7,5 +7,5 @@ import java.util.List;
 public interface ContactRepository {
     void addContact(AuditBO auditBO);
 
-    List<Long> getContacts();
+    List<Long> getContacts(Long userId);
 }

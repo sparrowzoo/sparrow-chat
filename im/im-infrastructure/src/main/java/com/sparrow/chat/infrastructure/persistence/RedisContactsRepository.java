@@ -1,7 +1,6 @@
 package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.domain.repository.ContactRepository;
-import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.protocol.dto.QunDTO;
@@ -31,9 +30,6 @@ public class RedisContactsRepository implements ContactRepository {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    @Autowired
-    private QunRepository qunRepository;
-
     private Json json = JsonFactory.getProvider();
 
     public Boolean existQunByUserId(Long userId, String qunId) {
@@ -42,29 +38,20 @@ public class RedisContactsRepository implements ContactRepository {
         }
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, CHAT_TYPE_1_2_N);
         String userQunKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
-        List<String> qunIds = this.redisTemplate.opsForList().range(userQunKey, 0, Integer.MAX_VALUE);
-        if (CollectionsUtility.isNullOrEmpty(qunIds)) {
-            return false;
-        }
-        if (qunIds.contains(qunId)) {
-            return true;
-        }
-        return false;
+        Double score = this.redisTemplate.opsForZSet().score(userQunKey, qunId);
+        return score != null;
     }
 
     @Override
     public List<QunDTO> getQunsByUserId(Long userId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, CHAT_TYPE_1_2_N);
         String userQunKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
-        List<String> qunIds = this.redisTemplate.opsForList().range(userQunKey, 0, Integer.MAX_VALUE);
+        Set<String> qunIds = this.redisTemplate.opsForZSet().range(userQunKey, 0, Integer.MAX_VALUE);
         List<String> qunKeys = new ArrayList<>(qunIds.size());
-        Map<String, List<Long>> qunMembersMap = new HashMap<>(qunIds.size());
         for (String qunId : qunIds) {
             PropertyAccessor qunPropertyAccessor = PropertyAccessBuilder.buildByQunId(qunId);
             String qunKey = PlaceHolderParser.parse(RedisKey.QUN, qunPropertyAccessor);
             qunKeys.add(qunKey);
-            List<Long> usersOfQun = this.qunRepository.getUserIdList(qunId);
-            qunMembersMap.put(qunId, usersOfQun);
         }
         List<String> quns = this.redisTemplate.opsForValue().multiGet(qunKeys);
         List<QunDTO> qunDtos = new ArrayList<>(quns.size());

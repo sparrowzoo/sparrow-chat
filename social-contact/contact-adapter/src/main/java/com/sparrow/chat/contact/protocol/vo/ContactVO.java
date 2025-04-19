@@ -21,8 +21,15 @@ public class ContactVO implements VO {
      * 用户名
      */
     private String userName;
+
+    /**
+     * 昵称
+     */
+    private String nickName;
     /**
      * 头象
      */
     private String avatar;
+
+    private String signature;
 }

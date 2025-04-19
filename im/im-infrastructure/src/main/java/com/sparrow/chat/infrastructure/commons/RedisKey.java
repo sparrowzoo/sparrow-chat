@@ -2,37 +2,32 @@ package com.sparrow.chat.infrastructure.commons;
 
 public class RedisKey {
     /**
-     * 会话内的消息 redis list
+     * 会话内的消息 zset hash
      */
-    public static final String SESSION_MESSAGE_KEY = "session:msg:{sessionKey}";
+    public static final String SESSION_MESSAGE_KEY = "msg:{sessionKey}";
 
     /**
-     * 用户的会话 redis list
+     * 用户的会话 zset
      */
-    public static final String USER_SESSION_KEY = "user.session:{userKey}";
+    public static final String USER_SESSION_KEY = "session:{userKey}";
 
     /**
-     * 是否已读
+     * 群内用户 zset
      */
-    public static final String USER_SESSION_READ = "user.read:{userKey}:{sessionKey}";
+    public static final String MEMBER_OF_QUN = "qun:member:{qunId}";
 
     /**
-     * 群内用户
-     */
-    public static final String USER_ID_OF_QUN = "user.qun:{qunId}";
-
-    /**
-     * 通讯录
+     * 通讯录zset
      */
     public static final String USER_CONTACTS = "contacts:{chatType}:{userId}";
 
     /**
-     * 用户信息
+     * 用户信息 string
      */
     public static final String USER = "user:{userId}";
 
     /**
-     * 群信息
+     * 群信息 string
      */
     public static final String QUN = "qun:{qunId}";
 

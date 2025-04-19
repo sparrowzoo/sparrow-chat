@@ -14,4 +14,6 @@ public interface SessionRepository {
     List<SessionDTO> getSessions(ChatUser chatUser);
 
     void read(SessionReadParams sessionReadParams);
+
+    void fillLastReadTime(List<SessionDTO> sessionDTOList);
 }

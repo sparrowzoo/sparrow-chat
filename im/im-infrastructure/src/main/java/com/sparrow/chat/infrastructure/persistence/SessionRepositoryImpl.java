@@ -3,6 +3,7 @@ package com.sparrow.chat.infrastructure.persistence;
 import com.sparrow.chat.dao.sparrow.SessionDao;
 import com.sparrow.chat.domain.bo.ChatSession;
 import com.sparrow.chat.domain.bo.ChatUser;
+import com.sparrow.chat.domain.repository.MessageRepository;
 import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.chat.domain.repository.SessionRepository;
 import com.sparrow.chat.im.po.Session;
@@ -37,6 +38,9 @@ public class SessionRepositoryImpl implements SessionRepository {
 
     @Autowired
     private SessionConverter sessionConverter;
+
+    @Autowired
+    private MessageRepository messageRepository;
 
     @Override
     public void saveSession(ChatSession session, ChatUser currentUser) {
@@ -76,16 +80,34 @@ public class SessionRepositoryImpl implements SessionRepository {
     @Override
     public List<SessionDTO> getSessions(ChatUser user) {
         List<Session> sessions = this.sessionDao.findByUser(user.getId(), user.getCategory());
-        return this.sessionConverter.convert(sessions);
+        List<SessionDTO> sessionDTOList = this.sessionConverter.convert(sessions);
+        this.fillLastReadTime(sessionDTOList);
+        this.messageRepository.fillSession(sessionDTOList);
+        return sessionDTOList;
     }
 
     @Override
-    public void read(SessionReadParams messageRead){
+    public void read(SessionReadParams messageRead) {
         LoginUser loginUser = ThreadContext.getLoginToken();
         ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserKey(messageRead.getSessionKey(), chatUser);
-        String sessionReadKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_READ, propertyAccessor);
-        redisTemplate.opsForValue().set(sessionReadKey, System.currentTimeMillis() + "");
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
+        String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
+        redisTemplate.opsForZSet().add(userSessionKey, messageRead.getSessionKey(), System.currentTimeMillis());
         this.sessionDao.read(chatUser.getId(), chatUser.getCategory(), messageRead.getSessionKey());
+    }
+
+    @Override
+    public void fillLastReadTime(List<SessionDTO> sessionDTOList) {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
+        String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
+        for (SessionDTO session : sessionDTOList) {
+            Double lastReadTime = redisTemplate.opsForZSet().score(userSessionKey, session.getSessionKey());
+            if (lastReadTime == null) {
+                lastReadTime = 0.0;
+            }
+            session.setLastReadTime(lastReadTime.longValue());
+        }
     }
 }

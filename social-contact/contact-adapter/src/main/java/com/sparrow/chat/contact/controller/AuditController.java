@@ -48,7 +48,7 @@ public class AuditController {
 
     @PostMapping("audit-friend-apply.json")
     @ApiOperation("对好友申请进行审核")
-    public void auditFriendApply(@RequestBody FriendAuditParam friendAuditParam) throws BusinessException {
+    public void auditFriendApply(@RequestBody FriendAuditParam friendAuditParam) throws Throwable {
         this.auditService.auditFriendApply(friendAuditParam);
     }
 

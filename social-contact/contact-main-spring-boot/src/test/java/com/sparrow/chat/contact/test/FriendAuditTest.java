@@ -3,7 +3,6 @@ package com.sparrow.chat.contact.test;
 import com.sparrow.chat.boot.ApplicationBoot;
 import com.sparrow.chat.contact.protocol.audit.FriendAuditParam;
 import com.sparrow.chat.contact.service.AuditService;
-import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.ThreadContext;
 import com.sparrow.spring.starter.test.SparrowTestExecutionListener;
@@ -25,7 +24,7 @@ public class FriendAuditTest {
     private AuditService auditService;
 
     @Test
-    public void testFriendAudit() throws BusinessException {
+    public void testFriendAudit() throws Throwable {
         LoginUser loginUser = new LoginUser();
         loginUser.setUserId(1L);
         ThreadContext.bindLoginToken(loginUser);

@@ -38,9 +38,12 @@ public class ContactRepositoryImpl implements ContactRepository {
     }
 
     @Override
-    public List<Long> getContacts() {
-        LoginUser loginUser = ThreadContext.getLoginToken();
-        List<Contact> contacts = this.contactDao.getMyContact(loginUser.getUserId());
+    public List<Long> getContacts(Long userId) {
+        if(userId == null) {
+            LoginUser loginUser = ThreadContext.getLoginToken();
+            userId=loginUser.getUserId();
+        }
+        List<Contact> contacts = this.contactDao.getMyContact(userId);
         if (CollectionsUtility.isNullOrEmpty(contacts)) {
             return null;
         }

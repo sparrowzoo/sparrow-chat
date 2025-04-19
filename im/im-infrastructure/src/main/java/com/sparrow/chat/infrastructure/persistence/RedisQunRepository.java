@@ -24,7 +24,7 @@ public class RedisQunRepository implements QunRepository {
     @Override
     public List<Long> getUserIdList(String qunId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByQunId(qunId);
-        String userOfQunKey = PlaceHolderParser.parse(RedisKey.USER_ID_OF_QUN, propertyAccessor);
+        String userOfQunKey = PlaceHolderParser.parse(RedisKey.MEMBER_OF_QUN, propertyAccessor);
         Set<String> originUserIds = this.redisTemplate.opsForSet().members(userOfQunKey);
         if (CollectionsUtility.isNullOrEmpty(originUserIds)) {
             return null;
@@ -42,7 +42,7 @@ public class RedisQunRepository implements QunRepository {
             return;
         }
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByQunId(qunId + "");
-        String userOfQunKey = PlaceHolderParser.parse(RedisKey.USER_ID_OF_QUN, propertyAccessor);
+        String userOfQunKey = PlaceHolderParser.parse(RedisKey.MEMBER_OF_QUN, propertyAccessor);
         List<Long> oldMembers = this.getUserIdList(qunId.toString());
         KeyCollectionUpsertSplitter<Long> keyCollectionUpsertSplitter =
                 new KeyCollectionUpsertSplitter<>(oldMembers, memberIds);
@@ -68,7 +68,7 @@ public class RedisQunRepository implements QunRepository {
     @Override
     public boolean isQunMember(Long qunId, Long userId) {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByQunId(qunId + "");
-        String userOfQunKey = PlaceHolderParser.parse(RedisKey.USER_ID_OF_QUN, propertyAccessor);
+        String userOfQunKey = PlaceHolderParser.parse(RedisKey.MEMBER_OF_QUN, propertyAccessor);
         return this.redisTemplate.opsForSet().isMember(userOfQunKey,userId.toString());
     }
 }
