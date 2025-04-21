@@ -1,0 +1,50 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>上传</title>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="expires" content="0"/>
+    <link rel="stylesheet" type="text/css" href="http://r.sparrowzoo.net/styles/sparrow.css?v=1.0"/>
+    <script type="text/javascript"
+            src="http://r.sparrowzoo.net/scripts/require.js?v=1.0"></script>
+    <link rel="stylesheet" type="text/css" href="http://r.sparrowzoo.net/styles/pure-css/pure.css?v=1.0"/>
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" type="text/css" href="http://r.sparrowzoo.net/styles/layouts-old-ie.css?v=1.0"/>
+    <![endif]-->
+    <script type="text/javascript">
+
+        requirejs.config({
+            baseUrl: "http://r.sparrowzoo.net/scripts",
+            paths: {
+                menu: 'http://r.sparrowzoo.net/scripts/system/menu'
+            }
+        });
+        require(['sparrow', 'domReady!'], function ($, dom) {
+            var pathKeySuffixPair = {
+                'user': 'User'
+            };
+            $.url.upload = $.url.root;
+            $.file.isShowProgress = true;
+            $.file.initImageUploadEvent('user', pathKeySuffixPair);
+            document.domain = $.browser.cookie.root_domain;
+        });
+    </script>
+</head>
+<body>
+
+
+resource :http://r.sparrowzoo.net
+<H2>forum</H2>
+<iframe id="null.resource" class="file-frame" frameborder="0"
+        src=""></iframe>
+
+<div id="divResourceIco"></div>
+
+<H2>resource_cover</H2>
+<div id="divUser"></div>
+<iframe id="null.user" class="file-frame" frameborder="0"
+        src=""></iframe>
+</body>
+</html>
+
+

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.sparrowzoo.chat</groupId>
+        <artifactId>social-contact</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>12talk-main-spring-boot</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <groupId>com.sparrowzoo.chat</groupId>
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <java.version>1.8</java.version>
+        <fastjson.version>1.2.58</fastjson.version>
+        <mybatis-spring.version>1.2.2</mybatis-spring.version>
+        <mybatis.version>3.2.8</mybatis.version>
+        <druid.version>1.2.8</druid.version>
+    </properties>
+    <dependencies>
+        <!--支持热部署-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-devtools</artifactId>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo.passport</groupId>
+            <artifactId>passport-adapter</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo.passport</groupId>
+            <artifactId>passport-infrastructure</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sparrowzoo.passport</groupId>
+            <artifactId>passport-sparrow-dao</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sparrowzoo.chat</groupId>
+            <artifactId>contact-infrastructure</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo</groupId>
+            <artifactId>sparrow-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo.chat</groupId>
+            <artifactId>contact-adapter</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo.chat</groupId>
+            <artifactId>contact-dao-sparrow</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo</groupId>
+            <artifactId>sparrow-container</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.bitwalker</groupId>
+            <artifactId>UserAgentUtils</artifactId>
+            <version>1.21</version>
+        </dependency>
+        <!-- thymeleaf -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <version>2.3.2.RELEASE</version>
+        </dependency>
+        <!--bean copy-->
+        <dependency>
+            <groupId>com.sparrowzoo</groupId>
+            <artifactId>sparrow-loader</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo</groupId>
+            <artifactId>passport-main-webapp</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sparrowzoo</groupId>
+            <artifactId>sparrow-protocol-mq</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sparrowzoo.chat</groupId>
+            <artifactId>im-adapter</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sparrowzoo.chat</groupId>
+            <artifactId>im-infrastructure</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo</groupId>
+            <artifactId>file-gateway</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <filters>
+            <filter>src/main/configs/${env}.properties</filter>
+        </filters>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>*.xml</include>
+                    <include>**/*.html</include>
+                    <include>*.properties</include>
+                </includes>
+                <filtering>true</filtering>
+                <targetPath>${project.build.directory}/classes/</targetPath>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.sparrow.chat.boot.ApplicationBoot</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

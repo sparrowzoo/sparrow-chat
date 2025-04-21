@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS `qun`;
+DROP TABLE IF EXISTS t_qun;
 CREATE TABLE `qun` (
                        `id` int(11) UNSIGNED  NOT NULL AUTO_INCREMENT,
                        `name` varchar(32)  DEFAULT '' COMMENT '群名称'  NOT NULL,

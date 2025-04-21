@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Table(name = "contact")
+@Table(name = "t_contact")
 public class Contact implements POJO {
     private Long id;
     private Long userId;

@@ -3,12 +3,10 @@ package com.sparrow.chat.im.po;
 import com.sparrow.protocol.POJO;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
+@Table(name = "t_session")
 public class Session implements POJO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

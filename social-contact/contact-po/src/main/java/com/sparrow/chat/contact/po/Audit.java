@@ -6,7 +6,7 @@ import com.sparrow.protocol.enums.StatusRecord;
 
 import javax.persistence.*;
 
-@Table(name = "audit")
+@Table(name = "t_audit")
 public class Audit implements POJO {
     /**
      * 主键 ID

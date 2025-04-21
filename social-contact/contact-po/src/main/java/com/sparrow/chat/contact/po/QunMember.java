@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Table(name = "qun_member")
+@Table(name = "t_qun_member")
 public class QunMember implements POJO {
     private Long id;
     private Long qunId;

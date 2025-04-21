@@ -6,7 +6,7 @@ import com.sparrow.protocol.enums.StatusRecord;
 
 import javax.persistence.*;
 
-@Table(name = "qun")
+@Table(name = "t_qun")
 public class Qun extends PO {
     private Long id;
     private String name;

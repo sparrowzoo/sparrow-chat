@@ -23,6 +23,7 @@
         <module>contact-domain</module>
         <module>contact-infrastructure</module>
         <module>contact-main-spring-boot</module>
+        <module>12talk-main-spring-boot</module>
         <module>contact-protocol</module>
         <module>contact-po</module>
         <module>contact-dao-mybatis-plus</module>
