@@ -32,4 +32,6 @@ public class ContactVO implements VO {
     private String avatar;
 
     private String signature;
+    private String englishName;
+    private Integer category;
 }

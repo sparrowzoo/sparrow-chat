@@ -55,7 +55,7 @@ public class SecurityTest {
 
     @Test
     public void passwordTest() {
-        System.out.println(domainRegistry.getEncryptionService().encryptPassword("WOOONLIGHT1!"));
+        System.out.println(domainRegistry.getEncryptionService().encryptPassword("abcABC123!"));
     }
 }
 

@@ -1,8 +1,8 @@
 package com.sparrow.chat.dao.sparrow;
 
+import com.sparrow.chat.im.po.Session;
 import com.sparrow.orm.query.*;
 import com.sparrow.orm.template.impl.ORMStrategy;
-import com.sparrow.chat.im.po.Session;
 
 import javax.inject.Named;
 import java.util.List;
@@ -15,12 +15,14 @@ public class SessionDaoImpl extends ORMStrategy<Session, Long> implements Sessio
 
     @Override
     public List<Session> findByUser(String userId, Integer category) {
+        long hourBefore24=System.currentTimeMillis()-8*60*60*1000;
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
                                 (Criteria.field(Session::getUserId).equal(userId))
                         .and
-                                (Criteria.field(Session::getCategory).equal(category)));
+                                (Criteria.field(Session::getCategory).equal(category))
+                        .and(Criteria.field(Session::getGmtCreate).greaterThan(hourBefore24)));
         searchCriteria.addOrderCriteria(OrderCriteria.desc(Session::getLastReadTime));
         return this.getList(searchCriteria);
     }
