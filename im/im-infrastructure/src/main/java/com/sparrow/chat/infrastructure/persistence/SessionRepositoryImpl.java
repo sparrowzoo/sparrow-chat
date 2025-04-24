@@ -92,8 +92,12 @@ public class SessionRepositoryImpl implements SessionRepository {
         ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
-        redisTemplate.opsForZSet().add(userSessionKey, messageRead.getSessionKey(), System.currentTimeMillis());
-        this.sessionDao.read(chatUser.getId(), chatUser.getCategory(), messageRead.getSessionKey());
+        Double score = redisTemplate.opsForZSet().score(userSessionKey, messageRead.getSessionKey());
+        //考虑第一次加载可能不存在，如果直接add 会导致数据库不存在，缓存不一致
+        if (score != null) {
+            redisTemplate.opsForZSet().add(userSessionKey, messageRead.getSessionKey(), System.currentTimeMillis());
+            this.sessionDao.read(chatUser.getId(), chatUser.getCategory(), messageRead.getSessionKey());
+        }
     }
 
     @Override

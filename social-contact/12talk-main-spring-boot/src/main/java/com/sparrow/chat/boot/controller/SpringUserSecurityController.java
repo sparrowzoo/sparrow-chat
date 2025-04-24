@@ -3,7 +3,6 @@ package com.sparrow.chat.boot.controller;
 import com.sparrow.passport.controller.UserSecurityController;
 import com.sparrow.passport.protocol.param.password.PasswordResetParam;
 import com.sparrow.protocol.BusinessException;
-import com.sparrow.protocol.Result;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +18,7 @@ public class SpringUserSecurityController {
     private UserSecurityController userSecurityController;
 
     @PostMapping("/send-find-password-email.json")
-    public Result<Boolean> sendEmailTokenForFindPassword(String email) throws BusinessException {
+    public Boolean sendEmailTokenForFindPassword(String email) throws BusinessException {
         return this.userSecurityController.sendEmailTokenForFindPassword(email);
     }
 
