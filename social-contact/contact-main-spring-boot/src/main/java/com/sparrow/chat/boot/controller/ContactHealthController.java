@@ -13,12 +13,16 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +31,7 @@ import java.util.stream.Collectors;
 @RestController
 public class ContactHealthController {
 
-//    @Autowired
+    //    @Autowired
     private DataSource dataSource;
 
     @Autowired
@@ -37,6 +41,11 @@ public class ContactHealthController {
     private UserProfileAppService userProfileAppService;
 
     private Logger logger = LoggerFactory.getLogger(ContactHealthController.class);
+
+    @GetMapping("/")
+    public ModelAndView index(HttpServletResponse response) throws IOException {
+        return new ModelAndView("index");
+    }
 
     @RequestMapping("ds")
     public String dataSourceCheck() {
