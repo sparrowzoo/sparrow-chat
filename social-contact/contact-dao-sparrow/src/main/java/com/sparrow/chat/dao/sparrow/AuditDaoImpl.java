@@ -18,7 +18,7 @@ public class AuditDaoImpl extends ORMStrategy<Audit, Long> implements AuditDao {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
-                                (Criteria.field("audit.businessId").equal(userId))
+                                (Criteria.field(Audit::getBusinessId).equal(userId))
                         .and
                                 (Criteria.field("audit.businessType").equal(AuditBusiness.FRIEND.getBusiness())));
         return this.getList(searchCriteria);

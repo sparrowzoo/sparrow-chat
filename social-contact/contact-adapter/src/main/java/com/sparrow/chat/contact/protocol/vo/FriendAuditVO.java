@@ -1,10 +1,18 @@
 package com.sparrow.chat.contact.protocol.vo;
 
+import lombok.Data;
+
+@Data
 public class FriendAuditVO {
     /**
      * 审核记录ID
      */
     private Long auditId;
+
+    private Long objectId;
+
+    private Integer objectType;
+
 
     /**
      * 头像
@@ -21,36 +29,8 @@ public class FriendAuditVO {
      */
     private Integer auditStatus;
 
-    public Long getAuditId() {
-        return auditId;
-    }
+    private Long applyTime;
+    private Long auditTime;
 
-    public void setAuditId(Long auditId) {
-        this.auditId = auditId;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-
-    public Integer getAuditStatus() {
-        return auditStatus;
-    }
-
-    public void setAuditStatus(Integer auditStatus) {
-        this.auditStatus = auditStatus;
-    }
+    private String remark;
 }
