@@ -9,6 +9,7 @@ import com.sparrow.chat.contact.protocol.qun.RemoveMemberOfQunParam;
 import com.sparrow.protocol.BusinessException;
 
 import java.util.List;
+import java.util.Map;
 
 public interface QunRepository {
 
@@ -17,7 +18,6 @@ public interface QunRepository {
     void removeMember(RemoveMemberOfQunParam removeMemberOfQunParam) throws BusinessException;
 
     void dissolve(Long qunId);
-
 
     Boolean isMember(Long qunId, Long newOwnerId);
 
@@ -39,5 +39,7 @@ public interface QunRepository {
     List<QunBO> queryQunPlaza();
 
     List<QunBO> getMyQunList();
+
+    Map<Long,QunBO> getQunList(List<Long> qunIds);
 
 }

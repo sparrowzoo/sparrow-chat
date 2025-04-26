@@ -1,35 +1,26 @@
 package com.sparrow.chat.contact.bo;
 
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
+import lombok.Data;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
+@Data
 public class ContactsWrapBO {
 
-    public ContactsWrapBO(Collection<UserProfileDTO> users, List<QunBO> quns) {
-        this.users = users;
+    public ContactsWrapBO( List<QunBO> quns) {
         this.quns = quns;
     }
 
-    private Collection<UserProfileDTO> users;
+    private Map<Long,UserProfileDTO> userMap;
     private List<QunBO> quns;
+    private List<Long> contactIds;
 
-
-
-    public Collection<UserProfileDTO> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Collection<UserProfileDTO> users) {
-        this.users = users;
-    }
-
-    public List<QunBO> getQuns() {
-        return quns;
-    }
-
-    public void setQuns(List<QunBO> quns) {
-        this.quns = quns;
+    public Set<Long> getQunOwnerIds() {
+        Set<Long> ids = new HashSet<>();
+        for (QunBO qun : quns) {
+            ids.add(qun.getOwnerId());
+        }
+        return ids;
     }
 }

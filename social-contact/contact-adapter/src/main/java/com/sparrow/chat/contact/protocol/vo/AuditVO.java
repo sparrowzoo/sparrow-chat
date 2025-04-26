@@ -1,14 +1,12 @@
-package com.sparrow.chat.contact.bo;
+package com.sparrow.chat.contact.protocol.vo;
 
-import com.sparrow.chat.contact.protocol.enums.AuditBusiness;
-import com.sparrow.protocol.BO;
-import com.sparrow.protocol.enums.StatusRecord;
+import com.sparrow.protocol.VO;
 import lombok.Data;
 
 @Data
-public class AuditBO implements BO {
+public class AuditVO implements VO {
     private Long auditId;
-    private AuditBusiness auditBusiness;
+    private Integer auditBusiness;
     /**
      * 业务ID  与业务类型对应
      * 如果是群，则为群ID
@@ -42,6 +40,5 @@ public class AuditBO implements BO {
     /**
      * 审核的状态
      */
-    private StatusRecord status;
-
+    private Integer status;
 }

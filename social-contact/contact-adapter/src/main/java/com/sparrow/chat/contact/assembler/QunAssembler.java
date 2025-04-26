@@ -4,10 +4,7 @@ import com.sparrow.chat.contact.bo.*;
 import com.sparrow.chat.contact.protocol.enums.Category;
 import com.sparrow.chat.contact.protocol.enums.ContactError;
 import com.sparrow.chat.contact.protocol.enums.Nationality;
-import com.sparrow.chat.contact.protocol.vo.CategoryVO;
-import com.sparrow.chat.contact.protocol.vo.QunMemberVO;
-import com.sparrow.chat.contact.protocol.vo.QunPlazaVO;
-import com.sparrow.chat.contact.protocol.vo.QunVO;
+import com.sparrow.chat.contact.protocol.vo.*;
 import com.sparrow.exception.Asserts;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
@@ -15,6 +12,7 @@ import com.sparrow.utility.BeanUtility;
 import com.sparrow.utility.CollectionsUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
 import java.util.*;
@@ -22,15 +20,18 @@ import java.util.*;
 @Named
 public class QunAssembler {
     private static Logger logger = LoggerFactory.getLogger(QunAssembler.class);
+    @Autowired
+    private UserAssembler userAssembler;
 
     public QunVO assembleQun(QunDetailWrapBO qunDetail) throws BusinessException {
         QunBO qunBO = qunDetail.getQun();
         QunVO qunVo = new QunVO();
-        this.assembleQun(qunBO, qunDetail.getOwner());
+        ContactVO owner =this.userAssembler.userDto2ContactVo(qunDetail.getOwner());
+        this.assembleQun(qunBO, owner);
         return qunVo;
     }
 
-    public QunVO assembleQun(QunBO qunBO, UserProfileDTO userProfile) throws BusinessException {
+    public QunVO assembleQun(QunBO qunBO, ContactVO userProfile) throws BusinessException {
         QunVO qunVo = new QunVO();
         BeanUtility.copyProperties(qunBO, qunVo);
         qunVo.setQunId(qunBO.getId().toString());
@@ -59,7 +60,8 @@ public class QunAssembler {
         for (QunBO qunBO : qunList) {
             QunVO qunVO = null;
             try {
-                qunVO = this.assembleQun(qunBO, userDicts.get(qunBO.getOwnerId()));
+                UserProfileDTO userProfile= userDicts.get(qunBO.getOwnerId());
+                qunVO = this.assembleQun(qunBO,this.userAssembler.userDto2ContactVo(userProfile));
             } catch (BusinessException e) {
                 logger.error("qun assemble error qunId:{},qunName:{}", qunBO.getId(), qunBO.getName(), e);
                 continue;

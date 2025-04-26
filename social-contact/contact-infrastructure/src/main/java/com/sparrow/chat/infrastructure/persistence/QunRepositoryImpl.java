@@ -22,9 +22,7 @@ import com.sparrow.protocol.enums.StatusRecord;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Named
 public class QunRepositoryImpl implements QunRepository {
@@ -121,5 +119,19 @@ public class QunRepositoryImpl implements QunRepository {
         }
         List<Qun> myQuns = this.qunDao.getQuns(myQunIds);
         return this.qunConverter.poList2BoList(myQuns);
+    }
+
+    @Override
+    public Map<Long,QunBO> getQunList(List<Long> qunIds) {
+        if(qunIds == null || qunIds.isEmpty()){
+            return new HashMap<>();
+        }
+        List<Qun> myQuns = this.qunDao.getQuns(qunIds);
+        Map<Long, QunBO> qunMap = new HashMap<>();
+        List<QunBO> qunBos= this.qunConverter.poList2BoList(myQuns);
+        for(QunBO qunBO : qunBos){
+            qunMap.put(qunBO.getId(),qunBO);
+        }
+        return qunMap;
     }
 }

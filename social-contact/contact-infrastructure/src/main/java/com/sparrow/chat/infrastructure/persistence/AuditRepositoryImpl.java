@@ -1,6 +1,7 @@
 package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.contact.bo.AuditBO;
+import com.sparrow.chat.contact.bo.AuditWrapBO;
 import com.sparrow.chat.contact.bo.FriendApplyBO;
 import com.sparrow.chat.contact.dao.AuditDao;
 import com.sparrow.chat.contact.po.Audit;
@@ -33,15 +34,21 @@ public class AuditRepositoryImpl implements AuditRepository {
     }
 
     @Override
-    public List<AuditBO> getAuditingFriendList(Long userId) {
-        List<Audit> audits = this.auditDao.getAuditingFriendList(userId);
-        return this.auditConverter.auditList2AuditBOList(audits);
+    public AuditWrapBO getFriendList(Long userId) {
+        List<Audit> auditingFriends = this.auditDao.getAuditingFriendList(userId);
+        List<Audit> myApplingFriendList = this.auditDao.getMyApplingFriendList(userId);
+        List<AuditBO> auditingBOList= this.auditConverter.auditList2AuditBOList(auditingFriends);
+        List<AuditBO> myApplingFriendBOList=this.auditConverter.auditList2AuditBOList(myApplingFriendList);
+        return new AuditWrapBO(auditingBOList, myApplingFriendBOList);
     }
 
     @Override
-    public List<AuditBO> getAuditingQunMemberList(Long qunId) {
-        List<Audit> audits = this.auditDao.getAuditingQunMemberList(qunId);
-        return this.auditConverter.auditList2AuditBOList(audits);
+    public AuditWrapBO getQunMemberList(Long userId) {
+        List<Audit> auditingQunMembers = this.auditDao.getAuditingQunMemberList(userId);
+        List<Audit> myApplingQunMemberList = this.auditDao.getMyApplingQunMemberList(userId);
+        List<AuditBO> auditingQunMemberBOList= this.auditConverter.auditList2AuditBOList(auditingQunMembers);
+        List<AuditBO> myApplingQunMemberBOList=this.auditConverter.auditList2AuditBOList(myApplingQunMemberList);
+        return new AuditWrapBO(auditingQunMemberBOList, myApplingQunMemberBOList);
     }
 
     @Override
@@ -71,5 +78,10 @@ public class AuditRepositoryImpl implements AuditRepository {
     public AuditBO getAudit(Long auditId) {
         Audit audit = this.auditDao.getEntity(auditId);
         return this.auditConverter.audit2AuditBO(audit);
+    }
+
+    @Override
+    public void changeOwner(Long qunId, Long userId) {
+        this.auditDao.changeOwner(qunId, userId);
     }
 }

@@ -2,6 +2,7 @@ package com.sparrow.chat.contact.repository;
 
 
 import com.sparrow.chat.contact.bo.AuditBO;
+import com.sparrow.chat.contact.bo.AuditWrapBO;
 import com.sparrow.chat.contact.bo.FriendApplyBO;
 import com.sparrow.chat.contact.protocol.audit.FriendAuditParam;
 import com.sparrow.chat.contact.protocol.audit.JoinQunParam;
@@ -12,11 +13,10 @@ import java.util.List;
 public interface AuditRepository {
     Long applyFriend(FriendApplyBO friendApply);
 
-    List<AuditBO> getAuditingFriendList(Long userId);
+    AuditWrapBO getFriendList(Long userId);
 
 
-    List<AuditBO> getAuditingQunMemberList(Long qunId);
-
+    AuditWrapBO getQunMemberList(Long userId);
 
     Long joinQun(JoinQunParam joinQun);
 
@@ -26,4 +26,6 @@ public interface AuditRepository {
     Integer auditQun(AuditBO auditBO, QunAuditParam friendAuditParam);
 
     AuditBO getAudit(Long auditId);
+
+    void  changeOwner(Long qunId, Long userId);
 }

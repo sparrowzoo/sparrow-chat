@@ -6,7 +6,7 @@ import com.sparrow.chat.contact.protocol.audit.FriendApplyParam;
 import com.sparrow.chat.contact.protocol.audit.FriendAuditParam;
 import com.sparrow.chat.contact.protocol.audit.JoinQunParam;
 import com.sparrow.chat.contact.protocol.audit.QunAuditParam;
-import com.sparrow.chat.contact.protocol.vo.FriendAuditWrapVO;
+import com.sparrow.chat.contact.protocol.vo.AuditWrapVO;
 import com.sparrow.chat.contact.service.AuditService;
 import com.sparrow.protocol.BusinessException;
 import io.swagger.annotations.Api;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 
 @RestController
-@RequestMapping("/contact")
+@RequestMapping("/audit")
 @Api(value = "contact", tags = "IM 联系人审核")
 public class AuditController {
     @Inject
@@ -28,16 +28,16 @@ public class AuditController {
 
     @GetMapping("friend-apply-list.json")
     @ApiOperation("获取好友申请列表")
-    public FriendAuditWrapVO friendApplyList() throws BusinessException {
+    public AuditWrapVO friendApplyList() throws BusinessException {
         AuditWrapBO friendAuditBO = this.auditService.friendApplyList();
-        return this.contactAssembler.toUserFriendApplyVoList(friendAuditBO);
+        return this.contactAssembler.toAuditVoList(friendAuditBO);
     }
 
-    @PostMapping("qun-member-apply-list.json")
+    @GetMapping("qun-member-apply-list.json")
     @ApiOperation("群成员申请列表")
-    public FriendAuditWrapVO qunMemberApplyList(Long qunId) throws BusinessException {
-        AuditWrapBO friendAuditBO = this.auditService.qunMemberApplyList(qunId);
-        return this.contactAssembler.toUserFriendApplyVoList(friendAuditBO);
+    public AuditWrapVO qunMemberApplyList() throws BusinessException {
+        AuditWrapBO friendAuditBO = this.auditService.qunMemberApplyList();
+        return this.contactAssembler.toAuditVoList(friendAuditBO);
     }
 
     @PostMapping("apply-friend.json")
@@ -46,7 +46,7 @@ public class AuditController {
         return this.auditService.applyFriend(friendApplyParam);
     }
 
-    @PostMapping("audit-friend-apply.json")
+    @PostMapping("/audit-friend-apply.json")
     @ApiOperation("对好友申请进行审核")
     public void auditFriendApply(@RequestBody FriendAuditParam friendAuditParam) throws Throwable {
         this.auditService.auditFriendApply(friendAuditParam);

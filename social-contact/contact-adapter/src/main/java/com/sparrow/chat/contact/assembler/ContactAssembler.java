@@ -4,17 +4,23 @@ import com.sparrow.chat.contact.bo.*;
 import com.sparrow.chat.contact.protocol.enums.Nationality;
 import com.sparrow.chat.contact.protocol.vo.*;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
-import com.sparrow.protocol.enums.StatusRecord;
+import com.sparrow.protocol.BusinessException;
 import com.sparrow.utility.BeanUtility;
 import com.sparrow.utility.CollectionsUtility;
-import com.sparrow.utility.EnumUtility;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.*;
 
 @Named
 public class ContactAssembler {
     private static final String STATUS_BUSINESS = "audit";
+
+    @Inject
+    private QunAssembler qunAssembler;
+
+    @Inject
+    private UserAssembler userAssembler;
 
 
     public UserFriendApplyVO toUserFriendApplyVO(UserProfileBO contactBO) {
@@ -25,69 +31,80 @@ public class ContactAssembler {
         return userFriendApply;
     }
 
-    public FriendAuditWrapVO toUserFriendApplyVoList(AuditWrapBO friendAuditWrap) {
-        List<AuditBO> auditBOS = friendAuditWrap.getAuditList();
-        List<FriendAuditVO> userFriendApplyList = new ArrayList<>();
-        Map<Long, UserProfileDTO> userDictionaries = friendAuditWrap.getFriendMap();
-        for (AuditBO audit : auditBOS) {
-            FriendAuditVO friendAuditVO = new FriendAuditVO();
-            friendAuditVO.setAuditId(audit.getAuditId());
-            friendAuditVO.setAuditStatus(audit.getStatus().ordinal());
-            UserProfileDTO applyUser = userDictionaries.get(audit.getApplyUserId());
-            if (applyUser != null) {
-                friendAuditVO.setAvatar(applyUser.getAvatar());
-                friendAuditVO.setNickName(applyUser.getNickName());
-                userFriendApplyList.add(friendAuditVO);
-            }
+    private List<AuditVO> toAuditVoList(List<AuditBO> audits){
+        if(CollectionsUtility.isNullOrEmpty(audits)){
+            return Collections.emptyList();
         }
-//        Map<Integer, String> auditStatusDict = new HashMap<>();
-//        auditStatusDict.put(StatusRecord.ENABLE.ordinal(), "通过");
-//        auditStatusDict.put(StatusRecord.DISABLE.ordinal(), "拒绝");
-
-        /**
-         * 1. 枚举变的时侯，这部分的逻辑不需要修改
-         * 2. 枚举国际化自动支持
-         * 3. 支持任务枚举的map 字典
-         */
-        Map<String, String> auditStatusDict = EnumUtility.getOrdinalValueMap(StatusRecord.class, STATUS_BUSINESS);
-        return new FriendAuditWrapVO(auditStatusDict, userFriendApplyList);
+        List<AuditVO> auditVos=new ArrayList<>();
+        for(AuditBO audit:audits){
+            AuditVO auditVO=new AuditVO();
+            BeanUtility.copyProperties(audit,auditVO);
+            auditVO.setAuditBusiness(audit.getAuditBusiness().getBusiness());
+            auditVO.setStatus(audit.getStatus().ordinal());
+            auditVos.add(auditVO);
+        }
+        return auditVos;
     }
 
-    private List<QunVO> assembleMyQun(ContactsWrapBO contactsWrap) {
+    public AuditWrapVO toAuditVoList(AuditWrapBO friendAuditWrap) throws BusinessException {
+        List<AuditVO> auditingList = this.toAuditVoList(friendAuditWrap.getAuditingList());
+        List<AuditVO> applyingList = this.toAuditVoList(friendAuditWrap.getMyApplingList());
+        AuditWrapVO auditVo = new AuditWrapVO();
+        auditVo.setAuditingList(auditingList);
+        auditVo.setMyApplyingList(applyingList);
+        Map<Long,ContactVO> contactMap=new HashMap<>();
+        for(Long userId:friendAuditWrap.getUserInfoMap().keySet()){
+            contactMap.put(userId,userAssembler.userDto2ContactVo(friendAuditWrap.getUserInfoMap().get(userId)));
+        }
+        auditVo.setContactMap(contactMap);
+        if(friendAuditWrap.getQunMap()==null){
+            return auditVo;
+        }
+        Map<Long, QunVO> qunVOMap = new HashMap<>();
+        for (Long qunId : friendAuditWrap.getQunMap().keySet()) {
+            QunBO qunBO = friendAuditWrap.getQunMap().get(qunId);
+            ContactVO contact = auditVo.getContactMap().get(qunBO.getOwnerId());
+            QunVO qunVO = this.qunAssembler.assembleQun(qunBO, contact);
+            qunVOMap.put(qunId, qunVO);
+        }
+        auditVo.setQunMap(qunVOMap);
+        return auditVo;
+    }
+
+    private List<QunVO> assembleMyQun(ContactsWrapBO contactsWrap) throws BusinessException {
         if (CollectionsUtility.isNullOrEmpty(contactsWrap.getQuns())) {
             return Collections.emptyList();
         }
         List<QunVO> qunVOS = new ArrayList<>(contactsWrap.getQuns().size());
         for (QunBO qunBO : contactsWrap.getQuns()) {
-            QunVO qunVO = new QunVO();
-            BeanUtility.copyProperties(qunBO, qunVO);
-            qunVO.setQunId(qunBO.getId().toString());
-            qunVO.setQunName(qunBO.getName());
+            UserProfileDTO userProfile= contactsWrap.getUserMap().get(qunBO.getOwnerId());
+            ContactVO contact=this.userAssembler.userDto2ContactVo(userProfile);
+            QunVO qunVO = this.qunAssembler.assembleQun(qunBO,contact);
             qunVOS.add(qunVO);
         }
         return qunVOS;
     }
 
     private List<ContactVO> assembleMyContact(ContactsWrapBO contactsWrap) {
-        if (CollectionsUtility.isNullOrEmpty(contactsWrap.getUsers())) {
-            return null;
+        if (CollectionsUtility.isNullOrEmpty(contactsWrap.getContactIds())) {
+            return Collections.emptyList();
         }
-        List<ContactVO> userVOS = new ArrayList<>(contactsWrap.getUsers().size());
-        for (UserProfileDTO userProfileDTO : contactsWrap.getUsers()) {
-            ContactVO userVO = new ContactVO();
-            BeanUtility.copyProperties(userProfileDTO, userVO);
-            userVO.setSignature(userProfileDTO.getPersonalSignature());
-            userVOS.add(userVO);
+        List<ContactVO> userVOS = new ArrayList<>(contactsWrap.getContactIds().size());
+        for (Long userId : contactsWrap.getContactIds()) {
+            UserProfileDTO userProfileDTO = contactsWrap.getUserMap().get(userId);
+            userVOS.add(userAssembler.userDto2ContactVo(userProfileDTO));
         }
         return userVOS;
     }
 
 
-    public ContactGroupVO assembleVO(ContactsWrapBO contactsWrap) {
+    public ContactGroupVO assembleVO(ContactsWrapBO contactsWrap) throws BusinessException {
         List<QunVO> qunVOS = this.assembleMyQun(contactsWrap);
         List<ContactVO> userVOS = this.assembleMyContact(contactsWrap);
         return new ContactGroupVO(qunVOS, userVOS);
     }
+
+
 
     public List<ContactVO> assembleUserListVO(Collection<UserProfileDTO> profileDTOS) {
         if (CollectionsUtility.isNullOrEmpty(profileDTOS)) {
@@ -95,10 +112,7 @@ public class ContactAssembler {
         }
         List<ContactVO> userVOS = new ArrayList<>(profileDTOS.size());
         for (UserProfileDTO userProfile : profileDTOS) {
-            ContactVO userVO = new ContactVO();
-            BeanUtility.copyProperties(userProfile, userVO);
-            userVO.setFlagUrl(Nationality.CHINA.getFlag());
-            userVOS.add(userVO);
+            userVOS.add(userAssembler.userDto2ContactVo(userProfile));
         }
         return userVOS;
     }

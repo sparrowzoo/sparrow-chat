@@ -26,10 +26,12 @@ import com.sparrow.utility.StringUtility;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 @Named
 public class AuditService {
+    @Inject
     private UserProfileAppService userProfileAppService;
     @Inject
     private AuditRepository auditRepository;
@@ -69,33 +71,31 @@ public class AuditService {
         this.auditRepository.joinQun(joinQunParam);
     }
 
-    private Set<Long> fetchUserId(Collection<AuditBO> auditBOS) {
-        Set<Long> userIds = new HashSet<>(auditBOS.size());
-        for (AuditBO audit : auditBOS) {
-            userIds.add(audit.getApplyUserId());
-        }
-        return userIds;
-    }
-
     public AuditWrapBO friendApplyList() throws BusinessException {
         LoginUser loginUser = ThreadContext.getLoginToken();
         Long currentUserId = loginUser.getUserId();
-        List<AuditBO> auditBOS = this.auditRepository.getAuditingFriendList(currentUserId);
-        Set<Long> applyFriendList = this.fetchUserId(auditBOS);
-        Map<Long, UserProfileDTO> userProfiles = this.userProfileAppService.getUserMap(applyFriendList);
-        return new AuditWrapBO(auditBOS, userProfiles);
+        AuditWrapBO auditWrap = this.auditRepository.getFriendList(currentUserId);
+
+        Set<Long> userIds= auditWrap.getUserIds();
+        userIds.add(currentUserId);
+        Map<Long, UserProfileDTO> userProfiles = this.userProfileAppService.getUserMap(userIds);
+        auditWrap.setUserInfoMap(userProfiles);
+        return auditWrap;
     }
 
 
-    public AuditWrapBO qunMemberApplyList(Long qunId) throws BusinessException {
+    public AuditWrapBO qunMemberApplyList() throws BusinessException {
         LoginUser loginUser = ThreadContext.getLoginToken();
         Long currentUserId = loginUser.getUserId();
-        QunBO qunBO = this.qunRepository.qunDetail(qunId);
-        Asserts.isTrue(!qunBO.getOwnerId().equals(currentUserId), ContactError.QUN_OWNER_IS_NOT_MATCH);
-        List<AuditBO> auditBOS = this.auditRepository.getAuditingQunMemberList(qunId);
-        Set<Long> applyFriendList = this.fetchUserId(auditBOS);
-        Map<Long, UserProfileDTO> userProfiles = this.userProfileAppService.getUserMap(applyFriendList);
-        return new AuditWrapBO(auditBOS, userProfiles);
+
+        AuditWrapBO auditWrap = this.auditRepository.getQunMemberList(currentUserId);
+        Set<Long> userIds= auditWrap.getUserIds();
+        userIds.add(currentUserId);
+        Map<Long, UserProfileDTO> userProfiles = this.userProfileAppService.getUserMap(auditWrap.getUserIds());
+        Map<Long, QunBO> qunMap = this.qunRepository.getQunList(auditWrap.getQunIds());
+        auditWrap.setUserInfoMap(userProfiles);
+        auditWrap.setQunMap(qunMap);
+        return auditWrap;
     }
 
     public void auditFriendApply(FriendAuditParam friendAuditParam) throws Throwable {

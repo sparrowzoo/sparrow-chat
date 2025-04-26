@@ -5,6 +5,7 @@ import com.sparrow.chat.contact.protocol.enums.Category;
 import com.sparrow.chat.contact.protocol.enums.ContactError;
 import com.sparrow.chat.contact.protocol.event.QunMemberEvent;
 import com.sparrow.chat.contact.protocol.qun.*;
+import com.sparrow.chat.contact.repository.AuditRepository;
 import com.sparrow.chat.contact.repository.QunRepository;
 import com.sparrow.exception.Asserts;
 import com.sparrow.mq.MQPublisher;
@@ -31,6 +32,9 @@ public class QunService {
 
     @Inject
     private MQPublisher mqPublisher;
+
+    @Inject
+    private AuditRepository auditRepository;
 
     public Long createQun(QunCreateParam qunCreateParam) throws BusinessException {
         Asserts.isTrue(StringUtility.isNullOrEmpty(qunCreateParam.getName()), ContactError.QUN_NAME_IS_EMPTY);
@@ -115,6 +119,7 @@ public class QunService {
         Boolean isMember = this.qunRepository.isMember(transferOwnerOfQun.getQunId(), transferOwnerOfQun.getNewOwnerId());
         Asserts.isTrue(!isMember, ContactError.USER_IS_NOT_MEMBER);
         this.qunRepository.transfer(existQun, transferOwnerOfQun.getNewOwnerId());
+        this.auditRepository.changeOwner(existQun.getId(), transferOwnerOfQun.getNewOwnerId());
         //todo 推消息 mq
     }
 

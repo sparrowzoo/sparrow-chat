@@ -43,6 +43,9 @@ public class ContactService {
 
     public ContactsWrapBO getContacts() throws BusinessException {
         List<Long> contactUserIds = new ArrayList<>();
+        List<QunBO> myQuns = this.qunRepository.getMyQunList();
+        ContactsWrapBO contactsWrapBO = new ContactsWrapBO(myQuns);
+
         //通讯录加自己
         /**
          * java.lang.UnsupportedOperationException: null
@@ -53,12 +56,14 @@ public class ContactService {
         Long userId = ThreadContext.getLoginToken().getUserId();
         contactUserIds.add(userId);
         List<Long> otherContacts = this.contactRepository.getContacts(userId);
+        contactsWrapBO.setContactIds(otherContacts);
         if (!CollectionsUtility.isNullOrEmpty(otherContacts)) {
             contactUserIds.addAll(otherContacts);
         }
+        contactUserIds.addAll(contactsWrapBO.getQunOwnerIds());
         Map<Long, UserProfileDTO> userProfileMap = this.userProfileAppService.getUserMap(contactUserIds);
-        List<QunBO> myQuns = this.qunRepository.getMyQunList();
-        return new ContactsWrapBO(userProfileMap.values(), myQuns);
+        contactsWrapBO.setUserMap(userProfileMap);
+        return contactsWrapBO;
     }
 
     public Map<Long, UserProfileDTO> getUserMap(List<Long> userIds) throws BusinessException {

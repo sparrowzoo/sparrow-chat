@@ -16,6 +16,7 @@ import com.sparrow.utility.CollectionsUtility;
 
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Named
@@ -61,7 +62,7 @@ public class AuditConverter {
 
     public List<AuditBO> auditList2AuditBOList(List<Audit> audits) {
         if (CollectionsUtility.isNullOrEmpty(audits)) {
-            return null;
+            return Collections.emptyList();
         }
         List<AuditBO> auditBos = new ArrayList<>(audits.size());
         for (Audit audit : audits) {
