@@ -99,12 +99,6 @@ public class QunRepositoryImpl implements QunRepository {
     }
 
     @Override
-    public List<QunBO> queryQunPlaza(Long categoryId) {
-        List<Qun> quns = this.qunDao.queryQunList(categoryId);
-        return this.qunConverter.poList2BoList(quns);
-    }
-
-    @Override
     public List<QunBO> queryQunPlaza() {
         List<Qun> quns = this.qunDao.queryEnabledQunList();
         return this.qunConverter.poList2BoList(quns);

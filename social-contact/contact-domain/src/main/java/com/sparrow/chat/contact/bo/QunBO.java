@@ -7,15 +7,12 @@ import lombok.Data;
 public class QunBO implements BO {
     private Long id;
     private String name;
-
     private String avatar;
     private String announcement;
     private Integer nationalityId;
     private String nationality;
     private Long organizationId;
     private Long ownerId;
-    private Long categoryId;
-    private String category;
+    private Integer categoryId;
     private String remark;
-
 }

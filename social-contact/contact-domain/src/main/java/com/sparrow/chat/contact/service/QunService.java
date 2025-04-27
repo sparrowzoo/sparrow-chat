@@ -25,6 +25,7 @@ public class QunService {
     @Inject
     private QunRepository qunRepository;
 
+    @Inject
     private UserProfileAppService userProfileAppService;
 
     @Inject
@@ -56,24 +57,19 @@ public class QunService {
     }
 
 
-    private QunPlazaBO wrapQunPlaza(List<QunBO> qunBOS) throws BusinessException {
+    private QunPlazaBO wrapQunPlaza(List<QunBO> quns) throws BusinessException {
         QunPlazaBO qunPlaza = new QunPlazaBO();
         Set<Long> userIds = new HashSet<>();
-        //Set<Long> categories = new HashSet<>();
-        for (QunBO qun : qunBOS) {
+        Map<Integer, Category> categoryDicts = new HashMap<>();
+        for (QunBO qun : quns) {
             userIds.add(qun.getOwnerId());
-            //categories.add(qun.getCategoryId());
+            categoryDicts.put(qun.getCategoryId(),Category.getById(qun.getCategoryId()));
         }
         Map<Long, UserProfileDTO> userProfileMap = this.userProfileAppService.getUserMap(userIds);
         qunPlaza.setUserDicts(userProfileMap);
-        qunPlaza.setCategoryDicts(Category.getMap());
-        qunPlaza.setQunList(qunBOS);
+        qunPlaza.setCategoryDicts(categoryDicts);
+        qunPlaza.setQunList(quns);
         return qunPlaza;
-    }
-
-    public QunPlazaBO qunPlaza(Long categoryId) throws BusinessException {
-        List<QunBO> qunBOs = this.qunRepository.queryQunPlaza(categoryId);
-        return this.wrapQunPlaza(qunBOs);
     }
 
     public QunPlazaBO qunPlaza() throws BusinessException {

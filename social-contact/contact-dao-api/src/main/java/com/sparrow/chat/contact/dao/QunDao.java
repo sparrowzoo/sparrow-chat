@@ -15,5 +15,4 @@ public interface QunDao extends DaoSupport<Qun, Long> {
 
     List<Qun> getQuns(Collection<Long> qunIds);
 
-
 }

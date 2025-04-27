@@ -1,13 +1,16 @@
 package com.sparrow.chat.contact.protocol.vo;
 
+import com.sparrow.protocol.VO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
 
 @ApiModel("群广场")
-public class QunPlazaVO {
+@Data
+public class QunPlazaVO implements VO {
 
     /**
      * key:categoryId
@@ -21,21 +24,5 @@ public class QunPlazaVO {
      * value:qun 列表
      */
     @ApiModelProperty("群分类列表")
-    private Map<Long, List<QunVO>> qunMap;
-
-    public Map<Integer, CategoryVO> getCategoryDicts() {
-        return categoryDicts;
-    }
-
-    public void setCategoryDicts(Map<Integer, CategoryVO> categoryDicts) {
-        this.categoryDicts = categoryDicts;
-    }
-
-    public Map<Long, List<QunVO>> getQunMap() {
-        return qunMap;
-    }
-
-    public void setQunMap(Map<Long, List<QunVO>> qunMap) {
-        this.qunMap = qunMap;
-    }
+    private Map<Integer, List<QunVO>> qunMap;
 }

@@ -34,8 +34,6 @@ public interface QunRepository {
     List<QunMemberBO> qunMembers(Long qunId) throws BusinessException;
 
 
-    List<QunBO> queryQunPlaza(Long categoryId);
-
     List<QunBO> queryQunPlaza();
 
     List<QunBO> getMyQunList();

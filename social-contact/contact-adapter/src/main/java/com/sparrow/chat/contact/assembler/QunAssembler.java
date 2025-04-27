@@ -43,7 +43,7 @@ public class QunAssembler {
             qunVo.setOwnerName(userProfile.getUserName());
         }
         //todo
-        Category category = Category.getById(qunBO.getCategoryId().intValue());
+        Category category = Category.getById(qunBO.getCategoryId());
         Asserts.isTrue(category == null, ContactError.CATEGORY_OF_QUN_EMPTY);
         qunVo.setCategoryName(category.getName());
         return qunVo;
@@ -54,11 +54,10 @@ public class QunAssembler {
         QunPlazaVO qunPlazaVO = new QunPlazaVO();
         List<QunBO> qunList = qunPlaza.getQunList();
         Map<Long, UserProfileDTO> userDicts = qunPlaza.getUserDicts();
-
         Map<Integer, Category> categories = qunPlaza.getCategoryDicts();
-        Map<Long, List<QunVO>> qunMap = new HashMap<>();
+        Map<Integer, List<QunVO>> qunMap = new HashMap<>();
         for (QunBO qunBO : qunList) {
-            QunVO qunVO = null;
+            QunVO qunVO;
             try {
                 UserProfileDTO userProfile= userDicts.get(qunBO.getOwnerId());
                 qunVO = this.assembleQun(qunBO,this.userAssembler.userDto2ContactVo(userProfile));
@@ -72,7 +71,6 @@ public class QunAssembler {
             qunMap.get(qunVO.getCategoryId()).add(qunVO);
         }
         qunPlazaVO.setQunMap(qunMap);
-
         Map<Integer, CategoryVO> categoryVOMap = new HashMap<>();
         for (Integer categoryId : categories.keySet()) {
             categoryVOMap.put(categoryId, this.assembleCategory(categories.get(categoryId)));

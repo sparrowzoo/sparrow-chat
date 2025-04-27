@@ -47,10 +47,10 @@ public class QunController {
         return this.qunAssembler.assembleQunMember(qunMemberWrap);
     }
 
-    @PostMapping("plaza-of-category-id/{categoryId}.json")
-    @ApiOperation("获取类别下的群列表")
-    public QunPlazaVO qunPlazaOfCategory(@PathVariable("categoryId") Long categoryId) throws BusinessException {
-        QunPlazaBO qunPlaza = this.qunService.qunPlaza(categoryId);
+    @PostMapping("plaza.json")
+    @ApiOperation("获取所有群")
+    public QunPlazaVO qunPlazaOfCategory() throws BusinessException {
+        QunPlazaBO qunPlaza = this.qunService.qunPlaza();
         return this.qunAssembler.assembleQunPlaza(qunPlaza);
     }
 

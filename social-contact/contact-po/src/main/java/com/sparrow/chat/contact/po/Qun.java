@@ -15,7 +15,7 @@ public class Qun extends PO {
     private Integer nationalityId;
     private Long organizationId;
     private Long ownerId;
-    private Long categoryId;
+    private Integer categoryId;
     private String remark;
 
     private StatusRecord status;
@@ -94,11 +94,11 @@ public class Qun extends PO {
 
     @MethodOrder(order = 7)
     @Column(name = "category_id", columnDefinition = "int(11) UNSIGNED  DEFAULT 0 COMMENT '所属类别'", nullable = false, updatable = false)
-    public Long getCategoryId() {
+    public Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Long categoryId) {
+    public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
 

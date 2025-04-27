@@ -118,7 +118,7 @@ public class AuditService {
         Asserts.isTrue(existQun == null, ContactError.QUN_NOT_FOUND);
         Asserts.isTrue(!existQun.getOwnerId().equals(loginUser.getUserId()), ContactError.AUDIT_USER_IS_NOT_MATCH);
         this.auditRepository.auditQun(auditBO, qunAuditParam);
-        if (qunAuditParam.getAgree()) {
+        if (qunAuditParam.getIsAgree()) {
             this.qunRepository.joinQun(auditBO);
             this.mqPublisher.publish(new QunMemberEvent(existQun.getId(), auditBO.getApplyUserId()));
         }
