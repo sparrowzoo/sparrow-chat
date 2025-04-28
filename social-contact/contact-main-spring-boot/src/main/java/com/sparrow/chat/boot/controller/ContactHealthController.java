@@ -41,7 +41,7 @@ public class ContactHealthController {
     private SparrowConfig config;
     @GetMapping("/")
     public void index(HttpServletResponse response) throws IOException {
-        response.sendRedirect(this.config.getMvc().getRootPath() + "/im/index");
+        response.sendRedirect(this.config.getMvc().getRootPath() + "/im");
     }
 
     @RequestMapping("ds")
