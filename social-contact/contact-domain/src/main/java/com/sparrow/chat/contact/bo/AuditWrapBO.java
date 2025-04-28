@@ -2,7 +2,6 @@ package com.sparrow.chat.contact.bo;
 
 import com.sparrow.chat.contact.protocol.enums.AuditBusiness;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
-import com.sparrow.protocol.LoginUser;
 import com.sparrow.utility.CollectionsUtility;
 import lombok.Data;
 
@@ -32,14 +31,14 @@ public class AuditWrapBO {
         if (!CollectionsUtility.isNullOrEmpty(auditingList)) {
             for (AuditBO auditBO : auditingList) {
                 userIds.add(auditBO.getApplyUserId());
-                userIds.add(auditBO.getAuditUserId());
+                userIds.add(auditBO.getBusinessId());
             }
         }
 
         if (!CollectionsUtility.isNullOrEmpty(myApplingList)) {
             for (AuditBO auditBO : myApplingList) {
                     userIds.add(auditBO.getApplyUserId());
-                    userIds.add(auditBO.getAuditUserId());
+                    userIds.add(auditBO.getBusinessId());
             }
         }
         return userIds;

@@ -4,6 +4,7 @@ import com.sparrow.chat.contact.bo.AuditBO;
 import com.sparrow.chat.contact.bo.AuditWrapBO;
 import com.sparrow.chat.contact.bo.FriendApplyBO;
 import com.sparrow.chat.contact.dao.AuditDao;
+import com.sparrow.chat.contact.dao.QunDao;
 import com.sparrow.chat.contact.po.Audit;
 import com.sparrow.chat.contact.protocol.audit.FriendAuditParam;
 import com.sparrow.chat.contact.protocol.audit.JoinQunParam;
@@ -14,6 +15,7 @@ import com.sparrow.chat.infrastructure.persistence.data.converter.AuditConverter
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
+import java.util.Set;
 
 @Named
 public class AuditRepositoryImpl implements AuditRepository {
@@ -21,6 +23,9 @@ public class AuditRepositoryImpl implements AuditRepository {
     private AuditDao auditDao;
     @Inject
     private AuditConverter auditConverter;
+
+    @Inject
+    private QunDao qunDao;
 
     @Override
     public Long applyFriend(FriendApplyBO friendApply) {
@@ -37,17 +42,18 @@ public class AuditRepositoryImpl implements AuditRepository {
     public AuditWrapBO getFriendList(Long userId) {
         List<Audit> auditingFriends = this.auditDao.getAuditingFriendList(userId);
         List<Audit> myApplingFriendList = this.auditDao.getMyApplingFriendList(userId);
-        List<AuditBO> auditingBOList= this.auditConverter.auditList2AuditBOList(auditingFriends);
-        List<AuditBO> myApplingFriendBOList=this.auditConverter.auditList2AuditBOList(myApplingFriendList);
+        List<AuditBO> auditingBOList = this.auditConverter.auditList2AuditBOList(auditingFriends);
+        List<AuditBO> myApplingFriendBOList = this.auditConverter.auditList2AuditBOList(myApplingFriendList);
         return new AuditWrapBO(auditingBOList, myApplingFriendBOList);
     }
 
     @Override
     public AuditWrapBO getQunMemberList(Long userId) {
-        List<Audit> auditingQunMembers = this.auditDao.getAuditingQunMemberList(userId);
+        Set<Long> qunIds = this.qunDao.getQunIdsByOwner(userId);
+        List<Audit> auditingQunMembers = this.auditDao.getAuditingQunMemberList(userId, qunIds);
         List<Audit> myApplingQunMemberList = this.auditDao.getMyApplingQunMemberList(userId);
-        List<AuditBO> auditingQunMemberBOList= this.auditConverter.auditList2AuditBOList(auditingQunMembers);
-        List<AuditBO> myApplingQunMemberBOList=this.auditConverter.auditList2AuditBOList(myApplingQunMemberList);
+        List<AuditBO> auditingQunMemberBOList = this.auditConverter.auditList2AuditBOList(auditingQunMembers);
+        List<AuditBO> myApplingQunMemberBOList = this.auditConverter.auditList2AuditBOList(myApplingQunMemberList);
         return new AuditWrapBO(auditingQunMemberBOList, myApplingQunMemberBOList);
     }
 

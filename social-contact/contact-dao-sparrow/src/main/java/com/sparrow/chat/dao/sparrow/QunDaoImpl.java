@@ -9,6 +9,7 @@ import com.sparrow.protocol.enums.StatusRecord;
 import javax.inject.Named;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Named
 public class QunDaoImpl extends ORMStrategy<Qun, Long> implements QunDao {
@@ -43,5 +44,13 @@ public class QunDaoImpl extends ORMStrategy<Qun, Long> implements QunDao {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(Criteria.field("qun.id").in(qunIds));
         return this.getList(searchCriteria);
+    }
+
+    @Override
+    public Set<Long> getQunIdsByOwner(Long userId) {
+        SearchCriteria searchCriteria = new SearchCriteria();
+        searchCriteria.setFields("qun.id");
+        searchCriteria.setWhere(Criteria.field(Qun::getOwnerId).equal(userId));
+        return this.getFieldValue(searchCriteria);
     }
 }

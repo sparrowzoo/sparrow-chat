@@ -9,6 +9,7 @@ import com.sparrow.protocol.enums.StatusRecord;
 
 import javax.inject.Named;
 import java.util.List;
+import java.util.Set;
 
 @Named
 public class AuditDaoImpl extends ORMStrategy<Audit, Long> implements AuditDao {
@@ -18,18 +19,22 @@ public class AuditDaoImpl extends ORMStrategy<Audit, Long> implements AuditDao {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
-                                (Criteria.field(Audit::getAuditUserId).equal(userId))
+                                (Criteria.field(Audit::getBusinessId).equal(userId))
+                        .and(Criteria.field(Audit::getApplyTime).greaterThan(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 30))
                         .and
                                 (Criteria.field(Audit::getBusinessType).equal(AuditBusiness.FRIEND.getBusiness())));
         return this.getList(searchCriteria);
     }
 
     @Override
-    public List<Audit> getAuditingQunMemberList(Long userId) {
+    public List<Audit> getAuditingQunMemberList(Long userId, Set<Long> qunIds) {
+
+
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
-                                (Criteria.field(Audit::getAuditUserId).equal(userId))
+                                (Criteria.field(Audit::getBusinessId).in(userId))
+                        .and(Criteria.field(Audit::getApplyTime).greaterThan(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 30))
                         .and
                                 (Criteria.field(Audit::getBusinessType).equal(AuditBusiness.GROUP.getBusiness())));
         return this.getList(searchCriteria);

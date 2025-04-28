@@ -5,6 +5,7 @@ import com.sparrow.protocol.dao.DaoSupport;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface QunDao extends DaoSupport<Qun, Long> {
     List<Qun> queryQunList(Long category);
@@ -14,5 +15,7 @@ public interface QunDao extends DaoSupport<Qun, Long> {
     void transfer(Long qunId, Long newOwnerId);
 
     List<Qun> getQuns(Collection<Long> qunIds);
+
+    Set<Long> getQunIdsByOwner(Long userId);
 
 }
