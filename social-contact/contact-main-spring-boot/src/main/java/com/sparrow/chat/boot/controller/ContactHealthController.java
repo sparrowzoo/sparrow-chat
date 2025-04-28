@@ -11,6 +11,7 @@ import com.sparrow.spring.starter.monitor.MonitorResult;
 import com.sparrow.support.checker.ConnectionValidCheckerAdapter;
 import com.sparrow.utility.StringUtility;
 import io.netty.channel.Channel;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
+@Slf4j
 public class ContactHealthController {
 
     //    @Autowired
@@ -39,9 +41,12 @@ public class ContactHealthController {
     private UserProfileAppService userProfileAppService;
     @Autowired
     private SparrowConfig config;
+
     @GetMapping("/")
     public void index(HttpServletResponse response) throws IOException {
-        response.sendRedirect(this.config.getMvc().getRootPath() + "/im");
+        String im = this.config.getMvc().getRootPath() + "/im";
+        log.info("redirect to im " + im);
+        response.sendRedirect(im);
     }
 
     @RequestMapping("ds")

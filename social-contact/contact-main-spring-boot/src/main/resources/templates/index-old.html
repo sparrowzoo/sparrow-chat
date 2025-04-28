@@ -1,7 +1,21 @@
 <html lang="en">
 <head>
+    <title>程序员有问题就上麻雀窝 和大牛直接聊</title>
+    <meta content="register 注册 " name="keywords"/>
+    <meta content="程序员有问题就上麻雀窝 和大牛直接聊" name="description"/>
+    <meta name="application-name" content="麻雀窝"/>
+    <meta name="msapplication-tooltip" content="麻雀窝"/>
+    <th:block th:include="/frames::global_resource"/>
     <script type="text/javascript">
-
+        function joinQun(qunId) {
+            var param = {
+                "qunId": qunId,
+                "reason": "加我，志哥"
+            }
+            $.http.post($.url.root + "/contact/join-qun", param, function (result) {
+                $.message("申请成功哟，等待后台审核哈.....")
+            });
+        }
     </script>
 </head>
 <body>

@@ -18,8 +18,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.inject.Inject;
@@ -32,7 +30,6 @@ public class ContactMvcConfigurerAdapter implements WebMvcConfigurer {
     private IpSupport ipSupport;
     @Autowired
     private SparrowConfig sparrowConfig;
-
     @Bean
     public Monitor monitor() {
         return new Monitor(this.ipSupport);
@@ -86,13 +83,6 @@ public class ContactMvcConfigurerAdapter implements WebMvcConfigurer {
         filterRegistrationBean.setOrder(1);
         //多个filter的时候order的数值越小 则优先级越高
         return filterRegistrationBean;
-    }
-
-
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("forward:/index");
-        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
     @Bean
