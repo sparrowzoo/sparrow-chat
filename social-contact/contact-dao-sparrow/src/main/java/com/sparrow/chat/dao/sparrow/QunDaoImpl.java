@@ -51,6 +51,6 @@ public class QunDaoImpl extends ORMStrategy<Qun, Long> implements QunDao {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setFields("qun.id");
         searchCriteria.setWhere(Criteria.field(Qun::getOwnerId).equal(userId));
-        return this.getFieldValue(searchCriteria);
+        return this.firstList(searchCriteria);
     }
 }

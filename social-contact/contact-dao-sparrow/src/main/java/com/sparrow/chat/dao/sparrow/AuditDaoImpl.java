@@ -33,7 +33,7 @@ public class AuditDaoImpl extends ORMStrategy<Audit, Long> implements AuditDao {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
-                                (Criteria.field(Audit::getBusinessId).in(userId))
+                                (Criteria.field(Audit::getBusinessId).in(qunIds))
                         .and(Criteria.field(Audit::getApplyTime).greaterThan(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 30))
                         .and
                                 (Criteria.field(Audit::getBusinessType).equal(AuditBusiness.GROUP.getBusiness())));
@@ -46,6 +46,8 @@ public class AuditDaoImpl extends ORMStrategy<Audit, Long> implements AuditDao {
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
                                 (Criteria.field(Audit::getApplyUserId).equal(userId))
+                        .and(Criteria.field(Audit::getApplyTime).greaterThan(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 30))
+
                         .and
                                 (Criteria.field(Audit::getBusinessType).equal(AuditBusiness.FRIEND.getBusiness())));
         return this.getList(searchCriteria);
@@ -57,6 +59,7 @@ public class AuditDaoImpl extends ORMStrategy<Audit, Long> implements AuditDao {
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
                                 (Criteria.field(Audit::getApplyUserId).equal(userId))
+                        .and(Criteria.field(Audit::getApplyTime).greaterThan(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 30))
                         .and
                                 (Criteria.field(Audit::getBusinessType).equal(AuditBusiness.GROUP.getBusiness())));
         return this.getList(searchCriteria);
