@@ -5,19 +5,17 @@ import com.sparrow.datasource.DataSourceValidChecker;
 import com.sparrow.passport.api.UserProfileAppService;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
+import com.sparrow.spring.starter.config.SparrowConfig;
 import com.sparrow.spring.starter.monitor.Monitor;
 import com.sparrow.spring.starter.monitor.MonitorResult;
 import com.sparrow.support.checker.ConnectionValidCheckerAdapter;
 import com.sparrow.utility.StringUtility;
 import io.netty.channel.Channel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,12 +37,11 @@ public class ContactHealthController {
 
     @Autowired
     private UserProfileAppService userProfileAppService;
-
-    private Logger logger = LoggerFactory.getLogger(ContactHealthController.class);
-
+    @Autowired
+    private SparrowConfig config;
     @GetMapping("/")
-    public ModelAndView index(HttpServletResponse response) throws IOException {
-        return new ModelAndView("index");
+    public void index(HttpServletResponse response) throws IOException {
+        response.sendRedirect(this.config.getMvc().getRootPath() + "/im/index");
     }
 
     @RequestMapping("ds")

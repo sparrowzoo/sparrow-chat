@@ -10,6 +10,7 @@ import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.utility.BeanUtility;
 import com.sparrow.utility.CollectionsUtility;
+import com.sparrow.utility.StringUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,10 @@ public class QunAssembler {
         Asserts.isTrue(nationality == null, ContactError.NATIONALITY_OF_QUN_EMPTY);
         qunVo.setNationality(nationality.getName());
         if (userProfile != null) {
-            qunVo.setOwnerName(userProfile.getUserName());
+            qunVo.setOwnerName(userProfile.getNickName());
+            if(StringUtility.isNullOrEmpty(qunVo.getOwnerName())){
+                qunVo.setOwnerName(userProfile.getUserName());
+            }
         }
         //todo
         Category category = Category.getById(qunBO.getCategoryId());

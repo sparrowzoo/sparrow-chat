@@ -47,7 +47,7 @@ public class QunController {
         return this.qunAssembler.assembleQunMember(qunMemberWrap);
     }
 
-    @PostMapping("plaza.json")
+    @GetMapping("plaza.json")
     @ApiOperation("获取所有群")
     public QunPlazaVO qunPlazaOfCategory() throws BusinessException {
         QunPlazaBO qunPlaza = this.qunService.qunPlaza();
