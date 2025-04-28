@@ -3,12 +3,14 @@ package com.sparrow.chat.contact.protocol.audit;
 import com.sparrow.protocol.Param;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
  * 加群
  * group room qun
  */
 @ApiModel("加群参数")
+@Data
 public class JoinQunParam implements Param {
     /**
      * 用户的密秘标识
@@ -20,20 +22,4 @@ public class JoinQunParam implements Param {
      */
     @ApiModelProperty("加群的理由")
     private String reason;
-
-    public Long getQunId() {
-        return qunId;
-    }
-
-    public void setQunId(Long qunId) {
-        this.qunId = qunId;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
 }
