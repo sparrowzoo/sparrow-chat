@@ -8,7 +8,11 @@ import com.sparrow.chat.contact.protocol.audit.JoinQunParam;
 import com.sparrow.chat.contact.protocol.audit.QunAuditParam;
 import com.sparrow.chat.contact.protocol.vo.AuditWrapVO;
 import com.sparrow.chat.contact.service.AuditService;
+import com.sparrow.exception.Asserts;
 import com.sparrow.protocol.BusinessException;
+import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.ThreadContext;
+import com.sparrow.protocol.constant.SparrowError;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -69,6 +73,8 @@ public class AuditController {
     @ApiOperation("加群")
     @PostMapping("join-qun.json")
     public void applyJoinQun(@RequestBody JoinQunParam joinQunParam) throws BusinessException {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        Asserts.isTrue(loginUser.isVisitor(), SparrowError.USER_NOT_LOGIN);
         this.auditService.applyJoinQun(joinQunParam);
     }
 }
