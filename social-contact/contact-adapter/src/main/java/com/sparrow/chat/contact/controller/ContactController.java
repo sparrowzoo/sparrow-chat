@@ -8,8 +8,12 @@ import com.sparrow.chat.contact.protocol.vo.ContactGroupVO;
 import com.sparrow.chat.contact.protocol.vo.UserFriendApplyVO;
 import com.sparrow.chat.contact.protocol.vo.ContactVO;
 import com.sparrow.chat.contact.service.ContactService;
+import com.sparrow.exception.Asserts;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
+import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.ThreadContext;
+import com.sparrow.protocol.constant.SparrowError;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +49,8 @@ public class ContactController {
     @GetMapping("/contacts.json")
     @ApiOperation("联系人接口")
     public ContactGroupVO getContacts() throws BusinessException {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        Asserts.isTrue(loginUser.isVisitor(), SparrowError.USER_NOT_LOGIN);
         ContactsWrapBO contactsWrapBO = this.contactService.getContacts();
         return this.contactAssembler.assembleVO(contactsWrapBO);
     }
