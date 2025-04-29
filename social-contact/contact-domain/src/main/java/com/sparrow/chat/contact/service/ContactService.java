@@ -16,9 +16,7 @@ import com.sparrow.utility.StringUtility;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Named
 public class ContactService {
@@ -42,7 +40,7 @@ public class ContactService {
     }
 
     public ContactsWrapBO getContacts() throws BusinessException {
-        List<Long> contactUserIds = new ArrayList<>();
+        Set<Long> contactUserIds = new TreeSet<>();
         List<QunBO> myQuns = this.qunRepository.getMyQunList();
         ContactsWrapBO contactsWrapBO = new ContactsWrapBO(myQuns);
 

@@ -1,7 +1,6 @@
 package com.sparrow.chat.contact.assembler;
 
 import com.sparrow.chat.contact.bo.*;
-import com.sparrow.chat.contact.protocol.enums.Nationality;
 import com.sparrow.chat.contact.protocol.vo.*;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
@@ -31,14 +30,14 @@ public class ContactAssembler {
         return userFriendApply;
     }
 
-    private List<AuditVO> toAuditVoList(List<AuditBO> audits){
-        if(CollectionsUtility.isNullOrEmpty(audits)){
+    private List<AuditVO> toAuditVoList(List<AuditBO> audits) {
+        if (CollectionsUtility.isNullOrEmpty(audits)) {
             return Collections.emptyList();
         }
-        List<AuditVO> auditVos=new ArrayList<>();
-        for(AuditBO audit:audits){
-            AuditVO auditVO=new AuditVO();
-            BeanUtility.copyProperties(audit,auditVO);
+        List<AuditVO> auditVos = new ArrayList<>();
+        for (AuditBO audit : audits) {
+            AuditVO auditVO = new AuditVO();
+            BeanUtility.copyProperties(audit, auditVO);
             auditVO.setAuditBusiness(audit.getAuditBusiness().getBusiness());
             auditVO.setStatus(audit.getStatus().ordinal());
             auditVos.add(auditVO);
@@ -52,12 +51,12 @@ public class ContactAssembler {
         AuditWrapVO auditVo = new AuditWrapVO();
         auditVo.setAuditingList(auditingList);
         auditVo.setMyApplyingList(applyingList);
-        Map<Long,ContactVO> contactMap=new HashMap<>();
-        for(Long userId:friendAuditWrap.getUserInfoMap().keySet()){
-            contactMap.put(userId,userAssembler.userDto2ContactVo(friendAuditWrap.getUserInfoMap().get(userId)));
+        Map<Long, ContactVO> contactMap = new HashMap<>();
+        for (Long userId : friendAuditWrap.getUserInfoMap().keySet()) {
+            contactMap.put(userId, userAssembler.userDto2ContactVo(friendAuditWrap.getUserInfoMap().get(userId)));
         }
         auditVo.setContactMap(contactMap);
-        if(friendAuditWrap.getQunMap()==null){
+        if (friendAuditWrap.getQunMap() == null) {
             return auditVo;
         }
         Map<Long, QunVO> qunVOMap = new HashMap<>();
@@ -77,33 +76,32 @@ public class ContactAssembler {
         }
         List<QunVO> qunVOS = new ArrayList<>(contactsWrap.getQuns().size());
         for (QunBO qunBO : contactsWrap.getQuns()) {
-            UserProfileDTO userProfile= contactsWrap.getUserMap().get(qunBO.getOwnerId());
-            ContactVO contact=this.userAssembler.userDto2ContactVo(userProfile);
-            QunVO qunVO = this.qunAssembler.assembleQun(qunBO,contact);
+            UserProfileDTO userProfile = contactsWrap.getUserMap().get(qunBO.getOwnerId());
+            ContactVO contact = this.userAssembler.userDto2ContactVo(userProfile);
+            QunVO qunVO = this.qunAssembler.assembleQun(qunBO, contact);
             qunVOS.add(qunVO);
         }
         return qunVOS;
     }
 
-    private List<ContactVO> assembleMyContact(ContactsWrapBO contactsWrap) {
-        if (CollectionsUtility.isNullOrEmpty(contactsWrap.getContactIds())) {
-            return Collections.emptyList();
+    private Map<Long, ContactVO> assembleUserMap(ContactsWrapBO contactsWrap) {
+        if (contactsWrap.getUserMap() == null) {
+            return Collections.emptyMap();
         }
-        List<ContactVO> userVOS = new ArrayList<>(contactsWrap.getContactIds().size());
-        for (Long userId : contactsWrap.getContactIds()) {
+        Map<Long, ContactVO> userMap = new HashMap<>(contactsWrap.getUserMap().size());
+        for (Long userId : contactsWrap.getUserMap().keySet()) {
             UserProfileDTO userProfileDTO = contactsWrap.getUserMap().get(userId);
-            userVOS.add(userAssembler.userDto2ContactVo(userProfileDTO));
+            userMap.put(userId, userAssembler.userDto2ContactVo(userProfileDTO));
         }
-        return userVOS;
+        return userMap;
     }
 
 
     public ContactGroupVO assembleVO(ContactsWrapBO contactsWrap) throws BusinessException {
         List<QunVO> qunVOS = this.assembleMyQun(contactsWrap);
-        List<ContactVO> userVOS = this.assembleMyContact(contactsWrap);
-        return new ContactGroupVO(qunVOS, userVOS);
+        Map<Long,ContactVO> userMap = this.assembleUserMap(contactsWrap);
+        return new ContactGroupVO(userMap,qunVOS,contactsWrap.getContactIds());
     }
-
 
 
     public List<ContactVO> assembleUserListVO(Collection<UserProfileDTO> profileDTOS) {
