@@ -1,10 +1,13 @@
 package com.sparrow.chat.infrastructure.converter;
 
+import com.sparrow.chat.dao.sparrow.query.session.MessageDBQuery;
 import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.im.po.Message;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.query.ChatUserQuery;
+import com.sparrow.chat.protocol.query.MessageQuery;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,6 +15,12 @@ import java.util.List;
 
 @Component
 public class MessageConverter {
+
+    public MessageDBQuery convertMessageQuery(MessageQuery messageQuery) {
+        MessageDBQuery messageDBQuery = new MessageDBQuery();
+        BeanUtils.copyProperties(messageQuery, messageDBQuery);
+        return messageDBQuery;
+    }
 
     public MessageDTO convertMessage(Protocol protocol) {
         MessageDTO message = new MessageDTO();

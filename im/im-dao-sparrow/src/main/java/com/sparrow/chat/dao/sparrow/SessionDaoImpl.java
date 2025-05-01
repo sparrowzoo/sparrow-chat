@@ -1,5 +1,6 @@
 package com.sparrow.chat.dao.sparrow;
 
+import com.sparrow.chat.dao.sparrow.query.session.SessionDBQuery;
 import com.sparrow.chat.im.po.Session;
 import com.sparrow.orm.query.*;
 import com.sparrow.orm.template.impl.ORMStrategy;
@@ -57,5 +58,20 @@ public class SessionDaoImpl extends ORMStrategy<Session, Long> implements Sessio
                                 (Criteria.field(Session::getSessionKey).equal(sessionKey)));
         this.update(updateCriteria);
         return true;
+    }
+
+    @Override
+    public List<Session> querySession(SessionDBQuery sessionQuery) {
+        SearchCriteria searchCriteria=new SearchCriteria();
+        searchCriteria.setWhere(
+                BooleanCriteria.criteria(
+                        BooleanCriteria.criteria(Criteria.field(Session::getSenderName).contains(sessionQuery.getSenderName()))
+                                .or(Criteria.field(Session::getReceiverName).contains(sessionQuery.getReceiverName()))
+                                .or(Criteria.field(Session::getSenderNickName).contains(sessionQuery.getSenderNickName()))
+                                .or(Criteria.field(Session::getReceiverNickName).contains(sessionQuery.getReceiverNickName()))
+                                .or(Criteria.field(Session::getGroupName).contains(sessionQuery.getGroupName())))
+                        .and(BooleanCriteria.criteria(Criteria.field(Session::getGmtCreate).greaterThanEqual(sessionQuery.getBeginDate()))
+                                .and(Criteria.field(Session::getGmtCreate).lessThanEqual(sessionQuery.getEndDate()))));
+        return this.getList(searchCriteria);
     }
 }

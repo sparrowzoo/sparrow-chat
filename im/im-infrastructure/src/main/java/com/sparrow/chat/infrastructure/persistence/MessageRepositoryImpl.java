@@ -2,6 +2,7 @@ package com.sparrow.chat.infrastructure.persistence;
 
 import com.alibaba.fastjson.JSON;
 import com.sparrow.chat.dao.sparrow.MessageDao;
+import com.sparrow.chat.dao.sparrow.query.session.MessageDBQuery;
 import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.bo.MessageKey;
 import com.sparrow.chat.domain.bo.Protocol;
@@ -13,6 +14,7 @@ import com.sparrow.chat.infrastructure.converter.MessageConverter;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
+import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.exception.Asserts;
 import com.sparrow.json.Json;
@@ -105,8 +107,9 @@ public class MessageRepositoryImpl implements MessageRepository {
     }
 
     @Override
-    public List<MessageDTO> getHistoryMessage(String session, long lastServerTime) {
-        List<Message> messages = this.messageDao.getHistoryMessage(session, lastServerTime);
+    public List<MessageDTO> getHistoryMessage(MessageQuery query) {
+        MessageDBQuery dbQuery=this.messageConverter.convertMessageQuery(query);
+        List<Message> messages = this.messageDao.getHistoryMessage(dbQuery);
         return this.messageConverter.convertMessages(messages);
     }
 

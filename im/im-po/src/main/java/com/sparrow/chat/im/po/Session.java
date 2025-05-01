@@ -2,7 +2,6 @@ package com.sparrow.chat.im.po;
 
 import com.sparrow.protocol.POJO;
 import lombok.Data;
-
 import javax.persistence.*;
 
 @Data
@@ -15,6 +14,21 @@ public class Session implements POJO {
 
     @Column(name = "user_id", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '用户id'")
     private String userId;
+
+    @Column(name = "sender_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '发送人名'")
+    private String senderName;
+
+    @Column(name = "sender_nick_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '发送人昵称'")
+    private String senderNickName;
+
+    @Column(name = "receiver_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '接收人名'")
+    private String receiverName;
+
+    @Column(name = "receiver_nick_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '接收人昵称'")
+    private String receiverNickName;
+
+    @Column(name = "group_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '群名'")
+    private String groupName;
 
 
     @Column(name = "category", columnDefinition = "tinyint(2) NOT NULL DEFAULT 0 COMMENT '会话分类 0 visitor, 1 register'")

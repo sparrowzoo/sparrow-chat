@@ -1,9 +1,9 @@
-package com.sparrow.chat.protocol.query;
+package com.sparrow.chat.dao.sparrow.query.session;
 
 import lombok.Data;
 
 @Data
-public class MessageQuery {
+public class MessageDBQuery {
     private String sessionKey;
     private Long lastReadTime;
     private String content;

@@ -60,10 +60,5 @@
             <artifactId>im-dao-api</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.sparrowzoo.chat</groupId>
-            <artifactId>im-protocol</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 </project>

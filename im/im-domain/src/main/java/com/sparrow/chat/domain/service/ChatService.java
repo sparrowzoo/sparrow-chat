@@ -1,9 +1,6 @@
 package com.sparrow.chat.domain.service;
 
-import com.sparrow.chat.domain.bo.CancelProtocol;
-import com.sparrow.chat.domain.bo.ChatSession;
-import com.sparrow.chat.domain.bo.ChatUser;
-import com.sparrow.chat.domain.bo.Protocol;
+import com.sparrow.chat.domain.bo.*;
 import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.repository.ContactRepository;
 import com.sparrow.chat.domain.repository.MessageRepository;
@@ -17,7 +14,10 @@ import com.sparrow.chat.protocol.params.SessionReadParams;
 import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
 import com.sparrow.chat.protocol.query.MessageQuery;
+import com.sparrow.chat.protocol.query.SessionQuery;
 import com.sparrow.exception.Asserts;
+import com.sparrow.passport.api.UserProfileAppService;
+import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.ThreadContext;
@@ -42,6 +42,9 @@ public class ChatService {
     private ContactRepository contactsRepository;
     @Inject
     private QunRepository qunRepository;
+
+    @Inject
+    private UserProfileAppService userProfileAppService;
 
 
     public List<ContactStatusDTO> getContactsStatus(Long userId, List<ChatUserQuery> userQueries) {
@@ -70,9 +73,9 @@ public class ChatService {
         return contacts;
     }
 
-    public void saveMessage(Protocol protocol,Long ip) {
+    public void saveMessage(Protocol protocol, Long ip) {
         //将消息保存至session 每个消息只存留一份，只保留最近100条
-        this.messageRepository.saveMessage(protocol,ip);
+        this.messageRepository.saveMessage(protocol, ip);
         this.sessionRepository.saveSession(protocol.getChatSession(), protocol.getSender());
     }
 
@@ -104,27 +107,35 @@ public class ChatService {
         return this.sessionRepository.getSessions(chatUser);
     }
 
+    public List<SessionBO> querySessions(SessionQuery sessionQuery) throws BusinessException {
+        return this.sessionRepository.querySessions(sessionQuery);
+    }
+
     public List<MessageDTO> fetchMessages(String sessionKey) throws BusinessException {
         this.isMember(sessionKey);
         this.sessionRepository.read(new SessionReadParams(sessionKey));
         return this.messageRepository.getMessageBySession(sessionKey);
-
     }
 
     public List<MessageDTO> fetchHistoryMessages(MessageQuery messageQuery) throws BusinessException {
         this.isMember(messageQuery.getSessionKey());
-        return this.messageRepository.getHistoryMessage(messageQuery.getSessionKey(), messageQuery.getLastReadTime());
+        return this.messageRepository.getHistoryMessage(messageQuery);
     }
 
     public void isMember(String sessionKey) throws BusinessException {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+
         ChatSession chatSession = ChatSession.parse(sessionKey);
         if (chatSession.isOne2One()) {
-            LoginUser loginUser = ThreadContext.getLoginToken();
             ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
-            Asserts.isTrue(!chatSession.isOne2OneMember(chatUser), SparrowError.SYSTEM_ILLEGAL_REQUEST);
+            Asserts.isTrue(!chatSession.isOne2OneMember(chatUser), SparrowError.SYSTEM_PERMISSION_DENIED);
             return;
         }
-        boolean isMember = qunRepository.isQunMember(Long.parseLong(chatSession.getId()), ThreadContext.getLoginToken().getUserId());
-        Asserts.isTrue(!isMember, SparrowError.SYSTEM_ILLEGAL_REQUEST);
+        boolean isMember = qunRepository.isQunMember(Long.parseLong(chatSession.getId()), loginUser.getUserId());
+        if (!isMember) {
+            UserProfileDTO userProfile = this.userProfileAppService.getByLoginUser(loginUser);
+            Asserts.isTrue(!userProfile.getIsManager(), SparrowError.SYSTEM_PERMISSION_DENIED);
+        }
+        Asserts.isTrue(!isMember, SparrowError.SYSTEM_PERMISSION_DENIED);
     }
 }

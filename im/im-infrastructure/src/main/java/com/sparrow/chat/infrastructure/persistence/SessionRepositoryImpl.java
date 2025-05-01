@@ -3,6 +3,7 @@ package com.sparrow.chat.infrastructure.persistence;
 import com.sparrow.chat.dao.sparrow.SessionDao;
 import com.sparrow.chat.domain.bo.ChatSession;
 import com.sparrow.chat.domain.bo.ChatUser;
+import com.sparrow.chat.domain.bo.SessionBO;
 import com.sparrow.chat.domain.repository.MessageRepository;
 import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.chat.domain.repository.SessionRepository;
@@ -12,6 +13,7 @@ import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.SessionConverter;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.params.SessionReadParams;
+import com.sparrow.chat.protocol.query.SessionQuery;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.ThreadContext;
 import com.sparrow.support.PlaceHolderParser;
@@ -84,6 +86,12 @@ public class SessionRepositoryImpl implements SessionRepository {
         this.fillLastReadTime(sessionDTOList);
         this.messageRepository.fillSession(sessionDTOList);
         return sessionDTOList;
+    }
+
+    @Override
+    public List<SessionBO> querySessions(SessionQuery sessionQuery) {
+        List<Session> sessions = this.sessionDao.querySession(this.sessionConverter.convert(sessionQuery));
+        return this.sessionConverter.poList2BOList(sessions);
     }
 
     @Override

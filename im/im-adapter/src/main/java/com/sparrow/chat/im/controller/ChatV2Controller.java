@@ -1,6 +1,7 @@
 package com.sparrow.chat.im.controller;
 
 import com.sparrow.chat.domain.bo.ChatUser;
+import com.sparrow.chat.domain.bo.SessionBO;
 import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.service.ChatService;
 import com.sparrow.chat.domain.service.UserLoginService;
@@ -10,6 +11,7 @@ import com.sparrow.chat.protocol.params.SessionReadParams;
 import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
 import com.sparrow.chat.protocol.query.MessageQuery;
+import com.sparrow.chat.protocol.query.SessionQuery;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.ClientInformation;
 import com.sparrow.protocol.LoginUser;
@@ -51,7 +53,6 @@ public class ChatV2Controller {
     public LoginUser getCurrentUser() {
         return ThreadContext.getLoginToken();
     }
-
 
 
     @ApiOperation(value = "登录")
@@ -96,6 +97,12 @@ public class ChatV2Controller {
     @PostMapping("/history-messages.json")
     public List<MessageDTO> getHistoryMessages(MessageQuery messageQuery) throws BusinessException {
         return chatService.fetchHistoryMessages(messageQuery);
+    }
+
+    @ApiOperation(value = "查询历史会话列表")
+    @PostMapping("/session-list.json")
+    public List<SessionBO> getSessionList(SessionQuery sessionQuery) throws BusinessException {
+        return this.chatService.querySessions(sessionQuery);
     }
 
     @ApiIgnore

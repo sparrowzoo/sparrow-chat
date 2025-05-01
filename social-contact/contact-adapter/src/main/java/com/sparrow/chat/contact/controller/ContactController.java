@@ -2,12 +2,14 @@ package com.sparrow.chat.contact.controller;
 
 import com.sparrow.chat.contact.assembler.ContactAssembler;
 import com.sparrow.chat.contact.bo.ContactsWrapBO;
+import com.sparrow.chat.contact.bo.CustomerServerBO;
 import com.sparrow.chat.contact.bo.UserProfileBO;
 import com.sparrow.chat.contact.protocol.FindUserSecretParam;
 import com.sparrow.chat.contact.protocol.vo.ContactGroupVO;
-import com.sparrow.chat.contact.protocol.vo.UserFriendApplyVO;
 import com.sparrow.chat.contact.protocol.vo.ContactVO;
+import com.sparrow.chat.contact.protocol.vo.UserFriendApplyVO;
 import com.sparrow.chat.contact.service.ContactService;
+import com.sparrow.chat.contact.service.CustomerServerService;
 import com.sparrow.exception.Asserts;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
@@ -32,6 +34,9 @@ public class ContactController {
 
     @Autowired
     private ContactAssembler contactAssembler;
+
+    @Autowired
+    private CustomerServerService customerServerService;
 
     /**
      * 通过用户标识查找用户密文标识 和 用户基本信息
@@ -60,6 +65,16 @@ public class ContactController {
     @ApiOperation("通过用户ID获取用户列表")
     public List<ContactVO> getUsersByIds(@RequestBody List<Long> userIds) throws BusinessException {
         Map<Long, UserProfileDTO> userProfileDTOMap = this.contactService.getUserMap(userIds);
+        return this.contactAssembler.assembleUserListVO(userProfileDTOMap.values());
+    }
+
+    @PostMapping("/get-customer-servers.json")
+    @ApiOperation("获取客服列表")
+    public List<ContactVO> getUsersTenantId() throws BusinessException {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        List<CustomerServerBO> customerServers = this.customerServerService.getCustomerServerListByTenantId(loginUser.getTenantId());
+        List<Long> customerServerIds = customerServers.stream().map(CustomerServerBO::getServerId).collect(java.util.stream.Collectors.toList());
+        Map<Long, UserProfileDTO> userProfileDTOMap = this.contactService.getUserMap(customerServerIds);
         return this.contactAssembler.assembleUserListVO(userProfileDTOMap.values());
     }
 }

@@ -53,5 +53,10 @@
             <artifactId>contact-client-api</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <version>1.0.0-SNAPSHOT</version>
+            <groupId>com.sparrowzoo.passport</groupId>
+            <artifactId>passport-api</artifactId>
+        </dependency>
     </dependencies>
 </project>
