@@ -1,6 +1,8 @@
 package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.dao.sparrow.SessionDao;
+import com.sparrow.chat.dao.sparrow.SessionMetaDao;
+import com.sparrow.chat.dao.sparrow.SessionMetaDaoImpl;
 import com.sparrow.chat.domain.bo.ChatSession;
 import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.bo.SessionBO;
@@ -8,6 +10,7 @@ import com.sparrow.chat.domain.repository.MessageRepository;
 import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.chat.domain.repository.SessionRepository;
 import com.sparrow.chat.im.po.Session;
+import com.sparrow.chat.im.po.SessionMeta;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.SessionConverter;
@@ -22,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +41,9 @@ public class SessionRepositoryImpl implements SessionRepository {
 
     @Autowired
     private SessionDao sessionDao;
+
+    @Inject
+    private SessionMetaDao sessionMetaDao;
 
     @Autowired
     private SessionConverter sessionConverter;
@@ -90,7 +97,7 @@ public class SessionRepositoryImpl implements SessionRepository {
 
     @Override
     public List<SessionBO> querySessions(SessionQuery sessionQuery) {
-        List<Session> sessions = this.sessionDao.querySession(this.sessionConverter.convert(sessionQuery));
+        List<SessionMeta> sessions = this.sessionMetaDao.querySession(this.sessionConverter.convert(sessionQuery));
         return this.sessionConverter.poList2BOList(sessions);
     }
 

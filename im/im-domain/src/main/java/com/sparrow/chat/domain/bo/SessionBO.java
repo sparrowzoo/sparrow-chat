@@ -6,11 +6,19 @@ import lombok.Data;
 public class SessionBO {
     private Long id;
 
-    private String userId;
+    private String sessionKey;
+
+    private Long senderId;
+
+    private Integer senderCategory;
 
     private String senderName;
 
     private String senderNickName;
+
+    private Long receiverId;
+
+    private Integer receiverCategory;
 
     private String receiverName;
 
@@ -18,13 +26,8 @@ public class SessionBO {
 
     private String groupName;
 
-    private Integer category;
-
-    private String sessionKey;
-
     private Integer chatType;
 
-    private Long gmtCreate;
+    private Integer isVisitor;
 
-    private Long lastReadTime;
 }

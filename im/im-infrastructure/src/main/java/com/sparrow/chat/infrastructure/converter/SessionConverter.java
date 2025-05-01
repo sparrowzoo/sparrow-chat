@@ -5,6 +5,7 @@ import com.sparrow.chat.domain.bo.ChatSession;
 import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.bo.SessionBO;
 import com.sparrow.chat.im.po.Session;
+import com.sparrow.chat.im.po.SessionMeta;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.query.SessionQuery;
 import org.springframework.beans.BeanUtils;
@@ -27,18 +28,18 @@ public class SessionConverter {
         return query;
     }
 
-    public List<SessionBO> poList2BOList(List<Session> sessions) {
+    public List<SessionBO> poList2BOList(List<SessionMeta> sessions) {
         if (CollectionUtils.isEmpty(sessions)) {
             return Collections.emptyList();
         }
         List<SessionBO> sessionBOS = new ArrayList<>(sessions.size());
-        for (Session session : sessions) {
+        for (SessionMeta session : sessions) {
             sessionBOS.add(po2BO(session));
         }
         return sessionBOS;
     }
 
-    public SessionBO po2BO(Session session) {
+    public SessionBO po2BO(SessionMeta session) {
         if (session == null) {
             return new SessionBO();
         }

@@ -11,7 +11,7 @@ public class QunApplyParam implements Param {
      */
     private Long qunId;
     /**
-     * 申请的理由F
+     * 申请的理由
      */
     private String reason;
 
