@@ -69,7 +69,7 @@ public class SessionDaoImpl extends ORMStrategy<Session, Long> implements Sessio
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
-                                (Criteria.field(Session::getIsSync).equal(false))
+                                (Criteria.field(Session::getSynced).equal(false))
                         .and(Criteria.field(Session::getChatType).equal(CHAT_TYPE_1_2_1)));
         searchCriteria.setPageSize(limit);
         return this.getList(searchCriteria);

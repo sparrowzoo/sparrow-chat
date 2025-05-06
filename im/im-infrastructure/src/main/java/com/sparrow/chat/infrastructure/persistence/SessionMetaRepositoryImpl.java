@@ -87,7 +87,7 @@ public class SessionMetaRepositoryImpl implements SessionMateRepository {
             Set<String> syncedSessionKeys = new HashSet<>();
             for (Session session : sessions) {
                 if (syncedSessionKeys.contains(session.getSessionKey())) {
-                    session.setIsSync(true);
+                    session.setSynced(true);
                     this.sessionDao.update(session);
                     continue;
                 }
@@ -99,7 +99,7 @@ public class SessionMetaRepositoryImpl implements SessionMateRepository {
                         continue;
                     }
                     this.save(sessionMeta);
-                    session.setIsSync(true);
+                    session.setSynced(true);
                     this.sessionDao.update(session);
                 } catch (Exception e) {
                     log.error("sync session error, sessionKey={}", session.getSessionKey(), e);

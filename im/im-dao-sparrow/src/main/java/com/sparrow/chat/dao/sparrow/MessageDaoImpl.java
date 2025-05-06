@@ -16,7 +16,7 @@ public class MessageDaoImpl extends ORMStrategy<Message, Long> implements Messag
     @Override
     public List<Message> getHistoryMessage(MessageDBQuery messageQuery) {
         SearchCriteria searchCriteria = new SearchCriteria();
-        searchCriteria.setPageSize(100);
+        searchCriteria.setPageSize(30);
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
                                 (Criteria.field(Message::getSessionKey).equal(messageQuery.getSessionKey()))

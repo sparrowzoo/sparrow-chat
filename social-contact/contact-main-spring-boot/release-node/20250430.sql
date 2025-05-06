@@ -19,5 +19,6 @@ CREATE TABLE `t_session_meta`
 
 
 alter table t_session
-add column is_sync tinyint default 0 not null comment '是否已经同步',
-modify column user_id int default 0 not null comment '用户类别'
+add column synced tinyint default 0 not null comment '是否已经同步',
+add column category tinyint default 0 not null comment '用户类型',
+modify column user_id int default 0 not null comment '用户id'
