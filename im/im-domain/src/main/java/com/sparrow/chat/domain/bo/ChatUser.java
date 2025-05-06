@@ -1,6 +1,7 @@
 package com.sparrow.chat.domain.bo;
 
 import com.sparrow.chat.protocol.query.ChatUserQuery;
+import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.constant.magic.Symbol;
 
 public class ChatUser {
@@ -33,6 +34,10 @@ public class ChatUser {
 
     private String id;
     private Integer category;
+
+    public Boolean isVisitor(){
+        return this.category== LoginUser.CATEGORY_VISITOR;
+    }
 
     public String getId() {
         return id;

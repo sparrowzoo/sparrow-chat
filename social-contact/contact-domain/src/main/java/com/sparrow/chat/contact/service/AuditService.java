@@ -106,7 +106,7 @@ public class AuditService {
         this.auditRepository.auditFriend(auditBO, friendAuditParam);
         if (friendAuditParam.getAgree()) {
             this.contactRepository.addContact(auditBO);
-            this.mqPublisher.publish(new ContactEvent(loginUser.getUserId(), auditBO.getApplyUserId()));
+            this.mqPublisher.publish(new ContactEvent(loginUser.getUserId(), auditBO.getApplyUserId(),auditBO.getApplyTime()));
         }
     }
 

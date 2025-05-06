@@ -3,6 +3,7 @@ package com.sparrow.chat.infrastructure.persistence;
 import com.sparrow.chat.contact.bo.AuditBO;
 import com.sparrow.chat.contact.dao.ContactDao;
 import com.sparrow.chat.contact.po.Contact;
+import com.sparrow.chat.contact.protocol.dto.FriendDetailDTO;
 import com.sparrow.chat.contact.repository.ContactRepository;
 import com.sparrow.chat.infrastructure.persistence.data.converter.ContactConverter;
 import com.sparrow.protocol.LoginUser;
@@ -38,7 +39,7 @@ public class ContactRepositoryImpl implements ContactRepository {
     }
 
     @Override
-    public List<Long> getContacts(Long userId) {
+    public List<FriendDetailDTO> getContacts(Long userId) {
         if(userId == null) {
             LoginUser loginUser = ThreadContext.getLoginToken();
             userId=loginUser.getUserId();
@@ -47,10 +48,10 @@ public class ContactRepositoryImpl implements ContactRepository {
         if (CollectionsUtility.isNullOrEmpty(contacts)) {
             return null;
         }
-        List<Long> contacIdList = new ArrayList<>(contacts.size());
+        List<FriendDetailDTO> contactDtos = new ArrayList<>(contacts.size());
         for (Contact contact : contacts) {
-            contacIdList.add(contact.getFriendId());
+            contactDtos.add(new FriendDetailDTO(contact.getUserId(),contact.getFriendId(),contact.getApplyTime()));
         }
-        return contacIdList;
+        return contactDtos;
     }
 }

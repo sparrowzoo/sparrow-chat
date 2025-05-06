@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class MessageDBQuery {
     private String sessionKey;
-    private Long lastReadTime;
+    private Long lastMessageId;
     private String content;
+    private Long beginDate;
+    private Long endDate;
 }

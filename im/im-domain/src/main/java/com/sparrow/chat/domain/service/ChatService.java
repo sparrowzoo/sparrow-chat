@@ -1,58 +1,54 @@
 package com.sparrow.chat.domain.service;
 
-import com.sparrow.chat.domain.bo.*;
+import com.sparrow.chat.domain.bo.CancelProtocol;
+import com.sparrow.chat.domain.bo.ChatSession;
+import com.sparrow.chat.domain.bo.ChatUser;
+import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.domain.netty.UserContainer;
-import com.sparrow.chat.domain.repository.ContactRepository;
-import com.sparrow.chat.domain.repository.MessageRepository;
-import com.sparrow.chat.domain.repository.QunRepository;
-import com.sparrow.chat.domain.repository.SessionRepository;
-import com.sparrow.chat.protocol.dto.ContactStatusDTO;
-import com.sparrow.chat.protocol.dto.MessageDTO;
-import com.sparrow.chat.protocol.dto.SessionDTO;
-import com.sparrow.chat.protocol.dto.UserDTO;
+import com.sparrow.chat.domain.repository.*;
+import com.sparrow.chat.protocol.dto.*;
 import com.sparrow.chat.protocol.params.SessionReadParams;
 import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
 import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.chat.protocol.query.SessionQuery;
+import com.sparrow.core.spi.ApplicationContext;
 import com.sparrow.exception.Asserts;
-import com.sparrow.passport.api.UserProfileAppService;
-import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.ThreadContext;
 import com.sparrow.protocol.constant.SparrowError;
+import com.sparrow.support.AuthenticatorConfigReader;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-@Component
+@Named
 public class ChatService {
-    @Autowired
+    @Inject
     private MessageRepository messageRepository;
-    @Autowired
+    @Inject
     private SessionRepository sessionRepository;
-    @Autowired
+    @Inject
     private ContactRepository contactsRepository;
     @Inject
     private QunRepository qunRepository;
-
     @Inject
-    private UserProfileAppService userProfileAppService;
+    private SessionMateRepository sessionMateRepository;
 
 
     public List<ContactStatusDTO> getContactsStatus(Long userId, List<ChatUserQuery> userQueries) {
         if (CollectionUtils.isEmpty(userQueries)) {
-            List<UserDTO> users = this.contactsRepository.getFriendsByUserId(userId);
+            Map<Long, Long> users = this.contactsRepository.getFriendsByUserId(userId);
             userQueries = new ArrayList<>();
-            for (UserDTO user : users) {
-                userQueries.add(user.getChatUser());
+            for (Long friendId : users.keySet()) {
+                userQueries.add(new ChatUserQuery(friendId.toString(), LoginUser.CATEGORY_REGISTER));
             }
         }
 
@@ -64,7 +60,7 @@ public class ChatService {
                 continue;
             }
             ContactStatusDTO contactStatus = new ContactStatusDTO();
-            contactStatus.setOnline(online);
+            contactStatus.setOnline(true);
             contactStatus.setId(userQuery.getId());
             contactStatus.setCategory(userQuery.getCategory());
             contactStatus.setLastActiveTime(userContainer.getLastActiveTime(ChatUser.convertFromQuery(userQuery)));
@@ -107,8 +103,8 @@ public class ChatService {
         return this.sessionRepository.getSessions(chatUser);
     }
 
-    public List<SessionBO> querySessions(SessionQuery sessionQuery) throws BusinessException {
-        return this.sessionRepository.querySessions(sessionQuery);
+    public List<SessionMetaDTO> querySessions(SessionQuery sessionQuery) throws BusinessException {
+        return this.sessionMateRepository.querySessions(sessionQuery);
     }
 
     public List<MessageDTO> fetchMessages(String sessionKey) throws BusinessException {
@@ -122,20 +118,26 @@ public class ChatService {
         return this.messageRepository.getHistoryMessage(messageQuery);
     }
 
+    public HistoryMessageWrap queryHistoryMessages(MessageQuery messageQuery) throws BusinessException {
+        LoginUser loginUser = ThreadContext.getLoginToken();
+        AuthenticatorConfigReader authenticatorConfigReader = ApplicationContext.getContainer().getBean(AuthenticatorConfigReader.class);
+        int platformId = authenticatorConfigReader.getPlatform();
+        Asserts.isTrue(!loginUser.getCategory().equals(platformId), SparrowError.SYSTEM_PERMISSION_DENIED);
+        return this.messageRepository.queryHistoryMessage(messageQuery);
+    }
+
     public void isMember(String sessionKey) throws BusinessException {
         LoginUser loginUser = ThreadContext.getLoginToken();
 
         ChatSession chatSession = ChatSession.parse(sessionKey);
-        if (chatSession.isOne2One()) {
-            ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
-            Asserts.isTrue(!chatSession.isOne2OneMember(chatUser), SparrowError.SYSTEM_PERMISSION_DENIED);
-            return;
+        if (chatSession != null) {
+            if (chatSession.isOne2One()) {
+                ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
+                Asserts.isTrue(!chatSession.isOne2OneMember(chatUser), SparrowError.SYSTEM_PERMISSION_DENIED);
+                return;
+            }
+            boolean isMember = qunRepository.isQunMember(Long.parseLong(chatSession.getId()), loginUser.getUserId());
+            Asserts.isTrue(!isMember, SparrowError.SYSTEM_PERMISSION_DENIED);
         }
-        boolean isMember = qunRepository.isQunMember(Long.parseLong(chatSession.getId()), loginUser.getUserId());
-        if (!isMember) {
-            UserProfileDTO userProfile = this.userProfileAppService.getByLoginUser(loginUser);
-            Asserts.isTrue(!userProfile.getIsManager(), SparrowError.SYSTEM_PERMISSION_DENIED);
-        }
-        Asserts.isTrue(!isMember, SparrowError.SYSTEM_PERMISSION_DENIED);
     }
 }

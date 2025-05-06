@@ -1,21 +1,24 @@
 package com.sparrow.chat.infrastructure.persistence;
 
+import com.alibaba.fastjson.JSON;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.domain.repository.QunRepository;
+import com.sparrow.chat.protocol.dto.QunDTO;
 import com.sparrow.core.algorithm.collections.KeyCollectionUpsertSplitter;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import com.sparrow.utility.CollectionsUtility;
+import com.sparrow.utility.StringUtility;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
+@Slf4j
 public class RedisQunRepository implements QunRepository {
 
     @Inject
@@ -70,5 +73,26 @@ public class RedisQunRepository implements QunRepository {
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByQunId(qunId + "");
         String userOfQunKey = PlaceHolderParser.parse(RedisKey.MEMBER_OF_QUN, propertyAccessor);
         return this.redisTemplate.opsForSet().isMember(userOfQunKey,userId.toString());
+    }
+
+    @Override
+    public Map<String, QunDTO> getQunMap(Set<String> qunIds) {
+        List<String> qunKeys = new ArrayList<>(qunIds.size());
+        for (String qunId : qunIds) {
+            PropertyAccessor qunPropertyAccessor = PropertyAccessBuilder.buildByQunId(qunId.toString());
+            String qunKey = PlaceHolderParser.parse(RedisKey.QUN, qunPropertyAccessor);
+            qunKeys.add(qunKey);
+        }
+        List<String> quns = this.redisTemplate.opsForValue().multiGet(qunKeys);
+        Map<String,QunDTO> qunDtos = new HashMap<>(quns.size());
+        for (String qun : quns) {
+            if (StringUtility.isNullOrEmpty(qun)) {
+                log.error("qun");
+                continue;
+            }
+            QunDTO qunDto = JSON.parseObject(qun, QunDTO.class);
+            qunDtos.put(qunDto.getQunId(),qunDto);
+        }
+        return qunDtos;
     }
 }

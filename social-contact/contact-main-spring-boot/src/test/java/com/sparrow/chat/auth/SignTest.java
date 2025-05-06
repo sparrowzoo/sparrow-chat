@@ -1,6 +1,6 @@
-package com.sparrow.im;
+package com.sparrow.chat.auth;
 
-import com.sparrow.chat.boot.Application;
+import com.sparrow.chat.boot.ApplicationBoot;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.LoginUserStatus;
@@ -17,7 +17,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import java.util.HashMap;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {Application.class})
+@SpringBootTest(classes = {ApplicationBoot.class})
 @TestExecutionListeners(listeners = {SparrowTestExecutionListener.class, DependencyInjectionTestExecutionListener.class})
 public class SignTest {
     @Autowired
@@ -56,6 +56,7 @@ public class SignTest {
 
 
    String token="eyJjYXRlZ29yeSI6MiwiZXh0ZW5zaW9ucyI6e30sInRlbmFudElkIjoiOWRlZjkzOTEtOWQyNC00NDg4LTg2N2UtNTk0Y2ZjMzVkMjU0IiwidXNlcklkIjo0NiwidmlzaXRvciI6ZmFsc2V9.YlWyVt6h7bsVk3u4ITCml%2BspWE4%3D";
+        String encryptKey = "7xVtRkGpLq9Yfz2wM8nJcB4hDmK3Td6AeXqP1oW0ySvF5U=";
 
 
         this.authenticator.authenticate(token,"7xVtRkGpLq9Yfz2wM8nJcB4hDmK3Td6AeXqP1oW0ySvF5U=");

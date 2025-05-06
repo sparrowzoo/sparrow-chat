@@ -3,6 +3,7 @@ package com.sparrow.chat.contact.service;
 import com.sparrow.chat.contact.bo.ContactsWrapBO;
 import com.sparrow.chat.contact.bo.QunBO;
 import com.sparrow.chat.contact.bo.UserProfileBO;
+import com.sparrow.chat.contact.protocol.dto.FriendDetailDTO;
 import com.sparrow.chat.contact.repository.ContactRepository;
 import com.sparrow.chat.contact.repository.QunRepository;
 import com.sparrow.exception.Asserts;
@@ -11,12 +12,13 @@ import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.ThreadContext;
 import com.sparrow.protocol.constant.SparrowError;
-import com.sparrow.utility.CollectionsUtility;
 import com.sparrow.utility.StringUtility;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Named
 public class ContactService {
@@ -40,7 +42,6 @@ public class ContactService {
     }
 
     public ContactsWrapBO getContacts() throws BusinessException {
-        Set<Long> contactUserIds = new TreeSet<>();
         List<QunBO> myQuns = this.qunRepository.getMyQunList();
         ContactsWrapBO contactsWrapBO = new ContactsWrapBO(myQuns);
 
@@ -52,13 +53,9 @@ public class ContactService {
          * 	at com.sparrow.chat.contact.service.ContactService.getContacts
          */
         Long userId = ThreadContext.getLoginToken().getUserId();
-        contactUserIds.add(userId);
-        List<Long> otherContacts = this.contactRepository.getContacts(userId);
-        contactsWrapBO.setContactIds(otherContacts);
-        if (!CollectionsUtility.isNullOrEmpty(otherContacts)) {
-            contactUserIds.addAll(otherContacts);
-        }
-        contactUserIds.addAll(contactsWrapBO.getQunOwnerIds());
+        List<FriendDetailDTO> otherContacts = this.contactRepository.getContacts(userId);
+        contactsWrapBO.setFriends(otherContacts);
+        Set<Long> contactUserIds = contactsWrapBO.getUserIds(userId);
         Map<Long, UserProfileDTO> userProfileMap = this.userProfileAppService.getUserMap(contactUserIds);
         contactsWrapBO.setUserMap(userProfileMap);
         return contactsWrapBO;

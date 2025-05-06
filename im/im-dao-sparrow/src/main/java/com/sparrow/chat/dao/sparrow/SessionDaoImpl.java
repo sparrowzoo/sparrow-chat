@@ -1,6 +1,5 @@
 package com.sparrow.chat.dao.sparrow;
 
-import com.sparrow.chat.dao.sparrow.query.session.SessionDBQuery;
 import com.sparrow.chat.im.po.Session;
 import com.sparrow.orm.query.*;
 import com.sparrow.orm.template.impl.ORMStrategy;
@@ -10,17 +9,22 @@ import java.util.List;
 
 @Named
 public class SessionDaoImpl extends ORMStrategy<Session, Long> implements SessionDao {
+    /**
+     * 一对一聊天
+     */
+    public static final int CHAT_TYPE_1_2_1 = 0;
+
     public SessionDaoImpl() {
         System.out.println("sessionDaoImpl init");
     }
 
     @Override
     public List<Session> findByUser(String userId, Integer category) {
-        long hourBefore24=System.currentTimeMillis()-8*60*60*1000;
+        long hourBefore24 = System.currentTimeMillis() - 8 * 60 * 60 * 1000;
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
-                                (Criteria.field(Session::getUserId).equal(userId))
+                                (Criteria.field(Session::getUserId).equal(Long.parseLong(userId)))
                         .and
                                 (Criteria.field(Session::getCategory).equal(category))
                         .and(Criteria.field(Session::getGmtCreate).greaterThan(hourBefore24)));
@@ -33,7 +37,7 @@ public class SessionDaoImpl extends ORMStrategy<Session, Long> implements Sessio
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(
                 BooleanCriteria.criteria
-                                (Criteria.field(Session::getUserId).equal(userId))
+                                (Criteria.field(Session::getUserId).equal(Long.parseLong(userId)))
                         .and
                                 (Criteria.field(Session::getCategory).equal(category))
                         .and
@@ -51,12 +55,23 @@ public class SessionDaoImpl extends ORMStrategy<Session, Long> implements Sessio
         updateCriteria.set(UpdateSetClausePair.field(Session::getLastReadTime).equal(System.currentTimeMillis()));
         updateCriteria.setWhere(
                 BooleanCriteria.criteria
-                                (Criteria.field(Session::getUserId).equal(userId))
+                                (Criteria.field(Session::getUserId).equal(Long.parseLong(userId)))
                         .and
                                 (Criteria.field(Session::getCategory).equal(category))
                         .and
                                 (Criteria.field(Session::getSessionKey).equal(sessionKey)));
         this.update(updateCriteria);
         return true;
+    }
+
+    @Override
+    public List<Session> fetchUnSyncSessions(int limit) {
+        SearchCriteria searchCriteria = new SearchCriteria();
+        searchCriteria.setWhere(
+                BooleanCriteria.criteria
+                                (Criteria.field(Session::getIsSync).equal(false))
+                        .and(Criteria.field(Session::getChatType).equal(CHAT_TYPE_1_2_1)));
+        searchCriteria.setPageSize(limit);
+        return this.getList(searchCriteria);
     }
 }

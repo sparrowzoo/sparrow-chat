@@ -4,11 +4,9 @@ import lombok.Data;
 
 @Data
 public class SessionDBQuery {
-    private String senderName;
-    private String receiverName;
-    private String senderNickName;
-    private String receiverNickName;
-    private String groupName;
+    private Long userId;
+    private String userName;
+    private String userNickName;
     private Long beginDate;
     private Long endDate;
 }

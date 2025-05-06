@@ -1,7 +1,6 @@
 package com.sparrow.im;
 
 import com.sparrow.chat.boot.Application;
-import com.sparrow.constant.SysObjectName;
 import com.sparrow.core.spi.ApplicationContext;
 import com.sparrow.datasource.ConnectionContextHolder;
 import com.sparrow.datasource.ConnectionReleaser;
@@ -39,7 +38,7 @@ public class DruidDatasourceTest {
 
     @Test
     public void testDruidDatasource() throws SQLException {
-        ConnectionContextHolder connectionHolder = ApplicationContext.getContainer().getBean(SysObjectName.CONNECTION_CONTEXT_HOLDER);
+        ConnectionContextHolder connectionHolder = ApplicationContext.getContainer().getBean(ConnectionContextHolder.class);
 
         Connection connection = dataSource.getConnection();
         connectionHolder.bindConnection(connection);

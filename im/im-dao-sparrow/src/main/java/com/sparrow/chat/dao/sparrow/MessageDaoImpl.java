@@ -21,10 +21,10 @@ public class MessageDaoImpl extends ORMStrategy<Message, Long> implements Messag
                 BooleanCriteria.criteria
                                 (Criteria.field(Message::getSessionKey).equal(messageQuery.getSessionKey()))
                         .and(Criteria.field(Message::getContent).contains(messageQuery.getContent()))
-                        .and
-                                (Criteria.field(Message::getServerTime).greaterThan(messageQuery.getLastReadTime())));
-
-        searchCriteria.addOrderCriteria(OrderCriteria.asc(Message::getServerTime));
+                        .and(Criteria.field(Message::getServerTime).greaterThanEqual(messageQuery.getBeginDate()))
+                        .and(Criteria.field(Message::getServerTime).lessThanEqual(messageQuery.getEndDate()))
+                        .and(Criteria.field(Message::getId).greaterThan(messageQuery.getLastMessageId())));
+        searchCriteria.addOrderCriteria(OrderCriteria.asc(Message::getId));
         return this.getList(searchCriteria);
     }
 }

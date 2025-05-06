@@ -1,9 +1,11 @@
 package com.sparrow.chat.im.controller;
 
 import com.sparrow.chat.domain.bo.ChatUser;
-import com.sparrow.chat.domain.bo.SessionBO;
+import com.sparrow.chat.protocol.dto.HistoryMessageWrap;
+import com.sparrow.chat.protocol.dto.SessionMetaDTO;
 import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.service.ChatService;
+import com.sparrow.chat.domain.service.MessageService;
 import com.sparrow.chat.domain.service.UserLoginService;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
@@ -34,6 +36,9 @@ public class ChatV2Controller {
     private static Logger logger = LoggerFactory.getLogger(ChatV2Controller.class);
     @Autowired
     private ChatService chatService;
+
+    @Autowired
+    private MessageService   messageService;
 
     @Autowired
     private Authenticator authenticator;
@@ -94,15 +99,21 @@ public class ChatV2Controller {
     }
 
     @ApiOperation(value = "获取历史消息列表")
-    @PostMapping("/history-messages.json")
-    public List<MessageDTO> getHistoryMessages(MessageQuery messageQuery) throws BusinessException {
+    @PostMapping("/my-history-messages.json")
+    public List<MessageDTO> getMyHistoryMessages(@RequestBody MessageQuery messageQuery) throws BusinessException {
         return chatService.fetchHistoryMessages(messageQuery);
+    }
+
+    @ApiOperation(value = "获取历史消息列表")
+    @PostMapping("/query-history-messages.json")
+    public HistoryMessageWrap queryHistoryMessages(@RequestBody MessageQuery messageQuery) throws BusinessException {
+        return chatService.queryHistoryMessages(messageQuery);
     }
 
     @ApiOperation(value = "查询历史会话列表")
     @PostMapping("/session-list.json")
-    public List<SessionBO> getSessionList(SessionQuery sessionQuery) throws BusinessException {
-        return this.chatService.querySessions(sessionQuery);
+    public List<SessionMetaDTO> getSessionList(@RequestBody SessionQuery sessionQuery) throws BusinessException {
+        return this.messageService.querySessionList(sessionQuery);
     }
 
     @ApiIgnore

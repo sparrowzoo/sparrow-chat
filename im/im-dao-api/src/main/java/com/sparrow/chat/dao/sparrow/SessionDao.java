@@ -12,4 +12,5 @@ public interface SessionDao extends DaoSupport<Session, Long> {
 
     Boolean read(String userId,Integer category, String sessionKey);
 
+    List<Session> fetchUnSyncSessions(int limit);
 }

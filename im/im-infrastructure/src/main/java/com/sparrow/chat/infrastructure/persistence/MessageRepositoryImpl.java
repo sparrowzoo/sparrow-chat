@@ -7,17 +7,21 @@ import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.bo.MessageKey;
 import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.domain.repository.MessageRepository;
+import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.chat.im.po.Message;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.MessageConverter;
+import com.sparrow.chat.protocol.dto.HistoryMessageWrap;
 import com.sparrow.chat.protocol.dto.MessageDTO;
+import com.sparrow.chat.protocol.dto.QunDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
 import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.exception.Asserts;
 import com.sparrow.json.Json;
+import com.sparrow.passport.api.UserProfileAppService;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.support.PlaceHolderParser;
@@ -28,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -38,7 +43,7 @@ import static com.sparrow.chat.protocol.constant.Chat.MESSAGE_EXPIRE_DAYS;
 public class MessageRepositoryImpl implements MessageRepository {
     private static Logger logger = LoggerFactory.getLogger(MessageRepositoryImpl.class);
 
-    private static final String MESSAGE_ZSET_PRFIX="z:";
+    private static final String MESSAGE_ZSET_PRFIX = "z:";
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -46,6 +51,10 @@ public class MessageRepositoryImpl implements MessageRepository {
     private MessageConverter messageConverter;
     @Autowired
     private MessageDao messageDao;
+    @Inject
+    private QunRepository qunRepository;
+    @Inject
+    private UserProfileAppService userProfileAppService;
     private Json json = JsonFactory.getProvider();
 
     @Override
@@ -78,25 +87,23 @@ public class MessageRepositoryImpl implements MessageRepository {
     }
 
     @Override
-    public void saveMessage(Protocol protocol,Long ip) {
+    public void saveMessage(Protocol protocol, Long ip) {
         MessageDTO message = this.messageConverter.convertMessage(protocol);
-        this.messageDao.insert(this.messageConverter.convertPo(protocol,ip));
+        this.messageDao.insert(this.messageConverter.convertPo(protocol, ip));
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(protocol.getChatSession().key());
         String messageKey = PlaceHolderParser.parse(RedisKey.SESSION_MESSAGE_KEY, propertyAccessor);
         String lkey = MESSAGE_ZSET_PRFIX + messageKey;
         MessageKey msgKey = new MessageKey(protocol.getSender(), protocol.getClientSendTime());
-        redisTemplate.opsForZSet().add(lkey, msgKey.key(),System.currentTimeMillis());
+        redisTemplate.opsForZSet().add(lkey, msgKey.key(), System.currentTimeMillis());
         redisTemplate.opsForHash().put(messageKey, msgKey.key(), this.json.toString(message));
         if (redisTemplate.opsForHash().size(messageKey) > MAX_MSG_OF_SESSION) {
-            Set<String> firstKey = redisTemplate.opsForZSet().range(lkey,0,0);
-            if(firstKey!=null&&firstKey.iterator().hasNext()) {
+            Set<String> firstKey = redisTemplate.opsForZSet().range(lkey, 0, 0);
+            if (firstKey != null && firstKey.iterator().hasNext()) {
                 redisTemplate.opsForHash().delete(messageKey, firstKey.iterator().next());
             }
         }
         redisTemplate.expire(messageKey, MESSAGE_EXPIRE_DAYS, TimeUnit.DAYS);
     }
-
-
 
 
     @Override
@@ -108,27 +115,41 @@ public class MessageRepositoryImpl implements MessageRepository {
 
     @Override
     public List<MessageDTO> getHistoryMessage(MessageQuery query) {
-        MessageDBQuery dbQuery=this.messageConverter.convertMessageQuery(query);
+        MessageDBQuery dbQuery = this.messageConverter.convertMessageQuery(query);
         List<Message> messages = this.messageDao.getHistoryMessage(dbQuery);
         return this.messageConverter.convertMessages(messages);
     }
 
     @Override
+    public HistoryMessageWrap queryHistoryMessage(MessageQuery query) throws BusinessException {
+        MessageDBQuery dbQuery = this.messageConverter.convertMessageQuery(query);
+        List<Message> messages = this.messageDao.getHistoryMessage(dbQuery);
+        List<MessageDTO> messageDtos = this.messageConverter.convertMessages(messages);
+        HistoryMessageWrap wrap = new HistoryMessageWrap();
+        wrap.setHistoryMessages(messageDtos);
+        Map<String, QunDTO> qunMap = this.qunRepository.getQunMap(wrap.qunIds());
+        wrap.setQunMaps(qunMap);
+        Set<Long> userIds = wrap.userIds();
+        wrap.setUserMaps(this.userProfileAppService.getUserMap(userIds));
+        return wrap;
+    }
+
+    @Override
     public void fillSession(List<SessionDTO> sessionDTOList) {
-        for(SessionDTO session:sessionDTOList) {
+        for (SessionDTO session : sessionDTOList) {
             PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(session.getSessionKey());
             String messageKey = PlaceHolderParser.parse(RedisKey.SESSION_MESSAGE_KEY, propertyAccessor);
             String lkey = MESSAGE_ZSET_PRFIX + messageKey;
-            Long unreadCount = redisTemplate.opsForZSet().count(lkey, session.getLastReadTime()+1,-1);
-            if(unreadCount==null){
-                unreadCount=0L;
+            Long unreadCount = redisTemplate.opsForZSet().count(lkey, session.getLastReadTime() + 1, -1);
+            if (unreadCount == null) {
+                unreadCount = 0L;
             }
             session.setUnreadCount(unreadCount.intValue());
-            Set<String> lastMessageKeys= redisTemplate.opsForZSet().reverseRange(lkey,0,0);
-            if(lastMessageKeys!=null&&lastMessageKeys.iterator().hasNext()){
-                String lastMessageKey=lastMessageKeys.iterator().next();
-                String lastMessage=(String) redisTemplate.opsForHash().get(messageKey, lastMessageKey);
-                session.setLastMessage(JSON.parseObject(lastMessage,MessageDTO.class));
+            Set<String> lastMessageKeys = redisTemplate.opsForZSet().reverseRange(lkey, 0, 0);
+            if (lastMessageKeys != null && lastMessageKeys.iterator().hasNext()) {
+                String lastMessageKey = lastMessageKeys.iterator().next();
+                String lastMessage = (String) redisTemplate.opsForHash().get(messageKey, lastMessageKey);
+                session.setLastMessage(JSON.parseObject(lastMessage, MessageDTO.class));
             }
         }
     }

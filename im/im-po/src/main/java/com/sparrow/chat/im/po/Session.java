@@ -12,8 +12,8 @@ public class Session implements POJO {
     @Column(name = "id", columnDefinition = "int UNSIGNED")
     private Long id;
 
-    @Column(name = "user_id", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '用户id'")
-    private String userId;
+    @Column(name = "user_id", columnDefinition = "int(11) NOT NULL DEFAULT 0 COMMENT '用户id'")
+    private Long userId;
 
     @Column(name = "category", columnDefinition = "tinyint(2) NOT NULL DEFAULT 0 COMMENT '会话分类 0 visitor, 1 register'")
     private Integer category;
@@ -31,5 +31,5 @@ public class Session implements POJO {
     private Long lastReadTime;
 
     @Column(name = "is_sync", columnDefinition = "tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否sync'")
-    private Long isSync;
+    private Boolean isSync;
 }

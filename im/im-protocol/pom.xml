@@ -16,5 +16,11 @@
             <groupId>com.sparrowzoo</groupId>
             <artifactId>sparrow-protocol</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo.passport</groupId>
+            <artifactId>passport-protocol</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

@@ -22,7 +22,6 @@
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>contact-protocol</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 

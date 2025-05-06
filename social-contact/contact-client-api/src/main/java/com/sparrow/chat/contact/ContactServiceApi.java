@@ -1,9 +1,10 @@
 package com.sparrow.chat.contact;
 
+import com.sparrow.chat.contact.protocol.dto.FriendDetailDTO;
 import com.sparrow.protocol.BusinessException;
 
 import java.util.List;
 
 public interface ContactServiceApi {
-    List<Long> getFriends(Long userId) throws BusinessException;
+    List<FriendDetailDTO> getFriends(Long userId) throws BusinessException;
 }

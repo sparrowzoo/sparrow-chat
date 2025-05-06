@@ -20,12 +20,6 @@ public class RedisKey {
      * 通讯录zset
      */
     public static final String USER_CONTACTS = "contacts:{chatType}:{userId}";
-
-    /**
-     * 用户信息 string
-     */
-    public static final String USER = "user:{userId}";
-
     /**
      * 群信息 string
      */

@@ -2,25 +2,23 @@ package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.dao.sparrow.SessionDao;
 import com.sparrow.chat.dao.sparrow.SessionMetaDao;
-import com.sparrow.chat.dao.sparrow.SessionMetaDaoImpl;
 import com.sparrow.chat.domain.bo.ChatSession;
 import com.sparrow.chat.domain.bo.ChatUser;
-import com.sparrow.chat.domain.bo.SessionBO;
 import com.sparrow.chat.domain.repository.MessageRepository;
 import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.chat.domain.repository.SessionRepository;
 import com.sparrow.chat.im.po.Session;
-import com.sparrow.chat.im.po.SessionMeta;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.SessionConverter;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.params.SessionReadParams;
-import com.sparrow.chat.protocol.query.SessionQuery;
+import com.sparrow.passport.api.UserProfileAppService;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.ThreadContext;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -32,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import static com.sparrow.chat.protocol.constant.Chat.*;
 
 @Component
+@Slf4j
 public class SessionRepositoryImpl implements SessionRepository {
     @Autowired
     private QunRepository qunRepository;
@@ -50,6 +49,9 @@ public class SessionRepositoryImpl implements SessionRepository {
 
     @Autowired
     private MessageRepository messageRepository;
+
+    @Inject
+    private UserProfileAppService userProfileAppService;
 
     @Override
     public void saveSession(ChatSession session, ChatUser currentUser) {
@@ -95,11 +97,7 @@ public class SessionRepositoryImpl implements SessionRepository {
         return sessionDTOList;
     }
 
-    @Override
-    public List<SessionBO> querySessions(SessionQuery sessionQuery) {
-        List<SessionMeta> sessions = this.sessionMetaDao.querySession(this.sessionConverter.convert(sessionQuery));
-        return this.sessionConverter.poList2BOList(sessions);
-    }
+
 
     @Override
     public void read(SessionReadParams messageRead) {

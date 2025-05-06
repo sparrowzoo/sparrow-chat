@@ -1,55 +1,47 @@
 package com.sparrow.chat.im.po;
 
+import com.sparrow.protocol.POJO;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
-public class SessionMeta {
+@Table(name = "t_session_meta")
+public class SessionMeta implements POJO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition = "int UNSIGNED")
     private Long id;
 
-    @Column(name = "session_key", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '发送人名'")
+    @Column(name = "session_key", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '用户名'")
     private String sessionKey;
 
-    @Column(name = "sender_id", columnDefinition = "int(10) NOT NULL DEFAULT 0 COMMENT '发送人ID'")
-    private Long senderId;
+    @Column(name = "user_id", columnDefinition = "int(10) NOT NULL DEFAULT 0 COMMENT '用户ID'")
+    private Long userId;
 
-    @Column(name = "sender_category", columnDefinition = "int(10) NOT NULL DEFAULT 0 COMMENT '发送人分类")
-    private Long senderCategory;
+    @Column(name = "user_category", columnDefinition = "int(10) NOT NULL DEFAULT 0 COMMENT '用户分类")
+    private Integer userCategory;
 
-    @Column(name = "sender_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '发送人名'")
-    private String senderName;
+    @Column(name = "user_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '用户名'")
+    private String userName;
 
-    @Column(name = "sender_nick_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '发送人昵称'")
-    private String senderNickName;
+    @Column(name = "user_nick_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '发送人昵称'")
+    private String userNickName;
 
-    @Column(name = "receiver_id", columnDefinition = "int(10) NOT NULL DEFAULT '' COMMENT 'receiver ID'")
-    private Long receiverId;
+    @Column(name = "opposite_id", columnDefinition = "int(10) NOT NULL DEFAULT '' COMMENT '对方 ID'")
+    private Long oppositeId;
 
-    @Column(name = "receiver_category", columnDefinition = "int(10) NOT NULL DEFAULT 0 COMMENT '接受人分类")
-    private Long receiverCategory;
+    @Column(name = "opposite_category", columnDefinition = "int(10) NOT NULL DEFAULT 0 COMMENT '对方分类")
+    private Integer oppositeCategory;
 
-    @Column(name = "receiver_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '接收人名'")
-    private String receiverName;
+    @Column(name = "opposite_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '对方名'")
+    private String oppositeName;
 
-    @Column(name = "receiver_nick_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '接收人昵称'")
-    private String receiverNickName;
-
-    @Column(name = "group_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '群名'")
-    private String groupName;
-
+    @Column(name = "opposite_nick_name", columnDefinition = "varchar(64) NOT NULL DEFAULT '' COMMENT '对方昵称'")
+    private String oppositeNickName;
 
     @Column(name = "is_visitor", columnDefinition = "tinyint(2) NOT NULL DEFAULT 0 COMMENT '是否临时会话 1 visitor, 0 register'")
-    private Integer isVisitor;
-
-    @Column(name = "chat_type", columnDefinition = "tinyint(2) NOT NULL DEFAULT 0 COMMENT '聊天类型 0 1v1 1 1vn'")
-    private Integer chatType;
+    private Boolean isVisitor;
 
     @Column(name = "gmt_create", columnDefinition = "bigint UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间'")
     private Long gmtCreate;

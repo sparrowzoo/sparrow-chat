@@ -76,9 +76,9 @@ public class ContactAssembler {
         }
         List<QunVO> qunVOS = new ArrayList<>(contactsWrap.getQuns().size());
         for (QunBO qunBO : contactsWrap.getQuns()) {
-            UserProfileDTO userProfile = contactsWrap.getUserMap().get(qunBO.getOwnerId());
-            ContactVO contact = this.userAssembler.userDto2ContactVo(userProfile);
-            QunVO qunVO = this.qunAssembler.assembleQun(qunBO, contact);
+            UserProfileDTO qunOwner = contactsWrap.getUserMap().get(qunBO.getOwnerId());
+            ContactVO qunOwnerVO = this.userAssembler.userDto2ContactVo(qunOwner);
+            QunVO qunVO = this.qunAssembler.assembleQun(qunBO, qunOwnerVO);
             qunVOS.add(qunVO);
         }
         return qunVOS;
@@ -99,8 +99,8 @@ public class ContactAssembler {
 
     public ContactGroupVO assembleVO(ContactsWrapBO contactsWrap) throws BusinessException {
         List<QunVO> qunVOS = this.assembleMyQun(contactsWrap);
-        Map<Long,ContactVO> userMap = this.assembleUserMap(contactsWrap);
-        return new ContactGroupVO(userMap,qunVOS,contactsWrap.getContactIds());
+        Map<Long, ContactVO> userMap = this.assembleUserMap(contactsWrap);
+        return new ContactGroupVO(userMap, qunVOS, contactsWrap.getFriends());
     }
 
 

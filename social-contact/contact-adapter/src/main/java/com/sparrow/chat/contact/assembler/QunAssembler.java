@@ -32,7 +32,7 @@ public class QunAssembler {
         return qunVo;
     }
 
-    public QunVO assembleQun(QunBO qunBO, ContactVO userProfile) throws BusinessException {
+    public QunVO assembleQun(QunBO qunBO, ContactVO qunOwnerVO) throws BusinessException {
         QunVO qunVo = new QunVO();
         BeanUtility.copyProperties(qunBO, qunVo);
         qunVo.setQunId(qunBO.getId().toString());
@@ -40,10 +40,10 @@ public class QunAssembler {
         Nationality nationality = Nationality.getById(qunBO.getNationalityId());
         Asserts.isTrue(nationality == null, ContactError.NATIONALITY_OF_QUN_EMPTY);
         qunVo.setNationality(nationality.getName());
-        if (userProfile != null) {
-            qunVo.setOwnerName(userProfile.getNickName());
+        if (qunOwnerVO != null) {
+            qunVo.setOwnerName(qunOwnerVO.getNickName());
             if(StringUtility.isNullOrEmpty(qunVo.getOwnerName())){
-                qunVo.setOwnerName(userProfile.getUserName());
+                qunVo.setOwnerName(qunOwnerVO.getUserName());
             }
         }
         //todo

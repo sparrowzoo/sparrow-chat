@@ -6,6 +6,9 @@ import lombok.Data;
 
 @Data
 public class MessageDTO implements POJO {
+    private Long messageId;
+    private String sessionKey;
+    private Integer chatType;
     /**
      * 消息类型
      */

@@ -78,7 +78,7 @@ public class ChatSession {
     }
 
     public static ChatSession parse(String sessionKey) {
-        if (sessionKey == null) {
+        if (StringUtility.isNullOrEmpty(sessionKey)) {
             return null;
         }
         int chatType = Integer.parseInt(sessionKey.substring(0, 1));

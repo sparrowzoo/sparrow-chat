@@ -4,12 +4,15 @@ import com.sparrow.chat.dao.sparrow.query.session.MessageDBQuery;
 import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.im.po.Message;
+import com.sparrow.chat.protocol.constant.Chat;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.chat.protocol.query.MessageQuery;
+import com.sparrow.utility.DateTimeUtility;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +22,17 @@ public class MessageConverter {
     public MessageDBQuery convertMessageQuery(MessageQuery messageQuery) {
         MessageDBQuery messageDBQuery = new MessageDBQuery();
         BeanUtils.copyProperties(messageQuery, messageDBQuery);
+        LocalDate beginDate = DateTimeUtility.strToDate(messageQuery.getBeginDate());
+        LocalDate endDate = DateTimeUtility.strToDate(messageQuery.getEndDate());
+        messageDBQuery.setBeginDate(DateTimeUtility.toMillis(beginDate));
+        messageDBQuery.setEndDate(DateTimeUtility.toMillis(endDate));
         return messageDBQuery;
     }
 
     public MessageDTO convertMessage(Protocol protocol) {
         MessageDTO message = new MessageDTO();
+        message.setSessionKey(protocol.getChatSession().key());
+        message.setChatType(protocol.getChatType());
         message.setMessageType(protocol.getMessageType());
         message.setContent(protocol.getContent());
         message.setSender(protocol.getSender().toChatUserQuery());
@@ -37,9 +46,14 @@ public class MessageConverter {
 
     public MessageDTO convertMessage(Message message) {
         MessageDTO messageDTO = new MessageDTO();
+        messageDTO.setMessageId(message.getId());
         messageDTO.setMessageType(message.getMessageType());
         messageDTO.setSender(new ChatUserQuery(message.getSender(), message.getSenderCategory()));
-        messageDTO.setReceiver(new ChatUserQuery(message.getReceiver(), message.getReceiverCategory()));
+        if (message.getChatType().equals((int) Chat.CHAT_TYPE_1_2_1)) {
+            messageDTO.setReceiver(new ChatUserQuery(message.getReceiver(), message.getReceiverCategory()));
+        }
+        messageDTO.setSessionKey(message.getSessionKey());
+        messageDTO.setChatType(message.getChatType());
         messageDTO.setContent(message.getContent());
         messageDTO.setServerTime(message.getServerTime());
         messageDTO.setClientSendTime(message.getClientSendTime());
@@ -54,7 +68,7 @@ public class MessageConverter {
         return messageDTOs;
     }
 
-    public Message convertPo(Protocol protocol,Long ip) {
+    public Message convertPo(Protocol protocol, Long ip) {
         ChatUser sender = protocol.getSender();
         ChatUser receiver = protocol.getReceiver();
         Message message = new Message();
