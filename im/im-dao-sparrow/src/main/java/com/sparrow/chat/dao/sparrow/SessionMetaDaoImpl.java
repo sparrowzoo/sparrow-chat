@@ -41,10 +41,10 @@ public class SessionMetaDaoImpl extends ORMStrategy<SessionMeta, Long> implement
         return this.getEntity(searchCriteria);
     }
 
-    public void disable(String sessionKey){
+    public void disable(String sessionKey) {
         UpdateCriteria updateCriteria = new UpdateCriteria();
         updateCriteria.setWhere(Criteria.field(SessionMeta::getSessionKey).equal(sessionKey));
-        updateCriteria.setWhere(Criteria.field(SessionMeta::getStatus).equal(StatusRecord.DISABLE));
+        updateCriteria.set(UpdateSetClausePair.field(SessionMeta::getStatus).equal(StatusRecord.DISABLE));
         this.update(updateCriteria);
     }
 
