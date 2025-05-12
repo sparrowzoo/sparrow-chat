@@ -15,9 +15,10 @@ public class ContactsWrapBO {
         this.quns = quns;
     }
 
-    private Map<Long,UserProfileDTO> userMap;
+    private Map<Long, UserProfileDTO> userMap;
     private List<QunDTO> quns;
     private List<FriendDetailDTO> friends;
+
     private Set<Long> getQunOwnerIds() {
         Set<Long> ids = new HashSet<>();
         for (QunDTO qun : quns) {
@@ -27,6 +28,9 @@ public class ContactsWrapBO {
     }
 
     private Set<Long> getFriendIds() {
+        if (CollectionsUtility.isNullOrEmpty(this.friends)) {
+            return Collections.emptySet();
+        }
         Set<Long> ids = new HashSet<>();
         for (FriendDetailDTO friend : friends) {
             ids.add(friend.getFriendId());
@@ -37,7 +41,7 @@ public class ContactsWrapBO {
     public Set<Long> getUserIds(Long currentUserId) {
         Set<Long> contactUserIds = new HashSet<>();
         contactUserIds.add(currentUserId);
-        Collection<Long> contactIds=this.getFriendIds();
+        Collection<Long> contactIds = this.getFriendIds();
         if (!CollectionsUtility.isNullOrEmpty(contactIds)) {
             contactUserIds.addAll(contactIds);
         }
