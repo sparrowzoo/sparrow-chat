@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.domain.repository.QunRepository;
-import com.sparrow.chat.protocol.dto.QunDTO;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.core.algorithm.collections.KeyCollectionUpsertSplitter;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
@@ -91,7 +91,7 @@ public class RedisQunRepository implements QunRepository {
                 continue;
             }
             QunDTO qunDto = JSON.parseObject(qun, QunDTO.class);
-            qunDtos.put(qunDto.getQunId(),qunDto);
+            qunDtos.put(qunDto.getId().toString(),qunDto);
         }
         return qunDtos;
     }

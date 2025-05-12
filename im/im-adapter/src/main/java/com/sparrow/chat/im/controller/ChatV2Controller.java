@@ -38,7 +38,7 @@ public class ChatV2Controller {
     private ChatService chatService;
 
     @Autowired
-    private MessageService   messageService;
+    private MessageService messageService;
 
     @Autowired
     private Authenticator authenticator;
@@ -96,12 +96,6 @@ public class ChatV2Controller {
     @PostMapping("/messages.json")
     public List<MessageDTO> getMessages(@RequestBody String sessionKey) throws BusinessException {
         return chatService.fetchMessages(sessionKey);
-    }
-
-    @ApiOperation(value = "获取历史消息列表")
-    @PostMapping("/my-history-messages.json")
-    public List<MessageDTO> getMyHistoryMessages(@RequestBody MessageQuery messageQuery) throws BusinessException {
-        return chatService.fetchHistoryMessages(messageQuery);
     }
 
     @ApiOperation(value = "获取历史消息列表")

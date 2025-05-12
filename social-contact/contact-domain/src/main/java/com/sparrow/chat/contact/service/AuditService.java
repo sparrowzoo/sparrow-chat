@@ -3,11 +3,11 @@ package com.sparrow.chat.contact.service;
 import com.sparrow.chat.contact.bo.AuditBO;
 import com.sparrow.chat.contact.bo.AuditWrapBO;
 import com.sparrow.chat.contact.bo.FriendApplyBO;
-import com.sparrow.chat.contact.bo.QunBO;
 import com.sparrow.chat.contact.protocol.audit.FriendApplyParam;
 import com.sparrow.chat.contact.protocol.audit.FriendAuditParam;
 import com.sparrow.chat.contact.protocol.audit.JoinQunParam;
 import com.sparrow.chat.contact.protocol.audit.QunAuditParam;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.contact.protocol.enums.AuditBusiness;
 import com.sparrow.chat.contact.protocol.enums.ContactError;
 import com.sparrow.chat.contact.protocol.event.ContactEvent;
@@ -63,8 +63,8 @@ public class AuditService {
 
     public void applyJoinQun(JoinQunParam joinQunParam) throws BusinessException {
         Asserts.isTrue(null == joinQunParam.getQunId(), ContactError.QUN_ID_IS_EMPTY);
-        QunBO qunBO = this.qunRepository.qunDetail(joinQunParam.getQunId());
-        Asserts.isTrue(qunBO == null, ContactError.QUN_NOT_FOUND);
+        QunDTO qunDto = this.qunRepository.qunDetail(joinQunParam.getQunId());
+        Asserts.isTrue(qunDto == null, ContactError.QUN_NOT_FOUND);
         LoginUser loginUser = ThreadContext.getLoginToken();
         Boolean isMember = this.qunRepository.isMember(joinQunParam.getQunId(), loginUser.getUserId());
         Asserts.isTrue(isMember, ContactError.USER_IS_MEMBER);
@@ -92,7 +92,7 @@ public class AuditService {
         Set<Long> userIds= auditWrap.getUserIds();
         userIds.add(currentUserId);
         Map<Long, UserProfileDTO> userProfiles = this.userProfileAppService.getUserMap(auditWrap.getUserIds());
-        Map<Long, QunBO> qunMap = this.qunRepository.getQunList(auditWrap.getQunIds());
+        Map<Long, QunDTO> qunMap = this.qunRepository.getQunList(auditWrap.getQunIds());
         auditWrap.setUserInfoMap(userProfiles);
         auditWrap.setQunMap(qunMap);
         return auditWrap;
@@ -114,7 +114,7 @@ public class AuditService {
         AuditBO auditBO = this.auditRepository.getAudit(qunAuditParam.getAuditId());
         Asserts.isTrue(AuditBusiness.GROUP != auditBO.getAuditBusiness(), ContactError.AUDIT_BUSINESS_TYPE_NOT_MATCH);
         LoginUser loginUser = ThreadContext.getLoginToken();
-        QunBO existQun = this.qunRepository.qunDetail(auditBO.getBusinessId());
+        QunDTO existQun = this.qunRepository.qunDetail(auditBO.getBusinessId());
         Asserts.isTrue(existQun == null, ContactError.QUN_NOT_FOUND);
         Asserts.isTrue(!existQun.getOwnerId().equals(loginUser.getUserId()), ContactError.AUDIT_USER_IS_NOT_MATCH);
         this.auditRepository.auditQun(auditBO, qunAuditParam);

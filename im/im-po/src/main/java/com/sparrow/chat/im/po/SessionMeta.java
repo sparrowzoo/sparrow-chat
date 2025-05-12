@@ -1,6 +1,7 @@
 package com.sparrow.chat.im.po;
 
 import com.sparrow.protocol.POJO;
+import com.sparrow.protocol.enums.StatusRecord;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -45,4 +46,10 @@ public class SessionMeta implements POJO {
 
     @Column(name = "gmt_create", columnDefinition = "bigint UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间'")
     private Long gmtCreate;
+
+    @Column(name = "gmt_modified", columnDefinition = "bigint UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间'")
+    private Long gmtModified;
+
+    @Column(name = "status", columnDefinition = "tinyint(2) NOT NULL DEFAULT 0 COMMENT '状态")
+    private StatusRecord status;
 }

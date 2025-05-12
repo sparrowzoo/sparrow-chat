@@ -1,12 +1,12 @@
 package com.sparrow.chat.contact.controller;
 
 import com.sparrow.chat.contact.assembler.QunAssembler;
-import com.sparrow.chat.contact.bo.QunMemberWrapBO;
+import com.sparrow.chat.contact.bo.QunDetailWrapBO;
 import com.sparrow.chat.contact.bo.QunPlazaBO;
 import com.sparrow.chat.contact.protocol.qun.*;
-import com.sparrow.chat.contact.protocol.vo.QunMemberVO;
 import com.sparrow.chat.contact.protocol.vo.QunPlazaVO;
 import com.sparrow.chat.contact.protocol.vo.QunVO;
+import com.sparrow.chat.contact.protocol.vo.QunWrapDetailVO;
 import com.sparrow.chat.contact.service.QunService;
 import com.sparrow.protocol.BusinessException;
 import io.swagger.annotations.Api;
@@ -14,7 +14,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-import java.util.List;
 
 @RestController
 @RequestMapping("qun")
@@ -37,14 +36,6 @@ public class QunController {
     @PostMapping("modify.json")
     public void modify(@RequestBody QunModifyParam qunModifyParam) throws BusinessException {
         this.qunService.modify(qunModifyParam);
-    }
-
-
-    @ApiOperation("群成员详情")
-    @PostMapping("members.json")
-    public List<QunMemberVO> detail(Long qunId) throws BusinessException {
-        QunMemberWrapBO qunMemberWrap = this.qunService.getMembersById(qunId);
-        return this.qunAssembler.assembleQunMember(qunMemberWrap);
     }
 
     @GetMapping("plaza.json")
@@ -90,5 +81,12 @@ public class QunController {
     @GetMapping("invite/{token}.json")
     public QunVO inviteJoinQun(@PathVariable("token") String token) throws BusinessException {
         return null;
+    }
+
+    @ApiOperation("获取群详情")
+    @GetMapping("detail/{qunId}.json")
+    public QunWrapDetailVO qunDetail(@PathVariable("qunId") Long qunId) throws BusinessException {
+        QunDetailWrapBO qunDetailWrap = this.qunService.qunDetail(qunId);
+        return this.qunAssembler.assembleQunWrapDetail(qunDetailWrap);
     }
 }

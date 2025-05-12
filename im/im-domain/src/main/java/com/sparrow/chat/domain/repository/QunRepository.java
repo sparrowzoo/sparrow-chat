@@ -1,6 +1,6 @@
 package com.sparrow.chat.domain.repository;
 
-import com.sparrow.chat.protocol.dto.QunDTO;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 
 import java.util.List;
 import java.util.Map;

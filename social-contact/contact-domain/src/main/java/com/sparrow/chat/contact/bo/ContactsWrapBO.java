@@ -1,6 +1,7 @@
 package com.sparrow.chat.contact.bo;
 
 import com.sparrow.chat.contact.protocol.dto.FriendDetailDTO;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.utility.CollectionsUtility;
 import lombok.Data;
@@ -10,16 +11,16 @@ import java.util.*;
 @Data
 public class ContactsWrapBO {
 
-    public ContactsWrapBO(List<QunBO> quns) {
+    public ContactsWrapBO(List<QunDTO> quns) {
         this.quns = quns;
     }
 
     private Map<Long,UserProfileDTO> userMap;
-    private List<QunBO> quns;
+    private List<QunDTO> quns;
     private List<FriendDetailDTO> friends;
     private Set<Long> getQunOwnerIds() {
         Set<Long> ids = new HashSet<>();
-        for (QunBO qun : quns) {
+        for (QunDTO qun : quns) {
             ids.add(qun.getOwnerId());
         }
         return ids;

@@ -13,5 +13,7 @@ public interface SessionMetaDao  extends DaoSupport<SessionMeta, Long> {
 
     List<SessionMeta> querySession(Set<String> sessionKeys);
 
-    boolean exists(String sessionKey);
+    SessionMeta exists(String sessionKey);
+
+    void disable(String sessionKey);
 }

@@ -1,5 +1,6 @@
 package com.sparrow.chat.contact.bo;
 
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.contact.protocol.enums.AuditBusiness;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.utility.CollectionsUtility;
@@ -24,7 +25,7 @@ public class AuditWrapBO {
     private List<AuditBO> myApplingList;
 
     private Map<Long, UserProfileDTO> userInfoMap;
-    private Map<Long, QunBO> qunMap;
+    private Map<Long, QunDTO> qunMap;
 
     public Set<Long> getUserIds() {
         Set<Long> userIds = new HashSet<>();

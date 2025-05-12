@@ -16,7 +16,6 @@ public class AuditWrapVO {
      * 我发起的申请列表
      */
     private List<AuditVO> myApplyingList;
-
     private Map<Long, ContactVO> contactMap;
     private Map<Long, QunVO> qunMap;
 }

@@ -1,5 +1,6 @@
 package com.sparrow.chat.contact.bo;
 
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.contact.protocol.enums.Category;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BO;
@@ -10,7 +11,7 @@ import java.util.Map;
 
 @Data
 public class QunPlazaBO implements BO {
-    private List<QunBO> qunList;
+    private List<QunDTO> qunList;
     /**
      * key:categoryId
      * value:类别
@@ -20,5 +21,5 @@ public class QunPlazaBO implements BO {
      * key:userId
      * value:用户实体
      */
-    private Map<Long, UserProfileDTO> userDicts;
+    private Map<Long, UserProfileDTO> ownerDicts;
 }

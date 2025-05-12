@@ -113,22 +113,19 @@ public class ChatService {
         return this.messageRepository.getMessageBySession(sessionKey);
     }
 
-    public List<MessageDTO> fetchHistoryMessages(MessageQuery messageQuery) throws BusinessException {
-        this.isMember(messageQuery.getSessionKey());
-        return this.messageRepository.getHistoryMessage(messageQuery);
-    }
-
     public HistoryMessageWrap queryHistoryMessages(MessageQuery messageQuery) throws BusinessException {
         LoginUser loginUser = ThreadContext.getLoginToken();
         AuthenticatorConfigReader authenticatorConfigReader = ApplicationContext.getContainer().getBean(AuthenticatorConfigReader.class);
         int platformId = authenticatorConfigReader.getPlatform();
-        Asserts.isTrue(!loginUser.getCategory().equals(platformId), SparrowError.SYSTEM_PERMISSION_DENIED);
+        boolean isAdmin =loginUser.getCategory().equals(platformId);
+        if(!isAdmin){
+            this.isMember(messageQuery.getSessionKey());
+        }
         return this.messageRepository.queryHistoryMessage(messageQuery);
     }
 
     public void isMember(String sessionKey) throws BusinessException {
         LoginUser loginUser = ThreadContext.getLoginToken();
-
         ChatSession chatSession = ChatSession.parse(sessionKey);
         if (chatSession != null) {
             if (chatSession.isOne2One()) {

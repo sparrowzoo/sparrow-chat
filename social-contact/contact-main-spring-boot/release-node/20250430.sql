@@ -13,12 +13,18 @@ CREATE TABLE `t_session_meta`
     `opposite_name` varchar(64) default '' not null comment '对方名',
     `opposite_nick_name` varchar(64) default '' not null comment '对方昵称',
     `gmt_create` bigint default 0 not null comment '创建时间',
-
+    `gmt_modified` bigint default 0 not null comment '更新时间',
+    `status` tinyint default 0 not null comment '状态',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4  ROW_FORMAT=DYNAMIC COMMENT='会话元数据';
 
 
 alter table t_session
-add column synced tinyint default 0 not null comment '是否已经同步',
-add column category tinyint default 0 not null comment '用户类型',
-modify column user_id int default 0 not null comment '用户id'
+add column sync_time bigint default 0 not null comment '同步时间',
+add column `status` tinyint default 1 not null comment '状态',
+modify column user_id int unsigned default 0 not null comment '用户id'
+
+
+alter table t_user
+add tenant_id int null comment '租户ID';
+

@@ -1,8 +1,8 @@
 package com.sparrow.chat.contact.repository;
 
 import com.sparrow.chat.contact.bo.AuditBO;
-import com.sparrow.chat.contact.bo.QunBO;
 import com.sparrow.chat.contact.bo.QunMemberBO;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.contact.protocol.qun.QunCreateParam;
 import com.sparrow.chat.contact.protocol.qun.QunModifyParam;
 import com.sparrow.chat.contact.protocol.qun.RemoveMemberOfQunParam;
@@ -22,22 +22,22 @@ public interface QunRepository {
     Boolean isMember(Long qunId, Long newOwnerId);
 
 
-    void transfer(QunBO newQun, Long newOwnerId) throws BusinessException;
+    void transfer(QunDTO newQun, Long newOwnerId) throws BusinessException;
 
     Long createQun(QunCreateParam qunCreateParam);
 
     void modifyQun(QunModifyParam qunModifyParam) throws BusinessException;
 
-    QunBO qunDetail(Long qunId) throws BusinessException;
+    QunDTO qunDetail(Long qunId) throws BusinessException;
 
 
     List<QunMemberBO> qunMembers(Long qunId) throws BusinessException;
 
 
-    List<QunBO> queryQunPlaza();
+    List<QunDTO> queryQunPlaza();
 
-    List<QunBO> getMyQunList();
+    List<QunDTO> getMyQunList();
 
-    Map<Long,QunBO> getQunList(List<Long> qunIds);
+    Map<Long,QunDTO> getQunList(List<Long> qunIds);
 
 }

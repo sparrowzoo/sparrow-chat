@@ -8,7 +8,9 @@ import com.sparrow.chat.im.po.Session;
 import com.sparrow.chat.im.po.SessionMeta;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.query.SessionQuery;
+import com.sparrow.core.Pair;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
+import com.sparrow.protocol.enums.StatusRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
@@ -64,28 +66,31 @@ public class SessionConverter {
     }
 
     public SessionMeta toSessionMeta(Session session, Map<Long, UserProfileDTO> userMap) {
-        ChatUser owner = ChatUser.longUserId(session.getUserId(), session.getCategory());
         ChatSession chatSession = ChatSession.parse(session.getSessionKey());
         if (!chatSession.isOne2One()) {
             log.warn("chat session is not one2one, sessionKey={}", session.getSessionKey());
             return null;
         }
-        ChatUser oppositeUser = chatSession.getOppositeUser(owner);
-        Boolean isVisitor = owner.isVisitor() || oppositeUser.isVisitor();
-        UserProfileDTO ownerProfile = userMap.get(Long.parseLong(owner.getId()));
-        UserProfileDTO oppositeProfile = userMap.get(Long.parseLong(oppositeUser.getId()));
+        Pair<ChatUser, ChatUser> users = chatSession.get1To1Members();
+        ChatUser first = users.getFirst();
+        ChatUser second = users.getSecond();
+        Boolean isVisitor = first.isVisitor() || second.isVisitor();
+        UserProfileDTO firstUserProfile = userMap.get(first.getLongUserId());
+        UserProfileDTO secondUserProfile = userMap.get(second.getLongUserId());
         SessionMeta sessionMeta = new SessionMeta();
         sessionMeta.setSessionKey(session.getSessionKey());
-        sessionMeta.setUserId(owner.getLongUserId());
-        sessionMeta.setUserCategory(owner.getCategory());
-        sessionMeta.setUserName(ownerProfile.getUserName());
-        sessionMeta.setUserNickName(ownerProfile.getNickName());
-        sessionMeta.setOppositeId(oppositeUser.getLongUserId());
-        sessionMeta.setOppositeCategory(oppositeUser.getCategory());
-        sessionMeta.setOppositeName(oppositeProfile.getUserName());
-        sessionMeta.setOppositeNickName(oppositeProfile.getNickName());
+        sessionMeta.setUserId(firstUserProfile.getUserId());
+        sessionMeta.setUserCategory(firstUserProfile.getCategory());
+        sessionMeta.setUserName(firstUserProfile.getUserName());
+        sessionMeta.setUserNickName(firstUserProfile.getNickName());
+        sessionMeta.setOppositeId(second.getLongUserId());
+        sessionMeta.setOppositeCategory(secondUserProfile.getCategory());
+        sessionMeta.setOppositeName(secondUserProfile.getUserName());
+        sessionMeta.setOppositeNickName(secondUserProfile.getNickName());
         sessionMeta.setIsVisitor(isVisitor);
         sessionMeta.setGmtCreate(session.getGmtCreate());
+        sessionMeta.setGmtModified(sessionMeta.getGmtCreate());
+        sessionMeta.setStatus(StatusRecord.ENABLE);
         return sessionMeta;
     }
 
@@ -97,6 +102,8 @@ public class SessionConverter {
         s.setChatType(session.getChatType());
         s.setGmtCreate(System.currentTimeMillis());
         s.setLastReadTime(System.currentTimeMillis());
+        s.setSyncTime(0L);
+        s.setStatus(StatusRecord.ENABLE);
         return s;
     }
 }

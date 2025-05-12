@@ -14,7 +14,7 @@ import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.MessageConverter;
 import com.sparrow.chat.protocol.dto.HistoryMessageWrap;
 import com.sparrow.chat.protocol.dto.MessageDTO;
-import com.sparrow.chat.protocol.dto.QunDTO;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
 import com.sparrow.chat.protocol.query.MessageQuery;

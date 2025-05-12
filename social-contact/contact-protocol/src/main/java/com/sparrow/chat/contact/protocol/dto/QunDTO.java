@@ -1,10 +1,10 @@
-package com.sparrow.chat.contact.bo;
+package com.sparrow.chat.contact.protocol.dto;
 
-import com.sparrow.protocol.BO;
+import com.sparrow.protocol.DTO;
 import lombok.Data;
 
 @Data
-public class QunBO implements BO {
+public class QunDTO implements DTO {
     private Long id;
     private String name;
     private String avatar;
@@ -13,6 +13,8 @@ public class QunBO implements BO {
     private String nationality;
     private Long organizationId;
     private Long ownerId;
+    private Long createUserId;
+    private Long createTime;
     private Integer categoryId;
     private String remark;
 }

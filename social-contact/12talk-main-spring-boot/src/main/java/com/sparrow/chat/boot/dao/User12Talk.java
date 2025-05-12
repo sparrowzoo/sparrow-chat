@@ -14,6 +14,8 @@ public class User12Talk implements POJO {
     private Long id;
     @Column(name = "account_code",unique = true)
     private String accountCode;
+    @Column(name = "manager_id")
+    private Long managerId;
     @Column(name = "password")
     private String password;
     @Column(name = "type")

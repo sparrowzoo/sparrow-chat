@@ -1,6 +1,7 @@
 package com.sparrow.chat.contact.assembler;
 
 import com.sparrow.chat.contact.bo.*;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.contact.protocol.vo.*;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
@@ -61,9 +62,8 @@ public class ContactAssembler {
         }
         Map<Long, QunVO> qunVOMap = new HashMap<>();
         for (Long qunId : friendAuditWrap.getQunMap().keySet()) {
-            QunBO qunBO = friendAuditWrap.getQunMap().get(qunId);
-            ContactVO contact = auditVo.getContactMap().get(qunBO.getOwnerId());
-            QunVO qunVO = this.qunAssembler.assembleQun(qunBO, contact);
+            QunDTO qunDTO = friendAuditWrap.getQunMap().get(qunId);
+            QunVO qunVO = this.qunAssembler.assembleQun(qunDTO, friendAuditWrap.getUserInfoMap());
             qunVOMap.put(qunId, qunVO);
         }
         auditVo.setQunMap(qunVOMap);
@@ -75,10 +75,8 @@ public class ContactAssembler {
             return Collections.emptyList();
         }
         List<QunVO> qunVOS = new ArrayList<>(contactsWrap.getQuns().size());
-        for (QunBO qunBO : contactsWrap.getQuns()) {
-            UserProfileDTO qunOwner = contactsWrap.getUserMap().get(qunBO.getOwnerId());
-            ContactVO qunOwnerVO = this.userAssembler.userDto2ContactVo(qunOwner);
-            QunVO qunVO = this.qunAssembler.assembleQun(qunBO, qunOwnerVO);
+        for (QunDTO qunDTO : contactsWrap.getQuns()) {
+            QunVO qunVO = this.qunAssembler.assembleQun(qunDTO, contactsWrap.getUserMap());
             qunVOS.add(qunVO);
         }
         return qunVOS;

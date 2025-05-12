@@ -100,16 +100,6 @@ public class PropertyAccessBuilder {
                 .session(sessionKey).build();
     }
 
-    public static PropertyAccessor buildByUserId(Long userId) {
-        return new ChatPropertyAccessor.Builder()
-                .userId(userId).build();
-    }
-
-    public static PropertyAccessor buildByUserKey(String userKey) {
-        return new ChatPropertyAccessor.Builder()
-                .userKey(userKey).build();
-    }
-
     public static PropertyAccessor buildByQunId(String qunId) {
         return new ChatPropertyAccessor.Builder()
                 .qunId(qunId).build();
@@ -118,12 +108,6 @@ public class PropertyAccessBuilder {
     public static PropertyAccessor buildContacts(Long userId, Byte charType) {
         return new ChatPropertyAccessor.Builder()
                 .chatType(charType)
-                .userId(userId).build();
-    }
-
-    public static PropertyAccessor buildMsgId(Long userId, Long time) {
-        return new ChatPropertyAccessor.Builder()
-                .time(time)
                 .userId(userId).build();
     }
 }

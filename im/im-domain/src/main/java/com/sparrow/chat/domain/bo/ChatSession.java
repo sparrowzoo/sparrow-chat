@@ -1,7 +1,8 @@
 package com.sparrow.chat.domain.bo;
 
-import com.sparrow.chat.protocol.dto.SessionDTO;
+import com.sparrow.core.Pair;
 import com.sparrow.utility.StringUtility;
+import lombok.Data;
 
 import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_1;
 
@@ -11,6 +12,7 @@ import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_1;
  * <p>
  * 方便1对1 聊天的使用
  */
+@Data
 public class ChatSession {
     public ChatSession() {
     }
@@ -38,21 +40,6 @@ public class ChatSession {
     private int chatType;
     private String id;
 
-    public int getChatType() {
-        return chatType;
-    }
-
-    public void setChatType(int chatType) {
-        this.chatType = chatType;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String key() {
         return chatType + id;
@@ -74,7 +61,7 @@ public class ChatSession {
         }
         int length = bigUser.getId().length();
         String len = StringUtility.leftPad(Integer.toString(length), '0', 2);
-        return bigUser.getCategory() + "" + smallUser.getCategory() + "" + len + "" + bigUser.getId() + smallUser.getId();
+        return bigUser.getSessionCategory() + "" + smallUser.getSessionCategory() + "" + len + "" + bigUser.getId() + smallUser.getId();
     }
 
     public static ChatSession parse(String sessionKey) {
@@ -86,10 +73,7 @@ public class ChatSession {
         return ChatSession.createSession(chatType, id);
     }
 
-    public ChatUser getOppositeUser(ChatUser currentUser) {
-        if (currentUser == null) {
-            return null;
-        }
+    public Pair<ChatUser, ChatUser> get1To1Members() {
         if (this.chatType != CHAT_TYPE_1_2_1) {
             return null;
         }
@@ -102,15 +86,15 @@ public class ChatSession {
 
         ChatUser bigUser = ChatUser.stringUserId(bigUserId, Integer.valueOf(bigUserCategory));
         ChatUser smallUser = ChatUser.stringUserId(smallUserId, Integer.valueOf(smallUserCategory));
-
-        if (bigUser.equals(currentUser)) {
-            return smallUser;
-        }
-        return bigUser;
+        return new Pair<>(bigUser, smallUser);
     }
 
-    public SessionDTO toSessionDTO() {
-        return SessionDTO.parse(this.key(), 0L);
+    public ChatUser getOppositeUser(ChatUser currentUser) {
+        Pair<ChatUser, ChatUser> members = this.get1To1Members();
+        if (members.getFirst().equals(currentUser)) {
+            return members.getSecond();
+        }
+        return members.getFirst();
     }
 
     public boolean isOne2OneMember(ChatUser user) {
@@ -119,5 +103,13 @@ public class ChatSession {
         }
         ChatUser oppositeUser = this.getOppositeUser(user);
         return oppositeUser != null;
+    }
+
+    public boolean isVisitor() {
+        if(!this.isOne2One()){
+            return false;
+        }
+        Pair<ChatUser, ChatUser> members = this.get1To1Members();
+        return members.getFirst().isVisitor() || members.getSecond().isVisitor();
     }
 }

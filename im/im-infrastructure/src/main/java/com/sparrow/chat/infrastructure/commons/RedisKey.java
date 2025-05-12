@@ -7,9 +7,9 @@ public class RedisKey {
     public static final String SESSION_MESSAGE_KEY = "msg:{sessionKey}";
 
     /**
-     * 用户的会话 zset
+     * 用户的会话 string 只保存最后一条消息的时间戮
      */
-    public static final String USER_SESSION_KEY = "session:{userKey}";
+    public static final String USER_SESSION_KEY = "session:{userKey}:{sessionKey}";
 
     /**
      * 群内用户 zset

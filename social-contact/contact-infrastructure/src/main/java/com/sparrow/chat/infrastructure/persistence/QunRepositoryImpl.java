@@ -1,12 +1,12 @@
 package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.contact.bo.AuditBO;
-import com.sparrow.chat.contact.bo.QunBO;
 import com.sparrow.chat.contact.bo.QunMemberBO;
 import com.sparrow.chat.contact.dao.QunDao;
 import com.sparrow.chat.contact.dao.QunMemberDao;
 import com.sparrow.chat.contact.po.Qun;
 import com.sparrow.chat.contact.po.QunMember;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.contact.protocol.enums.ContactError;
 import com.sparrow.chat.contact.protocol.qun.QunCreateParam;
 import com.sparrow.chat.contact.protocol.qun.QunModifyParam;
@@ -63,8 +63,8 @@ public class QunRepositoryImpl implements QunRepository {
 
 
     @Override
-    public void transfer(QunBO qunBO, Long newOwnerId) throws BusinessException {
-        this.qunDao.transfer(qunBO.getId(), newOwnerId);
+    public void transfer(QunDTO qunDTO, Long newOwnerId) throws BusinessException {
+        this.qunDao.transfer(qunDTO.getId(), newOwnerId);
     }
 
 
@@ -87,7 +87,7 @@ public class QunRepositoryImpl implements QunRepository {
     }
 
     @Override
-    public QunBO qunDetail(Long qunId) throws BusinessException {
+    public QunDTO qunDetail(Long qunId) throws BusinessException {
         Qun qun = this.qunDao.getEntity(qunId);
         return this.qunConverter.po2Bo(qun);
     }
@@ -99,13 +99,13 @@ public class QunRepositoryImpl implements QunRepository {
     }
 
     @Override
-    public List<QunBO> queryQunPlaza() {
+    public List<QunDTO> queryQunPlaza() {
         List<Qun> quns = this.qunDao.queryEnabledQunList();
         return this.qunConverter.poList2BoList(quns);
     }
 
     @Override
-    public List<QunBO> getMyQunList() {
+    public List<QunDTO> getMyQunList() {
         LoginUser loginUser = ThreadContext.getLoginToken();
         Set<Long> myQunIds = this.qunMemberDao.getQunsByMemberId(loginUser.getUserId());
         if (myQunIds == null || myQunIds.isEmpty()) {
@@ -116,14 +116,14 @@ public class QunRepositoryImpl implements QunRepository {
     }
 
     @Override
-    public Map<Long,QunBO> getQunList(List<Long> qunIds) {
+    public Map<Long,QunDTO> getQunList(List<Long> qunIds) {
         if(qunIds == null || qunIds.isEmpty()){
             return new HashMap<>();
         }
         List<Qun> myQuns = this.qunDao.getQuns(qunIds);
-        Map<Long, QunBO> qunMap = new HashMap<>();
-        List<QunBO> qunBos= this.qunConverter.poList2BoList(myQuns);
-        for(QunBO qunBO : qunBos){
+        Map<Long, QunDTO> qunMap = new HashMap<>();
+        List<QunDTO> qunBos= this.qunConverter.poList2BoList(myQuns);
+        for(QunDTO qunBO : qunBos){
             qunMap.put(qunBO.getId(),qunBO);
         }
         return qunMap;

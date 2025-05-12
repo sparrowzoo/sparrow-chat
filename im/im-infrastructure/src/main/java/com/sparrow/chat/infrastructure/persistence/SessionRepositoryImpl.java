@@ -13,21 +13,23 @@ import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.SessionConverter;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.params.SessionReadParams;
-import com.sparrow.passport.api.UserProfileAppService;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.ThreadContext;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
+import com.sparrow.utility.CollectionsUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static com.sparrow.chat.protocol.constant.Chat.*;
+import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_1;
 
 @Component
 @Slf4j
@@ -50,8 +52,6 @@ public class SessionRepositoryImpl implements SessionRepository {
     @Autowired
     private MessageRepository messageRepository;
 
-    @Inject
-    private UserProfileAppService userProfileAppService;
 
     @Override
     public void saveSession(ChatSession session, ChatUser currentUser) {
@@ -71,9 +71,9 @@ public class SessionRepositoryImpl implements SessionRepository {
 
 
     private void addNewSessionForUserId(ChatSession session, ChatUser chatUser) {
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserKey(session.key(), chatUser);
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
-        Double score = this.redisTemplate.opsForZSet().score(userSessionKey, session.key());
+        Long score = (Long) this.redisTemplate.opsForValue().get(userSessionKey);
         if (score != null) {
             // 已经存在，不再添加
             return;
@@ -81,11 +81,8 @@ public class SessionRepositoryImpl implements SessionRepository {
         if (!sessionDao.exist(chatUser.getId(), chatUser.getCategory(), session.key())) {
             sessionDao.insert(this.sessionConverter.convert(session, chatUser));
         }
-        this.redisTemplate.opsForZSet().add(userSessionKey, session.key(), System.currentTimeMillis());
-        if (this.redisTemplate.opsForZSet().size(userSessionKey) > MAX_SESSION_OF_USER) {
-            this.redisTemplate.opsForZSet().removeRange(userSessionKey, 0, 0);
-        }
-        redisTemplate.expire(userSessionKey, MESSAGE_EXPIRE_DAYS, TimeUnit.DAYS);
+        this.redisTemplate.opsForValue().set(userSessionKey, System.currentTimeMillis());
+        redisTemplate.expire(userSessionKey, 24, TimeUnit.HOURS);
     }
 
     @Override
@@ -98,17 +95,14 @@ public class SessionRepositoryImpl implements SessionRepository {
     }
 
 
-
     @Override
     public void read(SessionReadParams messageRead) {
         LoginUser loginUser = ThreadContext.getLoginToken();
         ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserKey(messageRead.getSessionKey(), chatUser);
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
-        Double score = redisTemplate.opsForZSet().score(userSessionKey, messageRead.getSessionKey());
-        //考虑第一次加载可能不存在，如果直接add 会导致数据库不存在，缓存不一致
-        if (score != null) {
-            redisTemplate.opsForZSet().add(userSessionKey, messageRead.getSessionKey(), System.currentTimeMillis());
+        if (redisTemplate.opsForValue().get(userSessionKey) != null) {
+            redisTemplate.opsForValue().set(userSessionKey, System.currentTimeMillis());
             this.sessionDao.read(chatUser.getId(), chatUser.getCategory(), messageRead.getSessionKey());
         }
     }
@@ -116,15 +110,25 @@ public class SessionRepositoryImpl implements SessionRepository {
     @Override
     public void fillLastReadTime(List<SessionDTO> sessionDTOList) {
         LoginUser loginUser = ThreadContext.getLoginToken();
+        Set<String> sessionKeySet = new LinkedHashSet<>();
         ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildByUserKey(chatUser.key());
-        String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
         for (SessionDTO session : sessionDTOList) {
-            Double lastReadTime = redisTemplate.opsForZSet().score(userSessionKey, session.getSessionKey());
+            PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserKey(session.getSessionKey(), chatUser);
+            String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
+            sessionKeySet.add(userSessionKey);
+        }
+
+        List<Long> lastReadTimeList = redisTemplate.opsForValue().multiGet(sessionKeySet);
+        if (CollectionsUtility.isNullOrEmpty(lastReadTimeList)) {
+            return;
+        }
+        for (int i = 0; i < lastReadTimeList.size(); i++) {
+            SessionDTO session = sessionDTOList.get(i);
+            Long lastReadTime = lastReadTimeList.get(i);
             if (lastReadTime == null) {
-                lastReadTime = 0.0;
+                lastReadTime = 0L;
             }
-            session.setLastReadTime(lastReadTime.longValue());
+            session.setLastReadTime(lastReadTime);
         }
     }
 }

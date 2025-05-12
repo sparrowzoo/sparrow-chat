@@ -4,7 +4,7 @@ import com.sparrow.chat.domain.repository.ContactRepository;
 import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
-import com.sparrow.chat.protocol.dto.QunDTO;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import com.sparrow.utility.CollectionsUtility;

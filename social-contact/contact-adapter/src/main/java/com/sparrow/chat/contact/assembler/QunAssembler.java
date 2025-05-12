@@ -1,22 +1,29 @@
 package com.sparrow.chat.contact.assembler;
 
-import com.sparrow.chat.contact.bo.*;
+import com.sparrow.chat.contact.bo.QunDetailWrapBO;
+import com.sparrow.chat.contact.bo.QunPlazaBO;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.contact.protocol.enums.Category;
 import com.sparrow.chat.contact.protocol.enums.ContactError;
 import com.sparrow.chat.contact.protocol.enums.Nationality;
-import com.sparrow.chat.contact.protocol.vo.*;
+import com.sparrow.chat.contact.protocol.vo.CategoryVO;
+import com.sparrow.chat.contact.protocol.vo.QunPlazaVO;
+import com.sparrow.chat.contact.protocol.vo.QunVO;
+import com.sparrow.chat.contact.protocol.vo.QunWrapDetailVO;
 import com.sparrow.exception.Asserts;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.utility.BeanUtility;
-import com.sparrow.utility.CollectionsUtility;
 import com.sparrow.utility.StringUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Named
 public class QunAssembler {
@@ -24,47 +31,43 @@ public class QunAssembler {
     @Autowired
     private UserAssembler userAssembler;
 
-    public QunVO assembleQun(QunDetailWrapBO qunDetail) throws BusinessException {
-        QunBO qunBO = qunDetail.getQun();
-        QunVO qunVo = new QunVO();
-        ContactVO owner =this.userAssembler.userDto2ContactVo(qunDetail.getOwner());
-        this.assembleQun(qunBO, owner);
-        return qunVo;
+    public QunWrapDetailVO assembleQunWrapDetail(QunDetailWrapBO qunDetailWrap) throws BusinessException {
+        QunWrapDetailVO qunWrapDetailVO = new QunWrapDetailVO();
+        qunWrapDetailVO.setDetail(this.assembleQun(qunDetailWrap.getQun(), qunDetailWrap.getUserMaps()));
+        qunWrapDetailVO.setMembers(qunDetailWrap.getMembers());
+        qunWrapDetailVO.setUserDicts(qunDetailWrap.getUserMaps());
+        return qunWrapDetailVO;
     }
 
-    public QunVO assembleQun(QunBO qunBO, ContactVO qunOwnerVO) throws BusinessException {
+    public QunVO assembleQun(QunDTO qun, Map<Long, UserProfileDTO> userDicts) throws BusinessException {
         QunVO qunVo = new QunVO();
-        BeanUtility.copyProperties(qunBO, qunVo);
-        qunVo.setQunId(qunBO.getId().toString());
-        qunVo.setQunName(qunBO.getName());
-        Nationality nationality = Nationality.getById(qunBO.getNationalityId());
+        BeanUtility.copyProperties(qun, qunVo);
+        qunVo.setQunId(qun.getId().toString());
+        qunVo.setQunName(qun.getName());
+        Nationality nationality = Nationality.getById(qun.getNationalityId());
         Asserts.isTrue(nationality == null, ContactError.NATIONALITY_OF_QUN_EMPTY);
         qunVo.setNationality(nationality.getName());
-        if (qunOwnerVO != null) {
-            qunVo.setOwnerName(qunOwnerVO.getNickName());
-            if(StringUtility.isNullOrEmpty(qunVo.getOwnerName())){
-                qunVo.setOwnerName(qunOwnerVO.getUserName());
+        UserProfileDTO qunOwner = userDicts.get(qun.getOwnerId());
+        if (qunOwner != null) {
+            qunVo.setOwnerName(qunOwner.getNickName());
+            if (StringUtility.isNullOrEmpty(qunVo.getOwnerName())) {
+                qunVo.setOwnerName(qunOwner.getUserName());
             }
         }
-        //todo
-        Category category = Category.getById(qunBO.getCategoryId());
-        Asserts.isTrue(category == null, ContactError.CATEGORY_OF_QUN_EMPTY);
-        qunVo.setCategoryName(category.getName());
         return qunVo;
     }
 
 
     public QunPlazaVO assembleQunPlaza(QunPlazaBO qunPlaza) {
         QunPlazaVO qunPlazaVO = new QunPlazaVO();
-        List<QunBO> qunList = qunPlaza.getQunList();
-        Map<Long, UserProfileDTO> userDicts = qunPlaza.getUserDicts();
+        List<QunDTO> qunList = qunPlaza.getQunList();
+        Map<Long, UserProfileDTO> userDicts = qunPlaza.getOwnerDicts();
         Map<Integer, Category> categories = qunPlaza.getCategoryDicts();
         Map<Integer, List<QunVO>> qunMap = new HashMap<>();
-        for (QunBO qunBO : qunList) {
+        for (QunDTO qunBO : qunList) {
             QunVO qunVO;
             try {
-                UserProfileDTO userProfile= userDicts.get(qunBO.getOwnerId());
-                qunVO = this.assembleQun(qunBO,this.userAssembler.userDto2ContactVo(userProfile));
+                qunVO = this.assembleQun(qunBO, userDicts);
             } catch (BusinessException e) {
                 logger.error("qun assemble error qunId:{},qunName:{}", qunBO.getId(), qunBO.getName(), e);
                 continue;
@@ -89,28 +92,5 @@ public class QunAssembler {
         categoryVO.setCategoryName(category.getName());
         categoryVO.setDescription(category.getDescription());
         return categoryVO;
-    }
-
-    public List<QunMemberVO> assembleQunMember(QunMemberWrapBO qunMemberWrap) {
-        if (qunMemberWrap == null) {
-            return null;
-        }
-        if (CollectionsUtility.isNullOrEmpty(qunMemberWrap.getQunMemberBOS())) {
-            return null;
-        }
-        List<QunMemberVO> qunMembers = new ArrayList<>(qunMemberWrap.getQunMemberBOS().size());
-        for (QunMemberBO qunMemberBO : qunMemberWrap.getQunMemberBOS()) {
-            QunMemberVO qunMember = new QunMemberVO();
-            qunMember.setUserId(qunMemberBO.getMemberId());
-            qunMember.setNationality(Nationality.CHINA.getName());
-            qunMember.setFlagUrl(Nationality.CHINA.getFlag());
-            UserProfileDTO userProfile = qunMemberWrap.getUserProfileDTOMap().get(qunMember.getUserId());
-            if (userProfile != null) {
-                qunMember.setUserName(userProfile.getUserName());
-                qunMember.setAvatar(userProfile.getAvatar());
-            }
-            qunMembers.add(qunMember);
-        }
-        return qunMembers;
     }
 }

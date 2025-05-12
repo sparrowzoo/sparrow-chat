@@ -2,11 +2,9 @@ package com.sparrow.chat.dao.sparrow;
 
 import com.sparrow.chat.dao.sparrow.query.session.SessionDBQuery;
 import com.sparrow.chat.im.po.SessionMeta;
-import com.sparrow.orm.query.BooleanCriteria;
-import com.sparrow.orm.query.Criteria;
-import com.sparrow.orm.query.OrderCriteria;
-import com.sparrow.orm.query.SearchCriteria;
+import com.sparrow.orm.query.*;
 import com.sparrow.orm.template.impl.ORMStrategy;
+import com.sparrow.protocol.enums.StatusRecord;
 
 import javax.inject.Named;
 import java.util.List;
@@ -37,16 +35,25 @@ public class SessionMetaDaoImpl extends ORMStrategy<SessionMeta, Long> implement
     }
 
     @Override
-    public boolean exists(String sessionKey) {
+    public SessionMeta exists(String sessionKey) {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setWhere(Criteria.field(SessionMeta::getSessionKey).equal(sessionKey));
-        return this.getCount(searchCriteria)>0;
+        return this.getEntity(searchCriteria);
+    }
+
+    public void disable(String sessionKey){
+        UpdateCriteria updateCriteria = new UpdateCriteria();
+        updateCriteria.setWhere(Criteria.field(SessionMeta::getSessionKey).equal(sessionKey));
+        updateCriteria.setWhere(Criteria.field(SessionMeta::getStatus).equal(StatusRecord.DISABLE));
+        this.update(updateCriteria);
     }
 
     @Override
     public List<SessionMeta> querySession(Set<String> sessionKeys) {
         SearchCriteria searchCriteria = new SearchCriteria();
-        searchCriteria.setWhere(Criteria.field(SessionMeta::getSessionKey).in(sessionKeys));
+        searchCriteria.setWhere(
+                BooleanCriteria.criteria(Criteria.field(SessionMeta::getSessionKey).in(sessionKeys)).and(
+                        Criteria.field(SessionMeta::getStatus).equal(StatusRecord.ENABLE)));
         return this.getList(searchCriteria);
     }
 }

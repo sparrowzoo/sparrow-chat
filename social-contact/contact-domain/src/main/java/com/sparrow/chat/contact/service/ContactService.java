@@ -1,9 +1,9 @@
 package com.sparrow.chat.contact.service;
 
 import com.sparrow.chat.contact.bo.ContactsWrapBO;
-import com.sparrow.chat.contact.bo.QunBO;
 import com.sparrow.chat.contact.bo.UserProfileBO;
 import com.sparrow.chat.contact.protocol.dto.FriendDetailDTO;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.contact.repository.ContactRepository;
 import com.sparrow.chat.contact.repository.QunRepository;
 import com.sparrow.exception.Asserts;
@@ -42,7 +42,7 @@ public class ContactService {
     }
 
     public ContactsWrapBO getContacts() throws BusinessException {
-        List<QunBO> myQuns = this.qunRepository.getMyQunList();
+        List<QunDTO> myQuns = this.qunRepository.getMyQunList();
         ContactsWrapBO contactsWrapBO = new ContactsWrapBO(myQuns);
 
         //通讯录加自己

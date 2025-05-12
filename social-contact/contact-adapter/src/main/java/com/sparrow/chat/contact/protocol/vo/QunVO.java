@@ -22,11 +22,8 @@ public class QunVO implements VO {
     private Long ownerId;
     @ApiModelProperty("群主名")
     private String ownerName;
-
     @ApiModelProperty("所属类型id")
     private Integer categoryId;
-    @ApiModelProperty("所属类型名")
-    private String categoryName;
     @ApiModelProperty("图标")
     private String avatar;
 }

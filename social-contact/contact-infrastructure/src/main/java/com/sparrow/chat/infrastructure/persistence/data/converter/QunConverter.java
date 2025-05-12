@@ -1,9 +1,9 @@
 package com.sparrow.chat.infrastructure.persistence.data.converter;
 
-import com.sparrow.chat.contact.bo.QunBO;
 import com.sparrow.chat.contact.bo.QunMemberBO;
 import com.sparrow.chat.contact.po.Qun;
 import com.sparrow.chat.contact.po.QunMember;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.contact.protocol.qun.QunCreateParam;
 import com.sparrow.chat.contact.protocol.qun.QunModifyParam;
 import com.sparrow.protocol.LoginUser;
@@ -47,10 +47,10 @@ public class QunConverter {
         return qun;
     }
 
-    public QunBO po2Bo(Qun qun) {
-        QunBO qunBo = new QunBO();
-        BeanUtility.copyProperties(qun, qunBo);
-        return qunBo;
+    public QunDTO po2Bo(Qun qun) {
+        QunDTO qunDto = new QunDTO();
+        BeanUtility.copyProperties(qun, qunDto);
+        return qunDto;
     }
 
     public List<QunMemberBO> membersPo2BoList(List<QunMember> members) {
@@ -66,11 +66,11 @@ public class QunConverter {
         return qunMemberBos;
     }
 
-    public List<QunBO> poList2BoList(List<Qun> quns) {
+    public List<QunDTO> poList2BoList(List<Qun> quns) {
         if (CollectionsUtility.isNullOrEmpty(quns)) {
             return Collections.emptyList();
         }
-        List<QunBO> qunBos = new ArrayList<>(quns.size());
+        List<QunDTO> qunBos = new ArrayList<>(quns.size());
         for (Qun qun : quns) {
             qunBos.add(this.po2Bo(qun));
         }

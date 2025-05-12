@@ -17,14 +17,17 @@ public class MessageDaoImpl extends ORMStrategy<Message, Long> implements Messag
     public List<Message> getHistoryMessage(MessageDBQuery messageQuery) {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setPageSize(30);
-        searchCriteria.setWhere(
-                BooleanCriteria.criteria
-                                (Criteria.field(Message::getSessionKey).equal(messageQuery.getSessionKey()))
-                        .and(Criteria.field(Message::getContent).contains(messageQuery.getContent()))
-                        .and(Criteria.field(Message::getServerTime).greaterThanEqual(messageQuery.getBeginDate()))
-                        .and(Criteria.field(Message::getServerTime).lessThanEqual(messageQuery.getEndDate()))
-                        .and(Criteria.field(Message::getId).greaterThan(messageQuery.getLastMessageId())));
-        searchCriteria.addOrderCriteria(OrderCriteria.asc(Message::getId));
+        BooleanCriteria booleanCriteria = BooleanCriteria.criteria
+                        (Criteria.field(Message::getSessionKey).equal(messageQuery.getSessionKey()))
+                .and(Criteria.field(Message::getContent).contains(messageQuery.getContent()))
+                .and(Criteria.field(Message::getServerTime).greaterThanEqual(messageQuery.getBeginDate()))
+                .and(Criteria.field(Message::getServerTime).lessThanEqual(messageQuery.getEndDate()));
+
+        if (messageQuery.getLastMessageId() > 0) {
+            booleanCriteria.and(Criteria.field(Message::getId).lessThan(messageQuery.getLastMessageId()));
+        }
+        searchCriteria.setWhere(booleanCriteria);
+        searchCriteria.addOrderCriteria(OrderCriteria.desc(Message::getId));
         return this.getList(searchCriteria);
     }
 }

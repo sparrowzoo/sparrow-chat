@@ -1,6 +1,7 @@
 package com.sparrow.chat.contact.service;
 
 import com.sparrow.chat.contact.bo.*;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.contact.protocol.enums.Category;
 import com.sparrow.chat.contact.protocol.enums.ContactError;
 import com.sparrow.chat.contact.protocol.event.QunMemberEvent;
@@ -51,34 +52,41 @@ public class QunService {
     }
 
     public QunDetailWrapBO qunDetail(Long qunId) throws BusinessException {
-        QunBO qunBo = this.qunRepository.qunDetail(qunId);
-        UserProfileDTO owner = this.userProfileAppService.getUser(qunBo.getOwnerId());
-        return new QunDetailWrapBO(qunBo, owner);
+        QunDTO qunDTO = this.qunRepository.qunDetail(qunId);
+        List<QunMemberBO> qunMemberBOs = this.qunRepository.qunMembers(qunId);
+        Set<Long> userIds = new HashSet<>();
+        userIds.add(qunDTO.getOwnerId());
+        userIds.add(qunDTO.getCreateUserId());
+        for (QunMemberBO qun : qunMemberBOs) {
+            userIds.add(qun.getMemberId());
+        }
+        Map<Long, UserProfileDTO> userProfileMap = this.userProfileAppService.getUserMap(userIds);
+        return new QunDetailWrapBO(qunDTO,qunMemberBOs,userProfileMap);
     }
 
 
-    private QunPlazaBO wrapQunPlaza(List<QunBO> quns) throws BusinessException {
+    private QunPlazaBO wrapQunPlaza(List<QunDTO> quns) throws BusinessException {
         QunPlazaBO qunPlaza = new QunPlazaBO();
         Set<Long> userIds = new HashSet<>();
         Map<Integer, Category> categoryDicts = new HashMap<>();
-        for (QunBO qun : quns) {
+        for (QunDTO qun : quns) {
             userIds.add(qun.getOwnerId());
             categoryDicts.put(qun.getCategoryId(),Category.getById(qun.getCategoryId()));
         }
         Map<Long, UserProfileDTO> userProfileMap = this.userProfileAppService.getUserMap(userIds);
-        qunPlaza.setUserDicts(userProfileMap);
+        qunPlaza.setOwnerDicts(userProfileMap);
         qunPlaza.setCategoryDicts(categoryDicts);
         qunPlaza.setQunList(quns);
         return qunPlaza;
     }
 
     public QunPlazaBO qunPlaza() throws BusinessException {
-        List<QunBO> qunBOs = this.qunRepository.queryQunPlaza();
+        List<QunDTO> qunBOs = this.qunRepository.queryQunPlaza();
         return this.wrapQunPlaza(qunBOs);
     }
 
     public void existQun(Long qunId) throws Throwable {
-        QunBO existQun = this.qunRepository.qunDetail(qunId);
+        QunDTO existQun = this.qunRepository.qunDetail(qunId);
         Asserts.isTrue(existQun == null, ContactError.QUN_NOT_FOUND);
         LoginUser loginUser = ThreadContext.getLoginToken();
         Boolean isMember = this.qunRepository.isMember(qunId, loginUser.getUserId());
@@ -88,7 +96,7 @@ public class QunService {
     }
 
     public void removeMember(RemoveMemberOfQunParam removeMemberOfQunParam) throws Throwable {
-        QunBO existQun = this.qunRepository.qunDetail(removeMemberOfQunParam.getQunId());
+        QunDTO existQun = this.qunRepository.qunDetail(removeMemberOfQunParam.getQunId());
         Asserts.isTrue(existQun == null, ContactError.QUN_NOT_FOUND);
         LoginUser loginUser = ThreadContext.getLoginToken();
         Asserts.isTrue(!existQun.getOwnerId().equals(loginUser.getUserId()), ContactError.QUN_OWNER_IS_NOT_MATCH);
@@ -97,7 +105,7 @@ public class QunService {
     }
 
     public void dissolve(Long qunId) throws BusinessException {
-        QunBO existQun = this.qunRepository.qunDetail(qunId);
+        QunDTO existQun = this.qunRepository.qunDetail(qunId);
         Asserts.isTrue(existQun == null, ContactError.QUN_NOT_FOUND);
         LoginUser loginUser = ThreadContext.getLoginToken();
         Asserts.isTrue(!existQun.getOwnerId().equals(loginUser.getUserId()), ContactError.QUN_OWNER_IS_NOT_MATCH);
@@ -106,7 +114,7 @@ public class QunService {
     }
 
     public void transfer(TransferOwnerOfQunParam transferOwnerOfQun) throws BusinessException {
-        QunBO existQun = this.qunRepository.qunDetail(transferOwnerOfQun.getQunId());
+        QunDTO existQun = this.qunRepository.qunDetail(transferOwnerOfQun.getQunId());
         Asserts.isTrue(existQun == null, ContactError.QUN_NOT_FOUND);
         LoginUser loginUser = ThreadContext.getLoginToken();
         Asserts.isTrue(!existQun.getOwnerId().equals(loginUser.getUserId()), ContactError.QUN_OWNER_IS_NOT_MATCH);
@@ -120,7 +128,7 @@ public class QunService {
     }
 
     public String inviteFriend(InviteFriendParam inviteFriendParam) throws BusinessException {
-        QunBO existQun = this.qunRepository.qunDetail(inviteFriendParam.getQunId());
+        QunDTO existQun = this.qunRepository.qunDetail(inviteFriendParam.getQunId());
         Asserts.isTrue(existQun == null, ContactError.QUN_NOT_FOUND);
         LoginUser loginUser = ThreadContext.getLoginToken();
         Asserts.isTrue(!existQun.getOwnerId().equals(loginUser.getUserId()), ContactError.QUN_OWNER_IS_NOT_MATCH);
@@ -133,17 +141,5 @@ public class QunService {
 
     public List<QunMemberBO> getMemberIdsById(Long qunId) throws BusinessException {
         return this.qunRepository.qunMembers(qunId);
-    }
-
-    public QunMemberWrapBO getMembersById(Long qunId) throws BusinessException {
-        List<QunMemberBO> qunMemberBOs = this.qunRepository.qunMembers(qunId);
-        Set<Long> userIds = new HashSet<>();
-        //Set<Long> categories = new HashSet<>();
-        for (QunMemberBO qun : qunMemberBOs) {
-            userIds.add(qun.getMemberId());
-            //categories.add(qun.getCategoryId());
-        }
-        Map<Long, UserProfileDTO> userProfileMap = this.userProfileAppService.getUserMap(userIds);
-        return new QunMemberWrapBO(qunMemberBOs, userProfileMap);
     }
 }

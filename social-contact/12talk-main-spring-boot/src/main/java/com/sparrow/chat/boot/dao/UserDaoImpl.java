@@ -31,6 +31,7 @@ public class UserDaoImpl implements UserDAO {
         user.setPersonalSignature(user12Talk.getRemark());
         user.setCategory(UserCategory.valueOf(user12Talk.getType()).getId());
         user.setEnglishName(user12Talk.getEnName());
+        user.setTenantId(user12Talk.getManagerId());
         StatusRecord statusRecord = StatusRecord.ENABLE;
         if (user12Talk.getDeleted() == 1 || user12Talk.getEnabled() == 0) {
             statusRecord = StatusRecord.DISABLE;

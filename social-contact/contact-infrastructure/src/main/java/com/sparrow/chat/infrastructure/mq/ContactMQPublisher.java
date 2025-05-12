@@ -1,6 +1,6 @@
 package com.sparrow.chat.infrastructure.mq;
 
-import com.sparrow.chat.contact.bo.QunBO;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.contact.protocol.event.QunMemberEvent;
 import com.sparrow.chat.contact.repository.QunRepository;
 import com.sparrow.concurrent.SparrowThreadFactory;
@@ -19,9 +19,10 @@ import java.util.concurrent.*;
 
 @Named
 public class ContactMQPublisher implements MQPublisher, InitializingBean {
+    private static Logger logger = LoggerFactory.getLogger(ContactMQPublisher.class);
+
     @Inject
     private QunRepository qunRepository;
-    private static Logger logger = LoggerFactory.getLogger(ContactMQPublisher.class);
 
     private ExecutorService qunMemberSyncExecutorService;
 
@@ -58,12 +59,12 @@ public class ContactMQPublisher implements MQPublisher, InitializingBean {
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                List<QunBO> qunBOS = qunRepository.queryQunPlaza();
-                for (QunBO qunBO : qunBOS) {
+                List<QunDTO> qunBOS = qunRepository.queryQunPlaza();
+                for (QunDTO qunDTO : qunBOS) {
                     try {
-                        publish(new QunMemberEvent(qunBO.getId(), null));
+                        publish(new QunMemberEvent(qunDTO.getId(), null));
                     } catch (Throwable e) {
-                        logger.error("all sync publish error {}", qunBO.getId(), e);
+                        logger.error("all sync publish error {}", qunDTO.getId(), e);
                     }
                 }
             }

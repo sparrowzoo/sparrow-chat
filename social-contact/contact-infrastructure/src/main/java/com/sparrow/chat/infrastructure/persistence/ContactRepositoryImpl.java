@@ -50,7 +50,7 @@ public class ContactRepositoryImpl implements ContactRepository {
         }
         List<FriendDetailDTO> contactDtos = new ArrayList<>(contacts.size());
         for (Contact contact : contacts) {
-            contactDtos.add(new FriendDetailDTO(contact.getUserId(),contact.getFriendId(),contact.getApplyTime()));
+            contactDtos.add(new FriendDetailDTO(contact.getFriendId(),contact.getUserId(),contact.getApplyTime()));
         }
         return contactDtos;
     }

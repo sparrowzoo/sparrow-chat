@@ -15,7 +15,7 @@ public class ContactGroupVO implements VO {
     public ContactGroupVO(Map<Long, ContactVO> userMap, List<QunVO> quns, List<FriendDetailDTO> friendDetails) {
         this.userMap = userMap;
         this.quns = quns;
-        if (contactIds == null) {
+        if (friendDetails == null) {
             this.contactIds = Collections.emptyList();
         } else {
             this.contactIds = friendDetails.stream().map(FriendDetailDTO::getFriendId).collect(Collectors.toList());

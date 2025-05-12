@@ -20,7 +20,13 @@
             <groupId>com.sparrowzoo.passport</groupId>
             <artifactId>passport-protocol</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.sparrowzoo.chat</groupId>
+            <artifactId>contact-protocol</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 </project>
