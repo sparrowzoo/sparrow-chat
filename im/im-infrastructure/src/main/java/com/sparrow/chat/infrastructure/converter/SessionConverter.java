@@ -10,6 +10,7 @@ import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.query.SessionQuery;
 import com.sparrow.core.Pair;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
+import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.enums.StatusRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -79,14 +80,30 @@ public class SessionConverter {
         UserProfileDTO secondUserProfile = userMap.get(second.getLongUserId());
         SessionMeta sessionMeta = new SessionMeta();
         sessionMeta.setSessionKey(session.getSessionKey());
-        sessionMeta.setUserId(firstUserProfile.getUserId());
-        sessionMeta.setUserCategory(firstUserProfile.getCategory());
-        sessionMeta.setUserName(firstUserProfile.getUserName());
-        sessionMeta.setUserNickName(firstUserProfile.getNickName());
-        sessionMeta.setOppositeId(second.getLongUserId());
-        sessionMeta.setOppositeCategory(secondUserProfile.getCategory());
-        sessionMeta.setOppositeName(secondUserProfile.getUserName());
-        sessionMeta.setOppositeNickName(secondUserProfile.getNickName());
+        if(firstUserProfile!=null) {
+            sessionMeta.setUserId(firstUserProfile.getUserId());
+            sessionMeta.setUserCategory(firstUserProfile.getCategory());
+            sessionMeta.setUserName(firstUserProfile.getUserName());
+            sessionMeta.setUserNickName(firstUserProfile.getNickName());
+        }
+        else{
+            sessionMeta.setUserId(0L);
+            sessionMeta.setUserCategory(LoginUser.CATEGORY_VISITOR);
+            sessionMeta.setUserName("访客");
+            sessionMeta.setUserNickName("访客");
+        }
+        if(secondUserProfile!=null) {
+            sessionMeta.setOppositeId(second.getLongUserId());
+            sessionMeta.setOppositeCategory(secondUserProfile.getCategory());
+            sessionMeta.setOppositeName(secondUserProfile.getUserName());
+            sessionMeta.setOppositeNickName(secondUserProfile.getNickName());
+        }
+        else {
+            sessionMeta.setOppositeId(0L);
+            sessionMeta.setOppositeCategory(LoginUser.CATEGORY_VISITOR);
+            sessionMeta.setOppositeName("访客");
+            sessionMeta.setOppositeNickName("访客");
+        }
         sessionMeta.setIsVisitor(isVisitor);
         sessionMeta.setGmtCreate(session.getGmtCreate());
         sessionMeta.setGmtModified(sessionMeta.getGmtCreate());
