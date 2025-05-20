@@ -83,6 +83,10 @@ public class MessageRepositoryImpl implements MessageRepository {
             }
         }
         messageList.sort(Comparator.comparing(MessageDTO::getServerTime));
+        long t = System.currentTimeMillis();
+        for (int i = 0; i < messageList.size(); i++) {
+            messageList.get(i).setMessageId(t + i);
+        }
         return messageList;
     }
 
