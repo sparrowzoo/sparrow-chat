@@ -5,23 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.sparrowzoo.chat</groupId>
-        <artifactId>im</artifactId>
+        <artifactId>chat-bom</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>im-dao-api</artifactId>
-
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>im-po</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

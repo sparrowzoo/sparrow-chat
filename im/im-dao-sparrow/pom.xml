@@ -5,18 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.sparrowzoo.chat</groupId>
-        <artifactId>im</artifactId>
+        <artifactId>chat-bom</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>im-dao-sparrow</artifactId>
-
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <druid.version>1.1.10</druid.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -58,7 +51,6 @@
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>im-dao-api</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

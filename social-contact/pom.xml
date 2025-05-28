@@ -11,9 +11,6 @@
     <artifactId>social-contact</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <groupId>com.sparrowzoo.chat</groupId>
-    <properties>
-        <chat_contact_version>1.0.0-SNAPSHOT</chat_contact_version>
-    </properties>
     <modules>
         <module>contact-adapter</module>
         <module>contact-client-api</module>
