@@ -23,7 +23,7 @@ public class UserLoginService {
         loginUser.setCategory(LoginUser.CATEGORY_REGISTER);
         loginUser.setNickName(loginUser.getUserName());
         loginUser.setAvatar("");
-        loginUser.setDays(Integer.MAX_VALUE);
+        loginUser.setDays(1D);
         loginUser.setDeviceId(springServletContainer.getClientIp());
         loginUser.setExpireAt(System.currentTimeMillis() + 3600 * 1000 * 24);
         return this.authenticator.sign(loginUser, null);

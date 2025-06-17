@@ -14,6 +14,6 @@ public class ThymeleafController {
         User user = new User();
         user.setUserId(1L);
         request.setAttribute("user", user);
-        return new ModelAndView("thymeleaf-test");
+        return new ModelAndView("/thymeleaf-test");
     }
 }

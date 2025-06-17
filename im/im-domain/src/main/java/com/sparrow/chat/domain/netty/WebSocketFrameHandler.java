@@ -206,6 +206,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         //ReferenceCountUtil.release(msg);
     }
 
+    //todo ACK 机制
     private static class LoggingListener implements ChannelFutureListener {
         public void operationComplete(ChannelFuture future) {
             logger.info("Write operation complete {}", future.channel());

@@ -1,6 +1,7 @@
 package com.sparrow.chat.domain.netty;
 
 import com.alibaba.fastjson.JSON;
+import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.Result;
 import com.sparrow.protocol.constant.SparrowError;
@@ -96,7 +97,13 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
                 UserContainer.getContainer().online(ctx.channel(), loginUser);
             } catch (Exception e) {
                 logger.error("authenticate error", e);
-                Result result = Result.fail(SparrowError.USER_TOKEN_ABNORMAL);
+                Result result = null;
+                if (e instanceof BusinessException) {
+                    BusinessException businessException = (BusinessException) e;
+                    result = Result.fail(businessException);
+                } else {
+                    result = Result.fail(SparrowError.USER_TOKEN_ABNORMAL);
+                }
                 result.setInstruction(Instruction.AUTH);
                 ctx.channel().writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(result))).addListener(future -> {
                     ctx.channel().close();
