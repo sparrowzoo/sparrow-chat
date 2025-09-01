@@ -12,6 +12,5 @@ import java.lang.annotation.*;
 @ComponentScan(
         basePackages = {"com.sparrow.chat"}
 )
-@ConditionalOnWebApplication
 public @interface EnableChatWebMvc {
 }

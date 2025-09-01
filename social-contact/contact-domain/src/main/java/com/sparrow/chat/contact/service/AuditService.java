@@ -23,6 +23,7 @@ import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.utility.StringUtility;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,7 +31,12 @@ import java.util.Map;
 import java.util.Set;
 
 @Named
+@Slf4j
 public class AuditService {
+    public AuditService() {
+        log.info("AuditService init");
+    }
+
     @Inject
     private UserProfileAppService userProfileAppService;
     @Inject
