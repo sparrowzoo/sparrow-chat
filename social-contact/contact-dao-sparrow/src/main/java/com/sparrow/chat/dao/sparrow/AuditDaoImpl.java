@@ -85,6 +85,6 @@ public class AuditDaoImpl extends ORMStrategy<Audit, Long> implements AuditDao {
         updateCriteria.setWhere(BooleanCriteria.criteria(
                 Criteria.field(Audit::getBusinessType).equal(AuditBusiness.GROUP.getBusiness()))
                 .and(Criteria.field(Audit::getBusinessId).equal(qunId))
-                .and(Criteria.field(Audit::getStatus).equal(StatusRecord.INIT)));
+                .and(Criteria.field(Audit::getStatus).equal(StatusRecord.ENABLE)));
     }
 }

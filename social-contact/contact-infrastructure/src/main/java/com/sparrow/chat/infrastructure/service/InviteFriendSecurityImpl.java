@@ -2,12 +2,12 @@ package com.sparrow.chat.infrastructure.service;
 
 import com.sparrow.chat.contact.protocol.qun.InviteFriendParam;
 import com.sparrow.chat.contact.service.InviteFriendSecurity;
+import com.sparrow.context.SessionContext;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.cryptogram.ThreeDES;
 import com.sparrow.json.Json;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
 
 import javax.inject.Named;
 
@@ -23,7 +23,7 @@ public class InviteFriendSecurityImpl implements InviteFriendSecurity {
 
     @Override
     public InviteFriendParam parseUserSecretIdentify(String inviteFriendToken) throws BusinessException {
-        LoginUser loginUser = ThreadContext.getLoginToken();
+        LoginUser loginUser = SessionContext.getLoginUser();
         String inviteFriendInfo = ThreeDES.getInstance().decryptHex(loginUser.getUserId() + "", inviteFriendToken);
         return (InviteFriendParam) this.json.parse(inviteFriendInfo, InviteFriendSecurity.class);
     }

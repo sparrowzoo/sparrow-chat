@@ -12,7 +12,7 @@ public class User12Talk implements POJO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "account_code",unique = true)
+    @Column(name = "account_code", unique = true)
     private String accountCode;
     @Column(name = "manager_id")
     private Long managerId;

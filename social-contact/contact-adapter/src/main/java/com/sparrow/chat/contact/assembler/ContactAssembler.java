@@ -1,11 +1,14 @@
 package com.sparrow.chat.contact.assembler;
 
-import com.sparrow.chat.contact.bo.*;
+import com.sparrow.chat.contact.bo.AuditBO;
+import com.sparrow.chat.contact.bo.AuditWrapBO;
+import com.sparrow.chat.contact.bo.ContactsWrapBO;
+import com.sparrow.chat.contact.bo.UserProfileBO;
 import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.contact.protocol.vo.*;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
+import com.sparrow.protocol.BeanCopier;
 import com.sparrow.protocol.BusinessException;
-import com.sparrow.utility.BeanUtility;
 import com.sparrow.utility.CollectionsUtility;
 
 import javax.inject.Inject;
@@ -14,10 +17,14 @@ import java.util.*;
 
 @Named
 public class ContactAssembler {
+
     private static final String STATUS_BUSINESS = "audit";
 
     @Inject
     private QunAssembler qunAssembler;
+
+    @Inject
+    private BeanCopier beanCopier;
 
     @Inject
     private UserAssembler userAssembler;
@@ -38,7 +45,7 @@ public class ContactAssembler {
         List<AuditVO> auditVos = new ArrayList<>();
         for (AuditBO audit : audits) {
             AuditVO auditVO = new AuditVO();
-            BeanUtility.copyProperties(audit, auditVO);
+            this.beanCopier.copyProperties(audit, auditVO);
             auditVO.setAuditBusiness(audit.getAuditBusiness().getBusiness());
             auditVO.setStatus(audit.getStatus().ordinal());
             auditVos.add(auditVO);

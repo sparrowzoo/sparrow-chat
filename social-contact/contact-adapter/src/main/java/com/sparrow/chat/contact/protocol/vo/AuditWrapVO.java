@@ -1,12 +1,13 @@
 package com.sparrow.chat.contact.protocol.vo;
 
+import com.sparrow.protocol.DTO;
 import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
 
 @Data
-public class AuditWrapVO {
+public class AuditWrapVO implements DTO {
 
     /**
      * 待我审核的申请列表

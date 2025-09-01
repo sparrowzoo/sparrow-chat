@@ -1,17 +1,17 @@
 package com.sparrow.chat.contact.service;
 
+import com.sparrow.authenticator.enums.AuthenticatorError;
 import com.sparrow.chat.contact.bo.ContactsWrapBO;
 import com.sparrow.chat.contact.bo.UserProfileBO;
 import com.sparrow.chat.contact.protocol.dto.FriendDetailDTO;
 import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.contact.repository.ContactRepository;
 import com.sparrow.chat.contact.repository.QunRepository;
+import com.sparrow.context.SessionContext;
 import com.sparrow.exception.Asserts;
 import com.sparrow.passport.api.UserProfileAppService;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
-import com.sparrow.protocol.ThreadContext;
-import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.utility.StringUtility;
 
 import javax.inject.Inject;
@@ -35,7 +35,7 @@ public class ContactService {
     private ContactRepository contactRepository;
 
     public UserProfileBO findFriend(String userIdentify) throws BusinessException {
-        Asserts.isTrue(StringUtility.isNullOrEmpty(userIdentify), SparrowError.USER_DISABLE);
+        Asserts.isTrue(StringUtility.isNullOrEmpty(userIdentify), AuthenticatorError.USER_DISABLE);
         UserProfileDTO userDto = this.userProfileAppService.getByIdentify(userIdentify);
         String secretIdentify = secretService.encryptUserIdentify(userDto);
         return new UserProfileBO(userDto, secretIdentify);
@@ -52,7 +52,7 @@ public class ContactService {
          * 	at java.util.AbstractList.add(AbstractList.java:108) ~[na:1.8.0_281]
          * 	at com.sparrow.chat.contact.service.ContactService.getContacts
          */
-        Long userId = ThreadContext.getLoginToken().getUserId();
+        Long userId = SessionContext.getLoginUser().getUserId();
         List<FriendDetailDTO> otherContacts = this.contactRepository.getContacts(userId);
         contactsWrapBO.setFriends(otherContacts);
         Set<Long> contactUserIds = contactsWrapBO.getUserIds(userId);

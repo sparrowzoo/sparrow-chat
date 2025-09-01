@@ -14,10 +14,10 @@ import com.sparrow.chat.contact.protocol.qun.RemoveMemberOfQunParam;
 import com.sparrow.chat.contact.repository.QunRepository;
 import com.sparrow.chat.infrastructure.persistence.data.converter.QunConverter;
 import com.sparrow.chat.infrastructure.persistence.data.converter.QunMemberConverter;
+import com.sparrow.context.SessionContext;
 import com.sparrow.exception.Asserts;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
 import com.sparrow.protocol.enums.StatusRecord;
 
 import javax.inject.Inject;
@@ -106,7 +106,7 @@ public class QunRepositoryImpl implements QunRepository {
 
     @Override
     public List<QunDTO> getMyQunList() {
-        LoginUser loginUser = ThreadContext.getLoginToken();
+        LoginUser loginUser = SessionContext.getLoginUser();
         Set<Long> myQunIds = this.qunMemberDao.getQunsByMemberId(loginUser.getUserId());
         if (myQunIds == null || myQunIds.isEmpty()) {
             return new ArrayList<>();

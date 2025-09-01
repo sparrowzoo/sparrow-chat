@@ -1,17 +1,17 @@
 package com.sparrow.chat.domain.service;
 
-import com.sparrow.chat.protocol.dto.SessionMetaDTO;
+import com.sparrow.authenticator.AuthenticatorConfigReader;
 import com.sparrow.chat.domain.repository.SessionMateRepository;
 import com.sparrow.chat.domain.repository.SessionRepository;
+import com.sparrow.chat.protocol.dto.SessionMetaDTO;
 import com.sparrow.chat.protocol.query.SessionQuery;
 import com.sparrow.concurrent.SparrowThreadFactory;
+import com.sparrow.context.SessionContext;
 import com.sparrow.core.spi.ApplicationContext;
 import com.sparrow.passport.api.UserProfileAppService;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
-import com.sparrow.support.AuthenticatorConfigReader;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -34,11 +34,11 @@ public class MessageService {
     private SessionMateRepository sessionMateRepository;
 
     public List<SessionMetaDTO> querySessionList(SessionQuery sessionQuery) throws BusinessException {
-        LoginUser loginUser = ThreadContext.getLoginToken();
+        LoginUser loginUser = SessionContext.getLoginUser();
         UserProfileDTO userProfile = userProfileService.getByLoginUser(loginUser);
         AuthenticatorConfigReader authenticatorConfigReader = ApplicationContext.getContainer().getBean(AuthenticatorConfigReader.class);
-        int platformId = authenticatorConfigReader.getPlatform();
-        boolean isAdmin =loginUser.getCategory().equals(platformId);
+        int platformId = authenticatorConfigReader.getPlatformManagerCategory();
+        boolean isAdmin = loginUser.getCategory().equals(platformId);
         if (!isAdmin) {
             sessionQuery.setUserId(userProfile.getUserId());
         }

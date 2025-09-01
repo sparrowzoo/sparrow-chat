@@ -71,7 +71,7 @@ public class UserDaoImpl implements UserDAO {
     }
 
     @Override
-    public Integer batchDelete(String s) {
+    public Integer batchDelete(Collection<Long> collection) {
         return null;
     }
 
@@ -127,8 +127,8 @@ public class UserDaoImpl implements UserDAO {
     }
 
     @Override
-    public <X> X getFieldValueByUnique(UniqueKeyCriteria uniqueKeyCriteria) {
-        return this.user12TalkAdapterDao.getFieldValueByUnique(uniqueKeyCriteria);
+    public <X> X getFieldValueByUnique(UniqueKeyCriteria<Long> uniqueKeyCriteria) {
+        return null;
     }
 
     @Override

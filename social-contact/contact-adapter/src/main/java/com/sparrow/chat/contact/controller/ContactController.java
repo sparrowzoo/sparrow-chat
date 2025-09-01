@@ -1,5 +1,6 @@
 package com.sparrow.chat.contact.controller;
 
+import com.sparrow.authenticator.enums.AuthenticatorError;
 import com.sparrow.chat.contact.assembler.ContactAssembler;
 import com.sparrow.chat.contact.bo.ContactsWrapBO;
 import com.sparrow.chat.contact.bo.CustomerServerBO;
@@ -10,12 +11,11 @@ import com.sparrow.chat.contact.protocol.vo.ContactVO;
 import com.sparrow.chat.contact.protocol.vo.UserFriendApplyVO;
 import com.sparrow.chat.contact.service.ContactService;
 import com.sparrow.chat.contact.service.CustomerServerService;
+import com.sparrow.context.SessionContext;
 import com.sparrow.exception.Asserts;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
-import com.sparrow.protocol.constant.SparrowError;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +54,8 @@ public class ContactController {
     @GetMapping("/contacts.json")
     @ApiOperation("联系人接口")
     public ContactGroupVO getContacts() throws BusinessException {
-        LoginUser loginUser = ThreadContext.getLoginToken();
-        Asserts.isTrue(loginUser.isVisitor(), SparrowError.USER_NOT_LOGIN);
+        LoginUser loginUser = SessionContext.getLoginUser();
+        Asserts.isTrue(loginUser.isVisitor(), AuthenticatorError.USER_NOT_LOGIN);
         ContactsWrapBO contactsWrapBO = this.contactService.getContacts();
         return this.contactAssembler.assembleVO(contactsWrapBO);
     }
@@ -71,7 +71,7 @@ public class ContactController {
     @PostMapping("/get-customer-servers.json")
     @ApiOperation("获取客服列表")
     public List<ContactVO> getUsersTenantId() throws BusinessException {
-        LoginUser loginUser = ThreadContext.getLoginToken();
+        LoginUser loginUser = SessionContext.getLoginUser();
         List<CustomerServerBO> customerServers = this.customerServerService.getCustomerServerListByTenantId(loginUser.getTenantId());
         List<Long> customerServerIds = customerServers.stream().map(CustomerServerBO::getServerId).collect(java.util.stream.Collectors.toList());
         Map<Long, UserProfileDTO> userProfileDTOMap = this.contactService.getUserMap(customerServerIds);

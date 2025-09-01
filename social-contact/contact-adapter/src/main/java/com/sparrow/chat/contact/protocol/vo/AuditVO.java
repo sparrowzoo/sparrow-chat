@@ -1,10 +1,10 @@
 package com.sparrow.chat.contact.protocol.vo;
 
-import com.sparrow.protocol.VO;
+import com.sparrow.protocol.DTO;
 import lombok.Data;
 
 @Data
-public class AuditVO implements VO {
+public class AuditVO implements DTO {
     private Long auditId;
     private Integer auditBusiness;
     /**

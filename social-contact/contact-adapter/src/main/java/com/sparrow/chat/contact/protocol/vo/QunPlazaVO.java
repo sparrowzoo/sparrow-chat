@@ -1,6 +1,6 @@
 package com.sparrow.chat.contact.protocol.vo;
 
-import com.sparrow.protocol.VO;
+import com.sparrow.protocol.DTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 @ApiModel("群广场")
 @Data
-public class QunPlazaVO implements VO {
+public class QunPlazaVO implements DTO {
 
     /**
      * key:categoryId

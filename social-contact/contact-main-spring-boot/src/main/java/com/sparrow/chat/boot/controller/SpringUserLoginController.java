@@ -58,7 +58,7 @@ public class SpringUserLoginController {
 
     @ApiOperation(value = "获取访客Token")
     @GetMapping("/chat/v2/get-visitor-token.json")
-    public String getVisitorToken(ClientInformation client) {
+    public String getVisitorToken(ClientInformation client) throws BusinessException {
         return this.userLoginController.getVisitorToken(client).getToken();
     }
 

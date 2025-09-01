@@ -1,12 +1,13 @@
 package com.sparrow.chat.domain.netty;
 
 import com.alibaba.fastjson.JSON;
+import com.sparrow.authenticator.Authenticator;
+import com.sparrow.authenticator.enums.AuthenticatorError;
+import com.sparrow.authenticator.token.BearerToken;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.Result;
-import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.spring.starter.SpringContext;
-import com.sparrow.support.Authenticator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -90,7 +91,7 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
             String token = serverHandshakeComplete.requestHeaders().get("sec-websocket-protocol");
             String ip = this.getClientIp(serverHandshakeComplete, ctx.channel());
             try {
-                LoginUser loginUser = SpringContext.getContext().getBean(Authenticator.class).authenticate(token, ip);
+                LoginUser loginUser = SpringContext.getContext().getBean(Authenticator.class).authenticate(new BearerToken(token, ip));
                 Result<LoginUser> result = Result.success(loginUser, Instruction.AUTH);
                 String userInfo = JSON.toJSONString(result);
                 ctx.channel().writeAndFlush(new TextWebSocketFrame(userInfo));
@@ -102,7 +103,7 @@ public class WebSocketServerProtocolSupportHandshake extends WebSocketServerProt
                     BusinessException businessException = (BusinessException) e;
                     result = Result.fail(businessException);
                 } else {
-                    result = Result.fail(SparrowError.USER_TOKEN_ABNORMAL);
+                    result = Result.fail(AuthenticatorError.USER_TOKEN_ABNORMAL);
                 }
                 result.setInstruction(Instruction.AUTH);
                 ctx.channel().writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(result))).addListener(future -> {

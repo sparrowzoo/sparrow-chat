@@ -1,5 +1,7 @@
 package com.sparrow.chat.domain.service;
 
+import com.sparrow.authenticator.AuthenticatorConfigReader;
+import com.sparrow.authenticator.enums.AuthenticatorError;
 import com.sparrow.chat.domain.bo.CancelProtocol;
 import com.sparrow.chat.domain.bo.ChatSession;
 import com.sparrow.chat.domain.bo.ChatUser;
@@ -12,13 +14,12 @@ import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
 import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.chat.protocol.query.SessionQuery;
+import com.sparrow.context.SessionContext;
 import com.sparrow.core.spi.ApplicationContext;
 import com.sparrow.exception.Asserts;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
 import com.sparrow.protocol.constant.SparrowError;
-import com.sparrow.support.AuthenticatorConfigReader;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.springframework.util.CollectionUtils;
@@ -80,8 +81,8 @@ public class ChatService {
     }
 
     public void cancel(MessageCancelQuery messageCancel) throws BusinessException {
-        LoginUser loginUser = ThreadContext.getLoginToken();
-        Asserts.isTrue(loginUser == null, SparrowError.USER_NOT_LOGIN);
+        LoginUser loginUser = SessionContext.getLoginUser();
+        Asserts.isTrue(loginUser == null, AuthenticatorError.USER_NOT_LOGIN);
         ChatUser sender = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
         ChatSession chatSession = ChatSession.parse(messageCancel.getSessionKey());
         CancelProtocol cancelProtocol = new CancelProtocol(messageCancel.getSessionKey(), messageCancel.getClientSendTime());
@@ -97,8 +98,8 @@ public class ChatService {
     }
 
     public List<SessionDTO> fetchSessions() throws BusinessException {
-        LoginUser loginUser = ThreadContext.getLoginToken();
-        Asserts.isTrue(loginUser == null, SparrowError.USER_NOT_LOGIN);
+        LoginUser loginUser = SessionContext.getLoginUser();
+        Asserts.isTrue(loginUser == null, AuthenticatorError.USER_NOT_LOGIN);
         ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
         return this.sessionRepository.getSessions(chatUser);
     }
@@ -114,18 +115,18 @@ public class ChatService {
     }
 
     public HistoryMessageWrap queryHistoryMessages(MessageQuery messageQuery) throws BusinessException {
-        LoginUser loginUser = ThreadContext.getLoginToken();
+        LoginUser loginUser = SessionContext.getLoginUser();
         AuthenticatorConfigReader authenticatorConfigReader = ApplicationContext.getContainer().getBean(AuthenticatorConfigReader.class);
-        int platformId = authenticatorConfigReader.getPlatform();
-        boolean isAdmin =loginUser.getCategory().equals(platformId);
-        if(!isAdmin){
+        int platformId = authenticatorConfigReader.getPlatformManagerCategory();
+        boolean isAdmin = loginUser.getCategory().equals(platformId);
+        if (!isAdmin) {
             this.isMember(messageQuery.getSessionKey());
         }
         return this.messageRepository.queryHistoryMessage(messageQuery);
     }
 
     public void isMember(String sessionKey) throws BusinessException {
-        LoginUser loginUser = ThreadContext.getLoginToken();
+        LoginUser loginUser = SessionContext.getLoginUser();
         ChatSession chatSession = ChatSession.parse(sessionKey);
         if (chatSession != null) {
             if (chatSession.isOne2One()) {

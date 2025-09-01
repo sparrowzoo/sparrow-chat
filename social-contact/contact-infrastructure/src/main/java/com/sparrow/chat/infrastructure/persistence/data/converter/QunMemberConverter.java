@@ -2,8 +2,8 @@ package com.sparrow.chat.infrastructure.persistence.data.converter;
 
 import com.sparrow.chat.contact.bo.AuditBO;
 import com.sparrow.chat.contact.po.QunMember;
+import com.sparrow.context.SessionContext;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
 
 import javax.inject.Named;
 
@@ -19,7 +19,7 @@ public class QunMemberConverter {
     }
 
     public QunMember convert2QunMember(Long qunId) {
-        LoginUser loginUser = ThreadContext.getLoginToken();
+        LoginUser loginUser = SessionContext.getLoginUser();
         QunMember qunMember = new QunMember();
         qunMember.setQunId(qunId);
         qunMember.setMemberId(loginUser.getUserId());

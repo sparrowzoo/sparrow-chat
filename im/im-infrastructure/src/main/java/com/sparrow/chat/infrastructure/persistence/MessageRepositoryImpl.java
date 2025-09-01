@@ -1,6 +1,7 @@
 package com.sparrow.chat.infrastructure.persistence;
 
 import com.alibaba.fastjson.JSON;
+import com.sparrow.authenticator.enums.AuthenticatorError;
 import com.sparrow.chat.dao.sparrow.MessageDao;
 import com.sparrow.chat.dao.sparrow.query.session.MessageDBQuery;
 import com.sparrow.chat.domain.bo.ChatUser;
@@ -59,7 +60,7 @@ public class MessageRepositoryImpl implements MessageRepository {
 
     @Override
     public void cancel(MessageCancelQuery messageCancel, ChatUser sender) throws BusinessException {
-        Asserts.isTrue(sender == null, SparrowError.USER_NOT_LOGIN);
+        Asserts.isTrue(sender == null, AuthenticatorError.USER_NOT_LOGIN);
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(messageCancel.getSessionKey());
         String redisKey = PlaceHolderParser.parse(RedisKey.SESSION_MESSAGE_KEY, propertyAccessor);
         String msgKey = new MessageKey(sender, messageCancel.getClientSendTime()).key();

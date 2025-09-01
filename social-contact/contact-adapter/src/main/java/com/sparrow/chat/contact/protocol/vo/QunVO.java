@@ -1,13 +1,13 @@
 package com.sparrow.chat.contact.protocol.vo;
 
-import com.sparrow.protocol.VO;
+import com.sparrow.protocol.DTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 @ApiModel("群详情")
-public class QunVO implements VO {
+public class QunVO implements DTO {
     @ApiModelProperty("群ID")
     private String qunId;
     @ApiModelProperty("群名称")

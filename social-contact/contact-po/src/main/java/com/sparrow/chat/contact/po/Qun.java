@@ -1,6 +1,5 @@
 package com.sparrow.chat.contact.po;
 
-import com.sparrow.protocol.MethodOrder;
 import com.sparrow.protocol.dao.PO;
 import com.sparrow.protocol.enums.StatusRecord;
 
@@ -23,7 +22,6 @@ public class Qun extends PO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition = "int(11) UNSIGNED ")
-    @MethodOrder(order = 1)
     public Long getId() {
         return id;
     }
@@ -32,7 +30,6 @@ public class Qun extends PO {
         this.id = id;
     }
 
-    @MethodOrder(order = 2)
     @Column(name = "name", columnDefinition = "varchar(32)  DEFAULT '' COMMENT '群名称'", nullable = false)
     public String getName() {
         return name;
@@ -42,7 +39,6 @@ public class Qun extends PO {
         this.name = name;
     }
 
-    @MethodOrder(order = 2.1F)
     @Column(name = "avatar", columnDefinition = "varchar(256)  DEFAULT '' COMMENT '群头象'", nullable = false)
     public String getAvatar() {
         return avatar;
@@ -52,7 +48,6 @@ public class Qun extends PO {
         this.avatar = avatar;
     }
 
-    @MethodOrder(order = 3)
     @Column(name = "announcement", columnDefinition = "varchar(255)  DEFAULT '' COMMENT '群公告'", nullable = false)
     public String getAnnouncement() {
         return announcement;
@@ -62,7 +57,6 @@ public class Qun extends PO {
         this.announcement = announcement;
     }
 
-    @MethodOrder(order = 4)
     @Column(name = "nationality_id", columnDefinition = "int(11)  DEFAULT 0 COMMENT '国籍id'", nullable = false, updatable = false)
     public Integer getNationalityId() {
         return nationalityId;
@@ -72,7 +66,6 @@ public class Qun extends PO {
         this.nationalityId = nationalityId;
     }
 
-    @MethodOrder(order = 5)
     @Column(name = "organization_id", columnDefinition = "int(11) UNSIGNED  DEFAULT 0 COMMENT '机构ID'", nullable = false, updatable = false)
     public Long getOrganizationId() {
         return organizationId;
@@ -82,7 +75,6 @@ public class Qun extends PO {
         this.organizationId = organizationId;
     }
 
-    @MethodOrder(order = 6)
     @Column(name = "owner_id", columnDefinition = "int(11) UNSIGNED  DEFAULT 0 COMMENT '群主'", nullable = false, updatable = false)
     public Long getOwnerId() {
         return ownerId;
@@ -92,7 +84,6 @@ public class Qun extends PO {
         this.ownerId = ownerId;
     }
 
-    @MethodOrder(order = 7)
     @Column(name = "category_id", columnDefinition = "int(11) UNSIGNED  DEFAULT 0 COMMENT '所属类别'", nullable = false, updatable = false)
     public Integer getCategoryId() {
         return categoryId;
@@ -102,7 +93,6 @@ public class Qun extends PO {
         this.categoryId = categoryId;
     }
 
-    @MethodOrder(order = 8)
     @Column(name = "remark", columnDefinition = "varchar(255)  DEFAULT '' COMMENT '备注'", nullable = false)
     public String getRemark() {
         return remark;
@@ -113,7 +103,6 @@ public class Qun extends PO {
     }
 
 
-    @MethodOrder(order = 9)
     @Column(name = "status", columnDefinition = "tinyint(2)  DEFAULT 1 COMMENT '状态'", nullable = false)
     public StatusRecord getStatus() {
         return status;

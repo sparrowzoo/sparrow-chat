@@ -12,13 +12,13 @@ import com.sparrow.chat.contact.protocol.vo.QunVO;
 import com.sparrow.chat.contact.protocol.vo.QunWrapDetailVO;
 import com.sparrow.exception.Asserts;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
+import com.sparrow.protocol.BeanCopier;
 import com.sparrow.protocol.BusinessException;
-import com.sparrow.utility.BeanUtility;
 import com.sparrow.utility.StringUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,8 +28,10 @@ import java.util.Map;
 @Named
 public class QunAssembler {
     private static Logger logger = LoggerFactory.getLogger(QunAssembler.class);
-    @Autowired
+    @Inject
     private UserAssembler userAssembler;
+    @Inject
+    private BeanCopier beanCopier;
 
     public QunWrapDetailVO assembleQunWrapDetail(QunDetailWrapBO qunDetailWrap) throws BusinessException {
         QunWrapDetailVO qunWrapDetailVO = new QunWrapDetailVO();
@@ -41,7 +43,7 @@ public class QunAssembler {
 
     public QunVO assembleQun(QunDTO qun, Map<Long, UserProfileDTO> userDicts) throws BusinessException {
         QunVO qunVo = new QunVO();
-        BeanUtility.copyProperties(qun, qunVo);
+        this.beanCopier.copyProperties(qun, qunVo);
         qunVo.setQunId(qun.getId().toString());
         qunVo.setQunName(qun.getName());
         Nationality nationality = Nationality.getById(qun.getNationalityId());

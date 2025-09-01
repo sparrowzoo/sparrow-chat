@@ -1,0 +1,81 @@
+<html lang="en">
+<head>
+    <title>程序员有问题就上麻雀窝 和大牛直接聊</title>
+    <meta content="register 注册 " name="keywords"/>
+    <meta content="程序员有问题就上麻雀窝 和大牛直接聊" name="description"/>
+    <meta name="application-name" content="麻雀窝"/>
+    <meta name="msapplication-tooltip" content="麻雀窝"/>
+    <th:block th:include="/frames::global_resource"/>
+    <script type="text/javascript">
+        function joinQun(qunId) {
+            var param = {
+                "qunId": qunId,
+                "reason": "加我，志哥"
+            }
+            $.http.post($.url.root + "/contact/join-qun", param, function (result) {
+                $.message("申请成功哟，等待后台审核哈.....")
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="body">
+    <th:block th:include="/frames::banner"/>
+    <div class="header">
+        <h1>程序员有问题就上麻雀窝</h1>
+<h1>新版</h1>
+        <h2>
+            <a href="http://passport.sparrowzoo.com/sign-in" target="_blank">登录</a>
+            <a href="http://passport.sparrowzoo.com/sign-up" target="_blank">注册</a>
+        </h2>
+    </div>
+
+    <div class="content">
+        <h2>志哥是谁</h2>
+        <ul>
+            <li>
+                原每日优鲜推荐系统 供应链算法架构师
+            </li>
+            <li>原同程旅游ATPCO 项目负责人，全球10亿数据量</li>
+        </ul>
+        <h2>
+            <a href="https://sparrowzoo.feishu.cn/docx/PdOed85n0o86TxxQBEOcOGZPnoh" target="_blank">0基础大纲指南</a>
+        </h2>
+
+        <h2>
+            <a href="https://sparrowzoo.feishu.cn/docx/AGrmdpOijo6mm6xAw0bccdIVn1c" target="_blank">志哥开源社区建议源码目录</a>
+        </h2>
+        <h2>
+            <a href="http://www.sparrowzoo.com/react/chat" target="_blank">
+                <img src="http://r.sparrowzoo.net/images/pc.webp" width="300px" height="300px"/><br/>
+                <span>进来开聊，兄弟们~~~~</span>
+            </a>
+        </h2>
+        <h2>欢迎大家进群体验</h2>
+        <div th:each="category,categoryStat:${qunPlazaVO?.categoryDicts}">
+            <!--        <div style="border: #ccc solid 1px ">-->
+            <!--            ID<span th:text="${category.key}"></span>-->
+            <!--            categoryName<span th:text="${category.value?.categoryName}"></span>-->
+            <!--            description<span th:text="${category.value?.description}"></span>-->
+            <!--            id<span th:text="${category.value?.id}"></span>-->
+            <!--        </div>-->
+            <div style="border: #ccc solid 1px;" th:each="qun,qunStat:${qunPlazaVO.qunMap[category.key]}">
+                <!--            <span th:text="${qunStat.count}"></span>-->
+                <span th:text="${qun.qunName}"></span><br/>
+                <span th:text="${qun.announcement}"></span><br/>
+                <span th:text="${qun.nationality}"></span><br/>
+<!--                <span th:text="${qun.qunId}"></span><br/>-->
+                <span th:text="${qun.remark}"></span><br/>
+
+                <input type="button"
+                       th:onclick="joinQun([[${qun.qunId}]])"
+                       title="加入群聊"
+                       value="加入群聊" class="pure-button"/>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</body>
+</html>

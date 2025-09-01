@@ -6,8 +6,8 @@ import com.sparrow.chat.contact.po.CustomerServer;
 import com.sparrow.chat.contact.protocol.query.CustomerServerQuery;
 import com.sparrow.chat.contact.repository.CustomerServerRepository;
 import com.sparrow.chat.infrastructure.persistence.data.converter.CustomerServiceConverter;
+import com.sparrow.context.SessionContext;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
 import com.sparrow.utility.CollectionsUtility;
 
 import javax.inject.Inject;
@@ -54,7 +54,7 @@ public class CustomerServiceRepositoryImpl implements CustomerServerRepository {
 
     @Override
     public Boolean permit() {
-        LoginUser loginUser = ThreadContext.getLoginToken();
+        LoginUser loginUser = SessionContext.getLoginUser();
 
         return null;
     }

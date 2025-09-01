@@ -13,8 +13,8 @@ import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.SessionConverter;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.params.SessionReadParams;
+import com.sparrow.context.SessionContext;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import com.sparrow.utility.CollectionsUtility;
@@ -97,7 +97,7 @@ public class SessionRepositoryImpl implements SessionRepository {
 
     @Override
     public void read(SessionReadParams messageRead) {
-        LoginUser loginUser = ThreadContext.getLoginToken();
+        LoginUser loginUser = SessionContext.getLoginUser();
         ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionAndUserKey(messageRead.getSessionKey(), chatUser);
         String userSessionKey = PlaceHolderParser.parse(RedisKey.USER_SESSION_KEY, propertyAccessor);
@@ -109,7 +109,7 @@ public class SessionRepositoryImpl implements SessionRepository {
 
     @Override
     public void fillLastReadTime(List<SessionDTO> sessionDTOList) {
-        LoginUser loginUser = ThreadContext.getLoginToken();
+        LoginUser loginUser = SessionContext.getLoginUser();
         Set<String> sessionKeySet = new LinkedHashSet<>();
         ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
         for (SessionDTO session : sessionDTOList) {

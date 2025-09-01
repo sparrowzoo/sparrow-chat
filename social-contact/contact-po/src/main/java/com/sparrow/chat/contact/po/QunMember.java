@@ -1,13 +1,8 @@
 package com.sparrow.chat.contact.po;
 
-import com.sparrow.protocol.MethodOrder;
 import com.sparrow.protocol.POJO;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Table(name = "t_qun_member")
 public class QunMember implements POJO {
@@ -20,7 +15,6 @@ public class QunMember implements POJO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition = "int(11) UNSIGNED")
-    @MethodOrder(order = 1)
     public Long getId() {
         return id;
     }
@@ -29,7 +23,6 @@ public class QunMember implements POJO {
         this.id = id;
     }
 
-    @MethodOrder(order = 2)
     @Column(name = "qun_id", columnDefinition = "int(11) UNSIGNED DEFAULT 0 COMMENT '群ID'", nullable = false, updatable = false)
     public Long getQunId() {
         return qunId;
@@ -39,7 +32,6 @@ public class QunMember implements POJO {
         this.qunId = qunId;
     }
 
-    @MethodOrder(order = 3)
     @Column(name = "member_id", columnDefinition = "int(11) UNSIGNED  DEFAULT 0 COMMENT '群成员ID'", nullable = false, updatable = false)
     public Long getMemberId() {
         return memberId;
@@ -49,7 +41,6 @@ public class QunMember implements POJO {
         this.memberId = memberId;
     }
 
-    @MethodOrder(order = 4)
     @Column(name = "apply_time", columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '申请时间'", nullable = false, updatable = false)
     public Long getApplyTime() {
         return applyTime;
@@ -59,7 +50,6 @@ public class QunMember implements POJO {
         this.applyTime = applyTime;
     }
 
-    @MethodOrder(order = 5)
     @Column(name = "audit_time", columnDefinition = "bigint(11)  DEFAULT 0 COMMENT '审核时间'", nullable = false, updatable = false)
     public Long getAuditTime() {
         return auditTime;

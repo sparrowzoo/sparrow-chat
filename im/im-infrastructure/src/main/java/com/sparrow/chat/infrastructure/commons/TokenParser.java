@@ -1,18 +1,20 @@
 package com.sparrow.chat.infrastructure.commons;
 
+import com.sparrow.authenticator.DefaultLoginUser;
+import com.sparrow.authenticator.enums.AuthenticatorError;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.enums.HttpMethod;
 import com.sparrow.json.Json;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.utility.HttpClient;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class TokenParser {
     public static LoginUser parseUserId(String token) throws BusinessException {
-        LoginUser loginUser=new LoginUser();
+        DefaultLoginUser loginUser = new DefaultLoginUser();
         if (token.contains("mock.")) {
             loginUser.setUserId(Long.valueOf(token.substring("mock.".length())));
             return loginUser;
@@ -31,6 +33,6 @@ public class TokenParser {
             loginUser.setUserName(userProperty.get("name").toString());
             return loginUser;
         }
-        throw new BusinessException(SparrowError.USER_NOT_LOGIN);
+        throw new BusinessException(AuthenticatorError.USER_NOT_LOGIN);
     }
 }

@@ -6,8 +6,8 @@ import com.sparrow.chat.contact.po.Contact;
 import com.sparrow.chat.contact.protocol.dto.FriendDetailDTO;
 import com.sparrow.chat.contact.repository.ContactRepository;
 import com.sparrow.chat.infrastructure.persistence.data.converter.ContactConverter;
+import com.sparrow.context.SessionContext;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
 import com.sparrow.utility.CollectionsUtility;
 
 import javax.inject.Inject;
@@ -40,9 +40,9 @@ public class ContactRepositoryImpl implements ContactRepository {
 
     @Override
     public List<FriendDetailDTO> getContacts(Long userId) {
-        if(userId == null) {
-            LoginUser loginUser = ThreadContext.getLoginToken();
-            userId=loginUser.getUserId();
+        if (userId == null) {
+            LoginUser loginUser = SessionContext.getLoginUser();
+            userId = loginUser.getUserId();
         }
         List<Contact> contacts = this.contactDao.getMyContact(userId);
         if (CollectionsUtility.isNullOrEmpty(contacts)) {
@@ -50,7 +50,7 @@ public class ContactRepositoryImpl implements ContactRepository {
         }
         List<FriendDetailDTO> contactDtos = new ArrayList<>(contacts.size());
         for (Contact contact : contacts) {
-            contactDtos.add(new FriendDetailDTO(contact.getFriendId(),contact.getUserId(),contact.getApplyTime()));
+            contactDtos.add(new FriendDetailDTO(contact.getFriendId(), contact.getUserId(), contact.getApplyTime()));
         }
         return contactDtos;
     }

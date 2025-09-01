@@ -1,7 +1,7 @@
 package com.sparrow.chat.contact.protocol.vo;
 
 import com.sparrow.chat.contact.protocol.dto.FriendDetailDTO;
-import com.sparrow.protocol.VO;
+import com.sparrow.protocol.DTO;
 import lombok.Data;
 
 import java.util.Collection;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
-public class ContactGroupVO implements VO {
+public class ContactGroupVO implements DTO {
     public ContactGroupVO(Map<Long, ContactVO> userMap, List<QunVO> quns, List<FriendDetailDTO> friendDetails) {
         this.userMap = userMap;
         this.quns = quns;

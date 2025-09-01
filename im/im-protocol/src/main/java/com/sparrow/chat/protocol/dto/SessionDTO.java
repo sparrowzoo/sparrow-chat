@@ -1,10 +1,10 @@
 package com.sparrow.chat.protocol.dto;
 
-import com.sparrow.protocol.VO;
+import com.sparrow.protocol.DTO;
 import lombok.Data;
 
 @Data
-public class SessionDTO implements VO {
+public class SessionDTO implements DTO {
 
     public static SessionDTO parse(String sessionKey, Long lastReadTime) {
         String chatType = sessionKey.substring(0, 1);

@@ -8,8 +8,7 @@ import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.mq.EventHandlerMappingContainer;
 import com.sparrow.mq.MQEvent;
 import com.sparrow.mq.MQPublisher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.inject.Inject;
@@ -18,9 +17,8 @@ import java.util.List;
 import java.util.concurrent.*;
 
 @Named
+@Slf4j
 public class ContactMQPublisher implements MQPublisher, InitializingBean {
-    private static Logger logger = LoggerFactory.getLogger(ContactMQPublisher.class);
-
     @Inject
     private QunRepository qunRepository;
 
@@ -42,7 +40,7 @@ public class ContactMQPublisher implements MQPublisher, InitializingBean {
             try {
                 queueHandlerMappingContainer.get(event.getClass().getName()).handle(event);
             } catch (Throwable e) {
-                logger.error("qun member sync error {}", JsonFactory.getProvider().toString(event), e);
+                log.error("qun member sync error {}", JsonFactory.getProvider().toString(event), e);
             }
         });
     }
@@ -64,7 +62,7 @@ public class ContactMQPublisher implements MQPublisher, InitializingBean {
                     try {
                         publish(new QunMemberEvent(qunDTO.getId(), null));
                     } catch (Throwable e) {
-                        logger.error("all sync publish error {}", qunDTO.getId(), e);
+                        log.error("all sync publish error {}", qunDTO.getId(), e);
                     }
                 }
             }

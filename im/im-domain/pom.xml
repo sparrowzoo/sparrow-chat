@@ -54,5 +54,9 @@
             <groupId>com.sparrowzoo.passport</groupId>
             <artifactId>passport-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo</groupId>
+            <artifactId>authenticator-core</artifactId>
+        </dependency>
     </dependencies>
 </project>

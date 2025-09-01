@@ -1,28 +1,29 @@
 package com.sparrow.chat.im.controller;
 
+import com.sparrow.authenticator.Authenticator;
+import com.sparrow.authenticator.HostAuthenticationToken;
+import com.sparrow.authenticator.token.BearerToken;
 import com.sparrow.chat.domain.bo.ChatUser;
-import com.sparrow.chat.protocol.dto.HistoryMessageWrap;
-import com.sparrow.chat.protocol.dto.SessionMetaDTO;
 import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.service.ChatService;
 import com.sparrow.chat.domain.service.MessageService;
 import com.sparrow.chat.domain.service.UserLoginService;
+import com.sparrow.chat.protocol.dto.HistoryMessageWrap;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
+import com.sparrow.chat.protocol.dto.SessionMetaDTO;
 import com.sparrow.chat.protocol.params.SessionReadParams;
 import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
 import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.chat.protocol.query.SessionQuery;
+import com.sparrow.context.SessionContext;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.ClientInformation;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
-import com.sparrow.support.Authenticator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -32,8 +33,8 @@ import java.util.List;
 @Api(tags = "聊天接口")
 @RestController
 @RequestMapping("/chat/v2")
+@Slf4j
 public class ChatV2Controller {
-    private static Logger logger = LoggerFactory.getLogger(ChatV2Controller.class);
     @Autowired
     private ChatService chatService;
 
@@ -49,26 +50,27 @@ public class ChatV2Controller {
     @ApiOperation(value = "解析登录Token")
     @PostMapping("/parse-token.json")
     public LoginUser parseToken(String token) throws BusinessException {
-        ClientInformation client = ThreadContext.getClientInfo();
-        return this.authenticator.authenticate(token, client.getDeviceId());
+        ClientInformation client = SessionContext.getClientInfo();
+        HostAuthenticationToken hostAuthenticationToken = new BearerToken(token, client.getDeviceId());
+        return this.authenticator.authenticate(hostAuthenticationToken);
     }
 
     @ApiOperation(value = "获取当前用户信息")
     @GetMapping("/get-current-user.json")
     public LoginUser getCurrentUser() {
-        return ThreadContext.getLoginToken();
+        return SessionContext.getLoginUser();
     }
 
 
     @ApiOperation(value = "登录")
     @PostMapping("/login.json")
-    public String login(@RequestBody ChatUserQuery userQuery) {
+    public String login(@RequestBody ChatUserQuery userQuery) throws BusinessException {
         return this.loginService.login(Long.parseLong(userQuery.getId()));
     }
 
     @ApiOperation(value = "登录")
     @PostMapping("/long-login.json")
-    public String login2(@RequestBody Long userId) {
+    public String login2(@RequestBody Long userId) throws BusinessException {
         return this.loginService.login(userId);
     }
 
@@ -116,7 +118,7 @@ public class ChatV2Controller {
         try {
             chatService.cancel(messageCancel);
         } catch (Exception e) {
-            logger.error("cancel error", e);
+            log.error("cancel error", e);
             return false;
         }
         return true;
