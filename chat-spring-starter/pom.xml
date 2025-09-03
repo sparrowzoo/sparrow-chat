@@ -11,16 +11,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>chat-spring-starter</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <groupId>com.sparrowzoo.chat</groupId>
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <java.version>1.8</java.version>
-        <fastjson.version>1.2.58</fastjson.version>
-        <mybatis-spring.version>1.2.2</mybatis-spring.version>
-        <mybatis.version>3.2.8</mybatis.version>
-        <druid.version>1.2.8</druid.version>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -88,8 +78,8 @@
             <artifactId>im-infrastructure</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.sparrowzoo</groupId>
-            <artifactId>file-gateway</artifactId>
+            <groupId>com.sparrowzoo.file</groupId>
+            <artifactId>file-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

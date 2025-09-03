@@ -24,5 +24,9 @@
             <groupId>com.sparrowzoo</groupId>
             <artifactId>sparrow-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo.passport</groupId>
+            <artifactId>passport-starter</artifactId>
+        </dependency>
     </dependencies>
 </project>

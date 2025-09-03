@@ -8,7 +8,6 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.sparrowzoo.chat</groupId>
     <artifactId>contact-protocol</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <dependencies>
@@ -21,10 +20,9 @@
             <artifactId>sparrow-protocol-mq</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>1.5.22</version>
-            <optional>true</optional>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
         </dependency>
+
     </dependencies>
 </project>

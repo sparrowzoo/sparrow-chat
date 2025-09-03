@@ -9,7 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <version>1.0.0-SNAPSHOT</version>
-    <groupId>com.sparrowzoo.chat</groupId>
     <artifactId>im-protocol</artifactId>
     <dependencies>
         <dependency>
@@ -18,15 +17,17 @@
         </dependency>
         <dependency>
             <groupId>com.sparrowzoo.passport</groupId>
-            <artifactId>passport-protocol</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <artifactId>passport-starter</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>contact-protocol</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 </project>
