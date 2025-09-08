@@ -42,6 +42,7 @@
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>*.xml</include>
+                    <include>**/**</include>
                     <include>**/*.html</include>
                     <include>*.properties</include>
                 </includes>

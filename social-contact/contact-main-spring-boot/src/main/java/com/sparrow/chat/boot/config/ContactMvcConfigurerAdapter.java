@@ -17,29 +17,7 @@ import javax.inject.Inject;
 
 @Configuration
 @Slf4j
-public class ContactMvcConfigurerAdapter implements WebMvcConfigurer {
-    @Inject
-    private IpSupport ipSupport;
-
-    @Bean
-    public Monitor monitor() {
-        return new Monitor(this.ipSupport);
-    }
-
-    @Bean
-    public AccessMonitorFilter accessMonitorFilter() {
-        return new AccessMonitorFilter(monitor());
-    }
-
-    @Bean
-    public ServletRegistrationBean fileUpload() {
-        return new ServletRegistrationBean(new FileUpload(), "/file-upload");
-    }
-
-    @Bean
-    public ServletRegistrationBean fileDownload() {
-        return new ServletRegistrationBean(new FileDownLoad(), "/file-download");
-    }
+public class ContactMvcConfigurerAdapter{
     @Bean
     public EventHandlerMappingContainer eventHandlerMappingContainer() {
         return new DefaultQueueHandlerMappingContainer();
