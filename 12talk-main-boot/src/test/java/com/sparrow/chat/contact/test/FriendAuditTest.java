@@ -1,10 +1,11 @@
 package com.sparrow.chat.contact.test;
 
+import com.sparrow.authenticator.DefaultLoginUser;
 import com.sparrow.chat.boot.ApplicationBoot;
 import com.sparrow.chat.contact.protocol.audit.FriendAuditParam;
 import com.sparrow.chat.contact.service.AuditService;
+import com.sparrow.context.SessionContext;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
 import com.sparrow.spring.starter.test.SparrowTestExecutionListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,9 +26,9 @@ public class FriendAuditTest {
 
     @Test
     public void testFriendAudit() throws Throwable {
-        LoginUser loginUser = new LoginUser();
+        DefaultLoginUser loginUser = new DefaultLoginUser();
         loginUser.setUserId(1L);
-        ThreadContext.bindLoginToken(loginUser);
+        SessionContext.bindLoginUser(loginUser);
         FriendAuditParam friendAuditParam = new FriendAuditParam();
         friendAuditParam.setAuditId(1L);
         friendAuditParam.setAgree(true);

@@ -1,13 +1,13 @@
 package com.sparrow.chat.qun.test;
 
+import com.sparrow.authenticator.DefaultLoginUser;
 import com.sparrow.chat.boot.ApplicationBoot;
 import com.sparrow.chat.contact.protocol.enums.Nationality;
 import com.sparrow.chat.contact.protocol.qun.QunCreateParam;
 import com.sparrow.chat.contact.protocol.qun.QunModifyParam;
 import com.sparrow.chat.contact.service.QunService;
+import com.sparrow.context.SessionContext;
 import com.sparrow.protocol.BusinessException;
-import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
 import com.sparrow.spring.starter.test.SparrowTestExecutionListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,10 +28,10 @@ public class QunTest {
 
     @Test
     public void testCreateQun() throws BusinessException {
-        LoginUser loginUser = new LoginUser();
+        DefaultLoginUser loginUser = new DefaultLoginUser();
         loginUser.setUserId(1L);
         loginUser.setUserName("mock-user-name");
-        ThreadContext.bindLoginToken(loginUser);
+        SessionContext.bindLoginUser(loginUser);
 
         QunCreateParam qunCreateParam = new QunCreateParam();
         qunCreateParam.setName("test");
@@ -46,10 +46,10 @@ public class QunTest {
 
     @Test
     public void testModifyQun() throws BusinessException {
-        LoginUser loginUser = new LoginUser();
+        DefaultLoginUser loginUser = new DefaultLoginUser();
         loginUser.setUserId(1L);
         loginUser.setUserName("mock-user-name");
-        ThreadContext.bindLoginToken(loginUser);
+        SessionContext.bindLoginUser(loginUser);
 
         QunModifyParam qunModifyParam = new QunModifyParam();
         qunModifyParam.setName("test");
