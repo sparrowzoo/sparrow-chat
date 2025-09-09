@@ -6,9 +6,9 @@
         <groupId>com.sparrowzoo.chat</groupId>
         <artifactId>chat-bom</artifactId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath/>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.sparrowzoo.chat</groupId>
     <artifactId>contact-dao-api</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <dependencies>
