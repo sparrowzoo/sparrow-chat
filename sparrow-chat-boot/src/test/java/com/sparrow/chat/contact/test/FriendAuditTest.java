@@ -4,7 +4,6 @@ import com.sparrow.chat.boot.ApplicationBoot;
 import com.sparrow.chat.contact.protocol.audit.FriendAuditParam;
 import com.sparrow.chat.contact.service.AuditService;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.protocol.ThreadContext;
 import com.sparrow.spring.starter.test.SparrowTestExecutionListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -16,7 +16,6 @@
         <module>im-adapter</module>
         <module>im-domain</module>
         <module>im-infrastructure</module>
-        <module>im-main-spring-boot</module>
         <module>im-protocol</module>
         <module>im-po</module>
         <module>im-dao-api</module>

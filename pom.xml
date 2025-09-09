@@ -11,6 +11,8 @@
         <module>social-contact</module>
         <module>im</module>
         <module>chat-spring-starter</module>
+        <module>sparrow-chat-boot</module>
+        <module>12talk-main-boot</module>
     </modules>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
