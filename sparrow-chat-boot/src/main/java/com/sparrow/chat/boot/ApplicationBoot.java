@@ -19,7 +19,7 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 
-@SpringBootApplication(scanBasePackages = "com.sparrow.*")
+@SpringBootApplication(scanBasePackages = {"com.sparrow"})
 @EnablePassport
 @EnableFileApp
 @EnableChatApp
