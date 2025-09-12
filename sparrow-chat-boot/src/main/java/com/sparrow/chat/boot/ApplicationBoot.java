@@ -9,8 +9,7 @@ import com.sparrow.container.ContainerBuilder;
 import com.sparrow.core.spi.ApplicationContext;
 import com.sparrow.file.config.EnableFileApp;
 import com.sparrow.passport.config.EnablePassport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationStartingEvent;
@@ -18,15 +17,12 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 
-
-@SpringBootApplication(scanBasePackages = "com.sparrow.*")
+@SpringBootApplication
 @EnablePassport
 @EnableFileApp
 @EnableChatApp
+@Slf4j
 public class ApplicationBoot {
-    private static Logger log = LoggerFactory.getLogger(ApplicationBoot.class);
-
-
     public static void main(String[] args) {
         SpringApplication springApplication = new SpringApplication(ApplicationBoot.class);
         springApplication.addListeners(new ApplicationListener<ApplicationStartingEvent>() {
