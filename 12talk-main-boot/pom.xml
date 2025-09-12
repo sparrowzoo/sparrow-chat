@@ -60,12 +60,12 @@
             <artifactId>UserAgentUtils</artifactId>
             <version>1.21</version>
         </dependency>
-        <!-- thymeleaf -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <!--bean copy-->
+<!--         thymeleaf-->
+<!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-starter-thymeleaf</artifactId>-->
+        <!--        </dependency>-->
+<!--        bean copy-->
         <dependency>
             <groupId>com.sparrowzoo</groupId>
             <artifactId>sparrow-loader</artifactId>
