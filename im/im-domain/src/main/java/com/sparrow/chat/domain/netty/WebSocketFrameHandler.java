@@ -30,7 +30,6 @@ import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.support.IpSupport;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufHolder;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.ContinuationWebSocketFrame;
@@ -101,7 +100,6 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         }
 
         if (frame instanceof BinaryWebSocketFrame) {
-
             UserContainer.getContainer().refreshLastActiveTime(ctx.channel());
             BinaryWebSocketFrame msg = (BinaryWebSocketFrame) frame;
             ByteBuf content = msg.content();
@@ -121,7 +119,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
                 return;
             }
             List<Channel> channels = UserContainer.getContainer().getChannels(protocol.getChatSession(), currentUser);
-            this.writeAndFlush(ctx, protocol.getChatType(), msg, channels);
+            this.sendMessage(ctx, protocol.getChatType(), msg, channels);
             return;
         }
         if (frame instanceof ContinuationWebSocketFrame) {
@@ -133,77 +131,36 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             BinaryWebSocketFrame msg) {
         byte[] serviceTimeBytes = ("_" + System.currentTimeMillis()).getBytes();
         int capacity = msg.content().readableBytes() + serviceTimeBytes.length;
-
-        /**
-         * .array()可能会报空指针异常
-         */
-        //byte [] bytes=msg.content().array();
-        //logger.info("msg length {}",bytes.length);
         ByteBuf byteBuf = ByteBufAllocator.DEFAULT.directBuffer(capacity);
-        //byteBuf.writeBytes(bytes);
+        //直接拿到消息体在后边添加服务器时间戮
         byteBuf.writeBytes(msg.content());
         //服务器时间戮
         byteBuf.writeBytes(serviceTimeBytes);
-
-        /**
-         *  public ByteBuf writeBytes(ByteBuf src, int length) {
-         *         if (checkBounds) {
-         *             checkReadableBounds(src, length);
-         *         }
-         *         writeBytes(src, src.readerIndex(), length);
-         *         src.readerIndex(src.readerIndex() + length);
-         *         return this;
-         *     }
-         */
         msg.content().resetReaderIndex();
         return new BinaryWebSocketFrame(byteBuf);
     }
 
-    @Deprecated
-    private BinaryWebSocketFrame unsafeDuplicateDeprecated(BinaryWebSocketFrame msg) {
-        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.directBuffer(msg.content().capacity());
-        ;
-        byteBuf.writeBytes(msg.content());
-        //必须重置
-        msg.content().resetReaderIndex();
-        return new BinaryWebSocketFrame(byteBuf);
-    }
+    private void sendMessage(ChannelHandlerContext ctx, Integer chatType, BinaryWebSocketFrame msg,
+                             List<Channel> channels){
 
-    private static Object safeDuplicate(Object message) {
-        if (message instanceof ByteBuf) {
-            return ((ByteBuf) message).retainedDuplicate();
-        } else {
-            return message instanceof ByteBufHolder ? ((ByteBufHolder) message).retainedDuplicate() : ReferenceCountUtil.retain(message);
-        }
-    }
-
-    private void writeAndFlush(ChannelHandlerContext ctx, Integer chatType, BinaryWebSocketFrame msg,
-                               List<Channel> channels) throws InterruptedException {
-//分组发送 或者自定义发送 release 会报错
-//        ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-//        channelGroup.addAll(channels);
-//        channelGroup.writeAndFlush(msg);
-
+        BinaryWebSocketFrame unsafe = this.unsafeDuplicate(msg);
+        //分组发送 或者自定义发送 release 会报错
         for (Channel channel : channels) {
+            BinaryWebSocketFrame unsafeDuplicate = unsafe.retainedDuplicate();
             if (channel == null || !channel.isOpen() || !channel.isActive()) {
                 if (chatType == Chat.CHAT_TYPE_1_2_1) {
-//                    ByteBuf offline = Unpooled.directBuffer(1);
-//                    offline.writeByte(0);
                     ctx.channel().writeAndFlush(new TextWebSocketFrame(Instruction.OFFLINE));
                 }
                 continue;
             }
-            BinaryWebSocketFrame unsafe = this.unsafeDuplicate(msg);
-
-            //对比使用 bad case
-            //BinaryWebSocketFrame safe=(BinaryWebSocketFrame) safeDuplicate(msg);
-            logger.info("write channel {}", channel);
             ChannelPromise promise = channel.newPromise();
             promise.addListener(new LoggingListener());
-            channel.writeAndFlush(unsafe, promise);
+            //并没有resetReaderIndex 所以需要重新读取
+            channel.writeAndFlush(unsafeDuplicate, promise);
+            //unsafe.content().resetReaderIndex();
         }
         //不需要手动release
-        //ReferenceCountUtil.release(msg);
+        ReferenceCountUtil.release(unsafe);
     }
 
     //todo ACK 机制
