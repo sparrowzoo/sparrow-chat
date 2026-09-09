@@ -57,11 +57,6 @@
                 <groupId>com.sparrowzoo.chat</groupId>
                 <artifactId>im-po</artifactId>
             </dependency>
-            <dependency>
-                <version>${chat_version}</version>
-                <groupId>com.sparrowzoo.chat</groupId>
-                <artifactId>im-main-spring-boot</artifactId>
-            </dependency>
 
 
             <dependency>
@@ -117,19 +112,10 @@
             <dependency>
                 <version>${chat_version}</version>
                 <groupId>com.sparrowzoo.chat</groupId>
-                <artifactId>contact-main-spring-boot</artifactId>
-            </dependency>
-
-            <dependency>
-                <version>${chat_version}</version>
-                <groupId>com.sparrowzoo.chat</groupId>
                 <artifactId>contact-po</artifactId>
             </dependency>
-            <dependency>
-                <version>${chat_version}</version>
-                <groupId>com.sparrowzoo.chat</groupId>
-                <artifactId>12talk-main-spring-boot</artifactId>
-            </dependency>
+
+
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
@@ -144,6 +130,11 @@
                 <groupId>com.sparrowzoo.passport</groupId>
                 <version>${passport_version}</version>
                 <artifactId>passport-starter</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>com.sparrowzoo.chat</groupId>
+                <version>${chat_version}</version>
+                <artifactId>chat-spring-starter</artifactId>
             </dependency>
         </dependencies>
     </dependencyManagement>
