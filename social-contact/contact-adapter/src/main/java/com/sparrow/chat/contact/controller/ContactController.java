@@ -45,7 +45,6 @@ public class ContactController {
 
     @Autowired
     private ContactService contactService;
-
     @Autowired
     private ContactAssembler contactAssembler;
 

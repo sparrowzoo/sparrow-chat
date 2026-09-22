@@ -47,7 +47,6 @@ import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.support.IpSupport;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufHolder;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.ContinuationWebSocketFrame;
@@ -116,7 +115,6 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         }
 
         if (frame instanceof BinaryWebSocketFrame) {
-
             UserContainer.getContainer().refreshLastActiveTime(ctx.channel());
             BinaryWebSocketFrame msg = (BinaryWebSocketFrame) frame;
             ByteBuf content = msg.content();
@@ -136,7 +134,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
                 return;
             }
             List<Channel> channels = UserContainer.getContainer().getChannels(protocol.getChatSession(), currentUser);
-            this.writeAndFlush(ctx, protocol.getChatType(), msg, channels);
+            this.sendMessage(ctx, protocol.getChatType(), msg, channels);
             return;
         }
         if (frame instanceof ContinuationWebSocketFrame) {
@@ -182,49 +180,25 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         }
     }
 
-    private static Object retainedDuplicate(Object message) {
-        if (message instanceof ByteBuf) {
-            return ((ByteBuf) message).retainedDuplicate();
-        } else {
-            return message instanceof ByteBufHolder ? ((ByteBufHolder) message).retainedDuplicate() : ReferenceCountUtil.retain(message);
-        }
-    }
-
-    private void writeAndFlush(ChannelHandlerContext ctx, Integer chatType, BinaryWebSocketFrame msg,
-                               List<Channel> channels) throws InterruptedException {
-//分组发送 或者自定义发送 release 会报错
-//        ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-//        channelGroup.addAll(channels);
-//        channelGroup.writeAndFlush(msg);
-
-        for (Channel channel : channels) {
-            if (channel == null || !channel.isOpen() || !channel.isActive()) {
-                if (chatType == Chat.CHAT_TYPE_1_2_1) {
-                    ctx.channel().writeAndFlush(new TextWebSocketFrame(Instruction.OFFLINE));
+    private void sendMessage(ChannelHandlerContext ctx, Integer chatType, BinaryWebSocketFrame msg,
+                             List<Channel> channels) {
+        BinaryWebSocketFrame frame = this.newFrame(msg);
+        try {
+            for (Channel channel : channels) {
+                if (channel == null || !channel.isOpen() || !channel.isActive()) {
+                    if (chatType == Chat.CHAT_TYPE_1_2_1) {
+                        ctx.channel().writeAndFlush(new TextWebSocketFrame(Instruction.OFFLINE));
+                    }
+                    continue;
                 }
-                continue;
+                log.info("write channel {}", channel);
+                ChannelPromise promise = channel.newPromise();
+                promise.addListener(new LoggingListener());
+                channel.writeAndFlush(frame.retainedDuplicate(), promise);
             }
-
-            BinaryWebSocketFrame webSocketFrame = null;//this.newFrame(msg);
-            log.info("init binary frame refCnt 这里会内存泄露" + webSocketFrame.refCnt());
-
-            //对比使用 bad case
-            webSocketFrame = (BinaryWebSocketFrame) retainedDuplicate(msg);
-            log.info("init safe binary frame refCnt {}", webSocketFrame.refCnt());
-            log.info("write before refCnt {}", msg.refCnt());
-            log.info("write channel {}", channel);
-            ChannelPromise promise = channel.newPromise();
-            promise.addListener(new LoggingListener());
-            channel.writeAndFlush(webSocketFrame, promise);
-            log.info("after write flush refCnt {}", webSocketFrame.refCnt());
+        } finally {
+            ReferenceCountUtil.release(frame);
         }
-        log.info("write before refCnt {}", msg.refCnt());
-
-        //谁创建谁释放，谁最后使用谁释放
-        //ReferenceCountUtil.release(unsafe);
-        //log.info("after release refCnt {}", unsafe.refCnt());
-        //不需要手动release
-        //ReferenceCountUtil.release(msg);
     }
 
     //todo ACK 机制
