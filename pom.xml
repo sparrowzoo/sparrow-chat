@@ -8,6 +8,7 @@
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
     <modules>
+        <module>bom</module>
         <module>social-contact</module>
         <module>im</module>
         <module>chat-spring-starter</module>

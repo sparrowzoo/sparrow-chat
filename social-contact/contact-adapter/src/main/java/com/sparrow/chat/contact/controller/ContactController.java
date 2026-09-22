@@ -1,3 +1,20 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package com.sparrow.chat.contact.controller;
 
 import com.sparrow.authenticator.enums.AuthenticatorError;
@@ -16,8 +33,6 @@ import com.sparrow.exception.Asserts;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@Api(value = "contact", tags = "IM 联系人接口")
 @RequestMapping("/contact")
 public class ContactController {
 
@@ -45,14 +59,12 @@ public class ContactController {
      * @return
      */
     @PostMapping("/find-friend.json")
-    @ApiOperation("通过用户标识（Email）查找用户")
     public UserFriendApplyVO findFriend(@RequestBody FindUserSecretParam findUserSecretParam) throws BusinessException {
         UserProfileBO contactBO = this.contactService.findFriend(findUserSecretParam.getUserIdentify());
         return this.contactAssembler.toUserFriendApplyVO(contactBO);
     }
 
     @GetMapping("/contacts.json")
-    @ApiOperation("联系人接口")
     public ContactGroupVO getContacts() throws BusinessException {
         LoginUser loginUser = SessionContext.getLoginUser();
         Asserts.isTrue(loginUser.isVisitor(), AuthenticatorError.USER_NOT_LOGIN);
@@ -62,14 +74,12 @@ public class ContactController {
 
 
     @PostMapping("/get-users-by-ids.json")
-    @ApiOperation("通过用户ID获取用户列表")
     public List<ContactVO> getUsersByIds(@RequestBody List<Long> userIds) throws BusinessException {
         Map<Long, UserProfileDTO> userProfileDTOMap = this.contactService.getUserMap(userIds);
         return this.contactAssembler.assembleUserListVO(userProfileDTOMap.values());
     }
 
     @PostMapping("/get-customer-servers.json")
-    @ApiOperation("获取客服列表")
     public List<ContactVO> getUsersTenantId() throws BusinessException {
         LoginUser loginUser = SessionContext.getLoginUser();
         List<CustomerServerBO> customerServers = this.customerServerService.getCustomerServerListByTenantId(loginUser.getTenantId());

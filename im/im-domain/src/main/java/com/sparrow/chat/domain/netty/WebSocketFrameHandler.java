@@ -1,4 +1,21 @@
 /*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+/*
  * Copyright 2012 The Netty Project
  *
  * The Netty Project licenses this file to you under the Apache License,
@@ -37,15 +54,13 @@ import io.netty.handler.codec.http.websocketx.ContinuationWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.ReferenceCountUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 import java.util.List;
 
+@Slf4j
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
-
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketFrameHandler.class);
 
     /**
      * 一定要重写channelRead0方法，否则会报错,内存泄漏问题交由netty处理
@@ -64,7 +79,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         if (frame instanceof TextWebSocketFrame) {
             TextWebSocketFrame text = (TextWebSocketFrame) frame;
             ByteBuf byteBuf = text.content();
-            logger.info("ping pong content address hashcode {},capacity {}", byteBuf.hashCode(), byteBuf.capacity());
+            log.info("ping pong content address hashcode {},capacity {}", byteBuf.hashCode(), byteBuf.capacity());
             // Send the uppercase string back.
             String content = ((TextWebSocketFrame) frame).text();
             if (Instruction.PING.equalsIgnoreCase(content)) {
@@ -129,47 +144,45 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         }
     }
 
-    private BinaryWebSocketFrame unsafeDuplicate(
+    private BinaryWebSocketFrame newFrame(
             BinaryWebSocketFrame msg) {
-        byte[] serviceTimeBytes = ("_" + System.currentTimeMillis()).getBytes();
-        int capacity = msg.content().readableBytes() + serviceTimeBytes.length;
+        ByteBuf byteBuf = null;
+        try {
+            byte[] serviceTimeBytes = ("_" + System.currentTimeMillis()).getBytes();
+            int capacity = msg.content().readableBytes() + serviceTimeBytes.length;
 
-        /**
-         * .array()可能会报空指针异常
-         */
-        //byte [] bytes=msg.content().array();
-        //logger.info("msg length {}",bytes.length);
-        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.directBuffer(capacity);
-        //byteBuf.writeBytes(bytes);
-        byteBuf.writeBytes(msg.content());
-        //服务器时间戮
-        byteBuf.writeBytes(serviceTimeBytes);
+            /**
+             * .array()可能会报空指针异常
+             */
+            //byte [] bytes=msg.content().array();
+            //log.info("msg length {}",bytes.length);
+            byteBuf = ByteBufAllocator.DEFAULT.directBuffer(capacity);
+            //byteBuf.writeBytes(bytes);
+            byteBuf.writeBytes(msg.content());
+            //服务器时间戮
+            byteBuf.writeBytes(serviceTimeBytes);
 
-        /**
-         *  public ByteBuf writeBytes(ByteBuf src, int length) {
-         *         if (checkBounds) {
-         *             checkReadableBounds(src, length);
-         *         }
-         *         writeBytes(src, src.readerIndex(), length);
-         *         src.readerIndex(src.readerIndex() + length);
-         *         return this;
-         *     }
-         */
-        msg.content().resetReaderIndex();
-        return new BinaryWebSocketFrame(byteBuf);
+            /**
+             *  public ByteBuf writeBytes(ByteBuf src, int length) {
+             *         if (checkBounds) {
+             *             checkReadableBounds(src, length);
+             *         }
+             *         writeBytes(src, src.readerIndex(), length);
+             *         src.readerIndex(src.readerIndex() + length);
+             *         return this;
+             *     }
+             */
+            msg.content().resetReaderIndex();
+            return new BinaryWebSocketFrame(byteBuf);
+        } catch (Exception e) {
+            if (byteBuf != null) {
+                ReferenceCountUtil.release(byteBuf);
+            }
+            throw e;
+        }
     }
 
-    @Deprecated
-    private BinaryWebSocketFrame unsafeDuplicateDeprecated(BinaryWebSocketFrame msg) {
-        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.directBuffer(msg.content().capacity());
-        ;
-        byteBuf.writeBytes(msg.content());
-        //必须重置
-        msg.content().resetReaderIndex();
-        return new BinaryWebSocketFrame(byteBuf);
-    }
-
-    private static Object safeDuplicate(Object message) {
+    private static Object retainedDuplicate(Object message) {
         if (message instanceof ByteBuf) {
             return ((ByteBuf) message).retainedDuplicate();
         } else {
@@ -187,21 +200,29 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         for (Channel channel : channels) {
             if (channel == null || !channel.isOpen() || !channel.isActive()) {
                 if (chatType == Chat.CHAT_TYPE_1_2_1) {
-//                    ByteBuf offline = Unpooled.directBuffer(1);
-//                    offline.writeByte(0);
                     ctx.channel().writeAndFlush(new TextWebSocketFrame(Instruction.OFFLINE));
                 }
                 continue;
             }
-            BinaryWebSocketFrame unsafe = this.unsafeDuplicate(msg);
+
+            BinaryWebSocketFrame webSocketFrame = null;//this.newFrame(msg);
+            log.info("init binary frame refCnt 这里会内存泄露" + webSocketFrame.refCnt());
 
             //对比使用 bad case
-            //BinaryWebSocketFrame safe=(BinaryWebSocketFrame) safeDuplicate(msg);
-            logger.info("write channel {}", channel);
+            webSocketFrame = (BinaryWebSocketFrame) retainedDuplicate(msg);
+            log.info("init safe binary frame refCnt {}", webSocketFrame.refCnt());
+            log.info("write before refCnt {}", msg.refCnt());
+            log.info("write channel {}", channel);
             ChannelPromise promise = channel.newPromise();
             promise.addListener(new LoggingListener());
-            channel.writeAndFlush(unsafe, promise);
+            channel.writeAndFlush(webSocketFrame, promise);
+            log.info("after write flush refCnt {}", webSocketFrame.refCnt());
         }
+        log.info("write before refCnt {}", msg.refCnt());
+
+        //谁创建谁释放，谁最后使用谁释放
+        //ReferenceCountUtil.release(unsafe);
+        //log.info("after release refCnt {}", unsafe.refCnt());
         //不需要手动release
         //ReferenceCountUtil.release(msg);
     }
@@ -209,7 +230,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     //todo ACK 机制
     private static class LoggingListener implements ChannelFutureListener {
         public void operationComplete(ChannelFuture future) {
-            logger.info("Write operation complete {}", future.channel());
+            log.info("Write operation complete {}", future.channel());
         }
     }
 }

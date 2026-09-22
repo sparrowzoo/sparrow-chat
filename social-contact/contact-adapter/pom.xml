@@ -11,7 +11,6 @@
     </parent>
     <groupId>com.sparrowzoo.chat</groupId>
     <artifactId>contact-adapter</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -20,22 +19,25 @@
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>contact-domain</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.sparrowzoo</groupId>
             <artifactId>sparrow-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>1.5.22</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>contact-client-api</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo.passport</groupId>
+            <artifactId>passport-starter</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

@@ -1,14 +1,31 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.dao.sparrow.SessionDao;
 import com.sparrow.chat.dao.sparrow.SessionMetaDao;
 import com.sparrow.chat.domain.bo.ChatSession;
 import com.sparrow.chat.domain.bo.ChatUser;
-import com.sparrow.chat.protocol.dto.SessionMetaDTO;
 import com.sparrow.chat.domain.repository.SessionMateRepository;
 import com.sparrow.chat.im.po.Session;
 import com.sparrow.chat.im.po.SessionMeta;
 import com.sparrow.chat.infrastructure.converter.SessionConverter;
+import com.sparrow.chat.protocol.dto.SessionMetaDTO;
 import com.sparrow.chat.protocol.query.SessionQuery;
 import com.sparrow.core.Pair;
 import com.sparrow.passport.api.UserProfileAppService;
@@ -17,10 +34,10 @@ import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.enums.StatusRecord;
 import com.sparrow.utility.CollectionsUtility;
 import com.sparrow.utility.StringUtility;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.*;
 
 @Named
@@ -56,7 +73,7 @@ public class SessionMetaRepositoryImpl implements SessionMateRepository {
 
     private void save(SessionMeta sessionMeta) {
         SessionMeta exists = this.sessionMetaDao.exists(sessionMeta.getSessionKey());
-        if (exists!= null) {
+        if (exists != null) {
             sessionMeta.setId(exists.getId());
             sessionMeta.setGmtModified(System.currentTimeMillis());
             this.sessionMetaDao.update(sessionMeta);
@@ -65,7 +82,7 @@ public class SessionMetaRepositoryImpl implements SessionMateRepository {
         }
     }
 
-    private boolean disableExpired(Session session,ChatSession chatSession) {
+    private boolean disableExpired(Session session, ChatSession chatSession) {
         if (!chatSession.isOne2One()) {
             return false;
         }
@@ -73,9 +90,9 @@ public class SessionMetaRepositoryImpl implements SessionMateRepository {
         if (!isVisitor) {
             return false;
         }
-        long gmtCreate= session.getGmtCreate();
+        long gmtCreate = session.getGmtCreate();
         long currentTime = System.currentTimeMillis();
-        int hours24 = 24*60*60*1000;
+        int hours24 = 24 * 60 * 60 * 1000;
         if (currentTime - gmtCreate > hours24) {
             session.setStatus(StatusRecord.DISABLE);
             this.sessionMetaDao.disable(session.getSessionKey());

@@ -1,22 +1,39 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package com.sparrow.chat.infrastructure.converter;
 
 import com.sparrow.chat.dao.sparrow.query.session.SessionDBQuery;
 import com.sparrow.chat.domain.bo.ChatSession;
 import com.sparrow.chat.domain.bo.ChatUser;
-import com.sparrow.chat.protocol.dto.SessionMetaDTO;
 import com.sparrow.chat.im.po.Session;
 import com.sparrow.chat.im.po.SessionMeta;
 import com.sparrow.chat.protocol.dto.SessionDTO;
+import com.sparrow.chat.protocol.dto.SessionMetaDTO;
 import com.sparrow.chat.protocol.query.SessionQuery;
 import com.sparrow.core.Pair;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.enums.StatusRecord;
+import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 
-import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -80,25 +97,23 @@ public class SessionConverter {
         UserProfileDTO secondUserProfile = userMap.get(second.getLongUserId());
         SessionMeta sessionMeta = new SessionMeta();
         sessionMeta.setSessionKey(session.getSessionKey());
-        if(firstUserProfile!=null) {
+        if (firstUserProfile != null) {
             sessionMeta.setUserId(firstUserProfile.getUserId());
             sessionMeta.setUserCategory(firstUserProfile.getCategory());
             sessionMeta.setUserName(firstUserProfile.getUserName());
             sessionMeta.setUserNickName(firstUserProfile.getNickName());
-        }
-        else{
+        } else {
             sessionMeta.setUserId(0L);
             sessionMeta.setUserCategory(LoginUser.CATEGORY_VISITOR);
             sessionMeta.setUserName("访客");
             sessionMeta.setUserNickName("访客");
         }
-        if(secondUserProfile!=null) {
+        if (secondUserProfile != null) {
             sessionMeta.setOppositeId(second.getLongUserId());
             sessionMeta.setOppositeCategory(secondUserProfile.getCategory());
             sessionMeta.setOppositeName(secondUserProfile.getUserName());
             sessionMeta.setOppositeNickName(secondUserProfile.getNickName());
-        }
-        else {
+        } else {
             sessionMeta.setOppositeId(0L);
             sessionMeta.setOppositeCategory(LoginUser.CATEGORY_VISITOR);
             sessionMeta.setOppositeName("访客");

@@ -8,7 +8,6 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <version>1.0.0-SNAPSHOT</version>
     <artifactId>im-protocol</artifactId>
     <dependencies>
         <dependency>
@@ -24,10 +23,7 @@
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>contact-protocol</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

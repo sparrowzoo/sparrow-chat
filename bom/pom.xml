@@ -2,9 +2,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>sparrow-bom</artifactId>
+        <artifactId>infra-bom</artifactId>
         <groupId>com.sparrowzoo</groupId>
-        <version>1.0.5-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
     <packaging>pom</packaging>
@@ -12,9 +12,6 @@
     <version>1.0.0-SNAPSHOT</version>
     <groupId>com.sparrowzoo.chat</groupId>
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <file_version>1.0.0-SNAPSHOT</file_version>
         <passport_version>1.0.0-SNAPSHOT</passport_version>
         <chat_version>1.0.0-SNAPSHOT</chat_version>
@@ -23,51 +20,56 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <version>${chat_version}</version>
                 <groupId>com.sparrowzoo.chat</groupId>
                 <artifactId>im-protocol</artifactId>
+                <version>${chat_version}</version>
             </dependency>
             <dependency>
-                <version>${chat_version}</version>
                 <groupId>com.sparrowzoo.chat</groupId>
                 <artifactId>im-dao-api</artifactId>
+                <version>${chat_version}</version>
             </dependency>
             <dependency>
-                <version>${chat_version}</version>
                 <groupId>com.sparrowzoo.chat</groupId>
                 <artifactId>im-dao-sparrow</artifactId>
+                <version>${chat_version}</version>
+
             </dependency>
             <dependency>
-                <version>${chat_version}</version>
                 <groupId>com.sparrowzoo.chat</groupId>
                 <artifactId>im-domain</artifactId>
+                <version>${chat_version}</version>
             </dependency>
             <dependency>
-                <version>${chat_version}</version>
                 <groupId>com.sparrowzoo.chat</groupId>
                 <artifactId>im-infrastructure</artifactId>
+                <version>${chat_version}</version>
+
             </dependency>
             <dependency>
-                <version>${chat_version}</version>
                 <groupId>com.sparrowzoo.chat</groupId>
                 <artifactId>im-adapter</artifactId>
+                <version>${chat_version}</version>
+
             </dependency>
             <dependency>
-                <version>${chat_version}</version>
                 <groupId>com.sparrowzoo.chat</groupId>
                 <artifactId>im-po</artifactId>
+                <version>${chat_version}</version>
+
             </dependency>
 
 
             <dependency>
-                <version>${chat_version}</version>
                 <groupId>com.sparrowzoo.chat</groupId>
                 <artifactId>contact-client-api</artifactId>
+                <version>${chat_version}</version>
+
             </dependency>
             <dependency>
-                <version>${chat_version}</version>
                 <groupId>com.sparrowzoo.chat</groupId>
                 <artifactId>contact-protocol</artifactId>
+                <version>${chat_version}</version>
             </dependency>
             <dependency>
                 <version>${chat_version}</version>
@@ -113,13 +115,6 @@
                 <version>${chat_version}</version>
                 <groupId>com.sparrowzoo.chat</groupId>
                 <artifactId>contact-po</artifactId>
-            </dependency>
-
-
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-all</artifactId>
-                <version>4.1.36.Final</version>
             </dependency>
             <dependency>
                 <groupId>com.sparrowzoo.file</groupId>

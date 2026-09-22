@@ -1,3 +1,20 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package com.sparrow.chat.contact.controller;
 
 import com.sparrow.authenticator.enums.AuthenticatorError;
@@ -13,15 +30,14 @@ import com.sparrow.context.SessionContext;
 import com.sparrow.exception.Asserts;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.inject.Inject;
 import org.springframework.web.bind.annotation.*;
-
-import javax.inject.Inject;
 
 @RestController
 @RequestMapping("/audit")
-@Api(value = "contact", tags = "IM 联系人审核")
+@Tag(name = "审核")
 public class AuditController {
     @Inject
     private ContactAssembler contactAssembler;
@@ -30,34 +46,30 @@ public class AuditController {
     private AuditService auditService;
 
 
+    @Operation(method = "申请列表")
     @GetMapping("friend-apply-list.json")
-    @ApiOperation("获取好友申请列表")
     public AuditWrapVO friendApplyList() throws BusinessException {
         AuditWrapBO friendAuditBO = this.auditService.friendApplyList();
         return this.contactAssembler.toAuditVoList(friendAuditBO);
     }
 
     @GetMapping("qun-member-apply-list.json")
-    @ApiOperation("群成员申请列表")
     public AuditWrapVO qunMemberApplyList() throws BusinessException {
         AuditWrapBO friendAuditBO = this.auditService.qunMemberApplyList();
         return this.contactAssembler.toAuditVoList(friendAuditBO);
     }
 
     @PostMapping("apply-friend.json")
-    @ApiOperation("申请好友")
     public Long applyFriend(@RequestBody FriendApplyParam friendApplyParam) throws BusinessException {
         return this.auditService.applyFriend(friendApplyParam);
     }
 
     @PostMapping("/audit-friend-apply.json")
-    @ApiOperation("对好友申请进行审核")
     public void auditFriendApply(@RequestBody FriendAuditParam friendAuditParam) throws Throwable {
         this.auditService.auditFriendApply(friendAuditParam);
     }
 
     @PostMapping("audit-qun-apply.json")
-    @ApiOperation("对加群进行审核")
     public void auditQunApply(@RequestBody QunAuditParam qunAuditParam) throws Throwable {
         this.auditService.auditQunApply(qunAuditParam);
     }
@@ -70,7 +82,6 @@ public class AuditController {
      * @param joinQunParam
      * @throws BusinessException
      */
-    @ApiOperation("加群")
     @PostMapping("join-qun.json")
     public void applyJoinQun(@RequestBody JoinQunParam joinQunParam) throws BusinessException {
         LoginUser loginUser = SessionContext.getLoginUser();

@@ -9,15 +9,7 @@
         <relativePath/>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
-    <version>1.0.0-SNAPSHOT</version>
-    <groupId>com.sparrowzoo.chat</groupId>
     <artifactId>contact-dao-sparrow</artifactId>
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <druid.version>1.1.10</druid.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -28,20 +20,6 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-
-        <!--为防止EmbeddedDatabaseType class not found-->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.sparrowzoo</groupId>
             <artifactId>sparrow-orm</artifactId>
         </dependency>
@@ -50,22 +28,12 @@
             <artifactId>sparrow-container</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.sparrowzoo</groupId>
-            <artifactId>sparrow-loader</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sparrowzoo</groupId>
-            <artifactId>sparrow-json</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>contact-dao-api</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>contact-protocol</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

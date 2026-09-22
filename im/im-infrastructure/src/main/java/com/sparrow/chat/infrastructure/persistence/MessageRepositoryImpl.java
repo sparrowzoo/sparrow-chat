@@ -1,7 +1,25 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package com.sparrow.chat.infrastructure.persistence;
 
 import com.alibaba.fastjson.JSON;
 import com.sparrow.authenticator.enums.AuthenticatorError;
+import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.dao.sparrow.MessageDao;
 import com.sparrow.chat.dao.sparrow.query.session.MessageDBQuery;
 import com.sparrow.chat.domain.bo.ChatUser;
@@ -15,7 +33,6 @@ import com.sparrow.chat.infrastructure.commons.RedisKey;
 import com.sparrow.chat.infrastructure.converter.MessageConverter;
 import com.sparrow.chat.protocol.dto.HistoryMessageWrap;
 import com.sparrow.chat.protocol.dto.MessageDTO;
-import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
 import com.sparrow.chat.protocol.query.MessageQuery;
@@ -27,13 +44,13 @@ import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.constant.SparrowError;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
+import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 

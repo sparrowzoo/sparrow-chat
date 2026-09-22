@@ -1,10 +1,27 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package com.sparrow.chat.domain.netty;
 
 import com.sparrow.chat.domain.bo.ChatSession;
 import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.protocol.LoginUser;
-import com.sparrow.spring.starter.SpringContext;
+import com.sparrow.spring.container.SpringContext;
 import io.netty.channel.Channel;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
@@ -29,7 +46,6 @@ public class UserContainer {
     public static final AttributeKey<Long> LAST_STATUS_MONITOR_TIME = AttributeKey.newInstance("lastMonitorTime");
 
 
-
     private UserContainer() {
     }
 
@@ -39,7 +55,7 @@ public class UserContainer {
         return userContainer;
     }
 
-    private static final Map<String, Channel> channelMap = new ConcurrentHashMap<String, Channel>();
+    private static final Map<String, Channel> CHANNEL_MAP = new ConcurrentHashMap<String, Channel>();
 
     public void refreshLastActiveTime(Channel channel) {
         channel.attr(LAST_ACTIVE_TIME).set(System.currentTimeMillis());
@@ -50,17 +66,17 @@ public class UserContainer {
     }
 
     public long getLastMonitorStatusTime(Channel channel) {
-        Long lastMonitorTime= channel.attr(LAST_STATUS_MONITOR_TIME).get();
-        if(lastMonitorTime == null){
+        Long lastMonitorTime = channel.attr(LAST_STATUS_MONITOR_TIME).get();
+        if (lastMonitorTime == null) {
             return 0L;
         }
         return lastMonitorTime;
     }
 
     public long getLastActiveTime(ChatUser chatUser) {
-        Channel channel = channelMap.get(chatUser.key());
-        Long lastActiveTime= channel.attr(LAST_ACTIVE_TIME).get();
-        if(lastActiveTime == null){
+        Channel channel = CHANNEL_MAP.get(chatUser.key());
+        Long lastActiveTime = channel.attr(LAST_ACTIVE_TIME).get();
+        if (lastActiveTime == null) {
             return 0L;
         }
         return lastActiveTime;
@@ -79,26 +95,29 @@ public class UserContainer {
 
     public void online(Channel channel, LoginUser loginUser) {
         ChatUser chatUser = ChatUser.longUserId(loginUser.getUserId(), loginUser.getCategory());
-        Channel oldChannel = channelMap.get(chatUser.key());
+        Channel oldChannel = CHANNEL_MAP.get(chatUser.key());
         if (oldChannel != null) {
             oldChannel.close();
         }
-        channelMap.put(chatUser.key(), channel);
+        CHANNEL_MAP.put(chatUser.key(), channel);
         channel.attr(USER_ID_KEY).set(chatUser.key());
     }
 
     public Channel getChannel(ChatUser chatUser) {
-        return channelMap.get(chatUser.key());
+        return CHANNEL_MAP.get(chatUser.key());
     }
 
     public Boolean online(ChatUser chatUser) {
         String key = chatUser.key();
-        return channelMap.containsKey(key) && channelMap.get(key) != null;
+        return CHANNEL_MAP.containsKey(key) && CHANNEL_MAP.get(key) != null;
     }
 
     public Channel offline(Channel channel) {
         Attribute<String> userId = channel.attr(USER_ID_KEY);
-        return channelMap.remove(userId.get());
+        if (userId != null) {
+            return CHANNEL_MAP.remove(userId.get());
+        }
+        return null;
     }
 
     public List<Channel> getChannels(ChatSession chatSession, ChatUser currentUser) {
@@ -130,6 +149,6 @@ public class UserContainer {
 
 
     public Map<String, Channel> getChannelMap() {
-        return channelMap;
+        return CHANNEL_MAP;
     }
 }

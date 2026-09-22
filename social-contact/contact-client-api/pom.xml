@@ -9,19 +9,11 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.sparrowzoo.chat</groupId>
     <artifactId>contact-client-api</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>contact-protocol</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

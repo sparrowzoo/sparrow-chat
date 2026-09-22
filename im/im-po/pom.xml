@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>im-po</artifactId>
-
     <dependencies>
         <dependency>
             <groupId>com.sparrowzoo</groupId>

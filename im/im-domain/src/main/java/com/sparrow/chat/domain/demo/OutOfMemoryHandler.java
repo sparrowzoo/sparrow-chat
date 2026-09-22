@@ -1,3 +1,20 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package com.sparrow.chat.domain.demo;
 
 import io.netty.buffer.ByteBuf;
@@ -66,12 +83,12 @@ public class OutOfMemoryHandler extends ChannelInboundHandlerAdapter {
             ByteBuf byteBuf = binaryWebSocketFrame.content();
             /**
              * java.lang.UnsupportedOperationException: null
-             * 	at io.netty.buffer.CompositeByteBuf.array(CompositeByteBuf.java:784)
-             * 	at com.sparrow.chat.domain.netty.WebSocketFrameHandler.unsafeDuplicate(WebSocketFrameHandler.java:90)
-             * 	at com.sparrow.chat.domain.netty.WebSocketFrameHandler.writeAndFlush(WebSocketFrameHandler.java:145)
-             * 	at com.sparrow.chat.domain.netty.WebSocketFrameHandler.channelRead0(WebSocketFrameHandler.java:79)
-             * 	at com.sparrow.chat.domain.netty.WebSocketFrameHandler.channelRead0(WebSocketFrameHandler.java:38)
-             * 	可能会报错
+             *     at io.netty.buffer.CompositeByteBuf.array(CompositeByteBuf.java:784)
+             *     at com.sparrow.chat.domain.netty.WebSocketFrameHandler.unsafeDuplicate(WebSocketFrameHandler.java:90)
+             *     at com.sparrow.chat.domain.netty.WebSocketFrameHandler.writeAndFlush(WebSocketFrameHandler.java:145)
+             *     at com.sparrow.chat.domain.netty.WebSocketFrameHandler.channelRead0(WebSocketFrameHandler.java:79)
+             *     at com.sparrow.chat.domain.netty.WebSocketFrameHandler.channelRead0(WebSocketFrameHandler.java:38)
+             *     可能会报错
              */
             byte[] bytes = byteBuf.array();
             String content1 = ByteBufUtil.hexDump(bytes, 0, 256);
@@ -83,7 +100,7 @@ public class OutOfMemoryHandler extends ChannelInboundHandlerAdapter {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    ByteBuf resp = allocator.heapBuffer(body.length,1024*1024);
+                    ByteBuf resp = allocator.heapBuffer(body.length, 1024 * 1024);
                     resp.writeBytes(body);
                     ctx.writeAndFlush(resp);
                 }

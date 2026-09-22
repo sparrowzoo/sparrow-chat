@@ -16,29 +16,16 @@
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-        </dependency>
 
         <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>contact-infrastructure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sparrowzoo</groupId>
-            <artifactId>sparrow-json</artifactId>
         </dependency>
         <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
