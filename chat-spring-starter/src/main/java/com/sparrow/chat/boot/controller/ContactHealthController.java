@@ -96,7 +96,7 @@ public class ContactHealthController {
 
         for (String userId : userChannel.keySet()) {
             Map<DeviceType, ClientConnection> clientConnectionMap = userChannel.get(userId);
-            status.computeIfAbsent(userId, _ -> new HashMap<>());
+            status.computeIfAbsent(userId, ignored -> new HashMap<>());
             for (DeviceType deviceType : clientConnectionMap.keySet()) {
                 ClientConnection connection = userChannel.get(userId).get(deviceType);
                 status.get(userId).put(deviceType, connection.loginUser().getHost());
