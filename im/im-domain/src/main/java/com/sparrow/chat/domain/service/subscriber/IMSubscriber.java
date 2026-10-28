@@ -28,7 +28,7 @@ import com.sparrow.messaging.protocol.MessageType;
 import com.sparrow.messaging.protocol.Protocol;
 import com.sparrow.messaging.protocol.ProtocolType;
 import com.sparrow.messaging.protocol.enums.DefaultProtocolType;
-import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.enums.DefaultUserCategory;
 import com.sparrow.protocol.enums.DeviceType;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -88,7 +88,7 @@ public class IMSubscriber extends AbstractSpringTypedSubscriber<Protocol> {
             if (userId.equals(protocol.getSender().getLongUserId())) {
                 continue;
             }
-            ChatUser receiver = ChatUser.longUserId(userId, LoginUser.CATEGORY_REGISTER);
+            ChatUser receiver = ChatUser.longUserId(userId, DefaultUserCategory.REGISTER.getIdentity());
             sendMessage(receiver, encoded, connectionRegistry.findConnections(receiver));
         }
     }

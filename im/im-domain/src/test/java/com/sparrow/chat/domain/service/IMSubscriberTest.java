@@ -28,7 +28,7 @@ import com.sparrow.messaging.protocol.ChatUser;
 import com.sparrow.messaging.protocol.Protocol;
 import com.sparrow.messaging.protocol.enums.ChatType;
 import com.sparrow.messaging.protocol.enums.DefaultProtocolType;
-import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.enums.DefaultUserCategory;
 import com.sparrow.protocol.enums.DeviceType;
 import org.junit.Before;
 import org.junit.Test;
@@ -168,7 +168,7 @@ public class IMSubscriberTest {
     private List<Protocol> connect(long id, DeviceType device, boolean fail) {
         DefaultLoginUser user = new DefaultLoginUser();
         user.setUserId(id);
-        user.setCategory(LoginUser.CATEGORY_REGISTER);
+        user.setCategory(DefaultUserCategory.REGISTER.getIdentity());
         user.setDeviceType(device);
         List<Protocol> frames = new ArrayList<>();
         ClientConnection connection = (ClientConnection) Proxy.newProxyInstance(
@@ -199,8 +199,8 @@ public class IMSubscriberTest {
         protocol.setProtocolType(DefaultProtocolType.IM);
         protocol.setChatType(ChatType.ONE_2_ONE);
         protocol.setDevice(DeviceType.PC);
-        protocol.setSender(ChatUser.longUserId(1L, LoginUser.CATEGORY_REGISTER));
-        protocol.setReceiver(ChatUser.longUserId(receiver, LoginUser.CATEGORY_REGISTER));
+        protocol.setSender(ChatUser.longUserId(1L, DefaultUserCategory.REGISTER.getIdentity()));
+        protocol.setReceiver(ChatUser.longUserId(receiver, DefaultUserCategory.REGISTER.getIdentity()));
         protocol.setPayload("hello");
         protocol.setClientSendTime(123L);
         return protocol;

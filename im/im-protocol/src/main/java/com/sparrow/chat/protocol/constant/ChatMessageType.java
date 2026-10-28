@@ -34,7 +34,8 @@ import com.sparrow.messaging.protocol.MessageType;
  */
 public enum ChatMessageType implements MessageType {
     TEXT(0),
-    HTML(1);
+    HTML(1),
+    MARKDOWN(2);
 
     ChatMessageType(Integer id) {
         this.id = id;

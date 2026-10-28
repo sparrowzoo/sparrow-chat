@@ -37,6 +37,7 @@ import com.sparrow.messaging.protocol.ChatUser;
 import com.sparrow.messaging.protocol.Protocol;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.enums.DefaultUserCategory;
 import com.sparrow.protocol.constant.SparrowError;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
@@ -69,7 +70,7 @@ public class ChatService {
             Map<Long, Long> users = this.contactsRepository.getFriendsByUserId(userId);
             userQueries = new ArrayList<>();
             for (Long friendId : users.keySet()) {
-                userQueries.add(new ChatUserQuery(friendId.toString(), LoginUser.CATEGORY_REGISTER));
+                userQueries.add(new ChatUserQuery(friendId.toString(), DefaultUserCategory.REGISTER.getIdentity()));
             }
         }
 

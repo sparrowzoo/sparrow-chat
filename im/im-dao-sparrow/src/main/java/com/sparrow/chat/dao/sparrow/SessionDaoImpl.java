@@ -20,7 +20,7 @@ package com.sparrow.chat.dao.sparrow;
 import com.sparrow.chat.im.po.Session;
 import com.sparrow.orm.query.*;
 import com.sparrow.orm.template.impl.ORMStrategy;
-import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.enums.DefaultUserCategory;
 import com.sparrow.protocol.enums.StatusRecord;
 import jakarta.inject.Named;
 import org.slf4j.Logger;
@@ -47,8 +47,8 @@ public class SessionDaoImpl extends ORMStrategy<Session, Long> implements Sessio
         searchCriteria.setWhere(
                 BooleanCriteria.criteria(Criteria.field(Session::getUserId).equal(Long.parseLong(userId)))
                         .and(Criteria.field(Session::getStatus).equal(StatusRecord.ENABLE)));
-        if (category == LoginUser.CATEGORY_VISITOR) {
-            searchCriteria.getWhere().and(Criteria.field(Session::getCategory).equal(LoginUser.CATEGORY_VISITOR));
+        if (category == DefaultUserCategory.VISITOR.getIdentity()) {
+            searchCriteria.getWhere().and(Criteria.field(Session::getCategory).equal(DefaultUserCategory.VISITOR.getIdentity()));
         }
         searchCriteria.addOrderCriteria(OrderCriteria.desc(Session::getLastReadTime));
         return this.getList(searchCriteria);
@@ -60,8 +60,8 @@ public class SessionDaoImpl extends ORMStrategy<Session, Long> implements Sessio
         BooleanCriteria criteria =
                 BooleanCriteria.criteria(Criteria.field(Session::getUserId).equal(Long.parseLong(userId)))
                         .and(Criteria.field(Session::getSessionKey).equal(sessionKey));
-        if (category == LoginUser.CATEGORY_VISITOR) {
-            criteria.and(Criteria.field(Session::getCategory).equal(LoginUser.CATEGORY_VISITOR));
+        if (category == DefaultUserCategory.VISITOR.getIdentity()) {
+            criteria.and(Criteria.field(Session::getCategory).equal(DefaultUserCategory.VISITOR.getIdentity()));
         }
         searchCriteria.setWhere(criteria);
         Long count = this.getCount(searchCriteria);
@@ -78,8 +78,8 @@ public class SessionDaoImpl extends ORMStrategy<Session, Long> implements Sessio
         updateCriteria.setWhere(
                 BooleanCriteria.criteria(Criteria.field(Session::getUserId).equal(Long.parseLong(userId)))
                         .and(Criteria.field(Session::getSessionKey).equal(sessionKey)));
-        if (category == LoginUser.CATEGORY_VISITOR) {
-            updateCriteria.getWhere().and(Criteria.field(Session::getCategory).equal(LoginUser.CATEGORY_VISITOR));
+        if (category == DefaultUserCategory.VISITOR.getIdentity()) {
+            updateCriteria.getWhere().and(Criteria.field(Session::getCategory).equal(DefaultUserCategory.VISITOR.getIdentity()));
         }
         this.update(updateCriteria);
         return true;

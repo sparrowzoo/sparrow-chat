@@ -27,7 +27,7 @@ import com.sparrow.chat.protocol.dto.SessionMetaDTO;
 import com.sparrow.chat.protocol.query.SessionQuery;
 import com.sparrow.protocol.Pair;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
-import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.enums.DefaultUserCategory;
 import com.sparrow.protocol.enums.StatusRecord;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
@@ -104,7 +104,7 @@ public class SessionConverter {
             sessionMeta.setUserNickName(firstUserProfile.getNickName());
         } else {
             sessionMeta.setUserId(0L);
-            sessionMeta.setUserCategory(LoginUser.CATEGORY_VISITOR);
+            sessionMeta.setUserCategory(DefaultUserCategory.VISITOR.getIdentity());
             sessionMeta.setUserName("访客");
             sessionMeta.setUserNickName("访客");
         }
@@ -115,7 +115,7 @@ public class SessionConverter {
             sessionMeta.setOppositeNickName(secondUserProfile.getNickName());
         } else {
             sessionMeta.setOppositeId(0L);
-            sessionMeta.setOppositeCategory(LoginUser.CATEGORY_VISITOR);
+            sessionMeta.setOppositeCategory(DefaultUserCategory.VISITOR.getIdentity());
             sessionMeta.setOppositeName("访客");
             sessionMeta.setOppositeNickName("访客");
         }

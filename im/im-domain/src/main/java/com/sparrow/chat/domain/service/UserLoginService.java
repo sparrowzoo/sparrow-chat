@@ -22,6 +22,7 @@ import com.sparrow.authenticator.Authenticator;
 import com.sparrow.authenticator.DefaultLoginUser;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.enums.DefaultUserCategory;
 import com.sparrow.protocol.enums.DeviceType;
 import com.sparrow.servlet.ServletContainer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class UserLoginService {
         DefaultLoginUser loginUser = new DefaultLoginUser();
         loginUser.setUserId(userId);
         loginUser.setUserName("张" + userId);
-        loginUser.setCategory(LoginUser.CATEGORY_REGISTER);
+        loginUser.setCategory(DefaultUserCategory.REGISTER.getIdentity());
         loginUser.setNickName(loginUser.getUserName());
         loginUser.setAvatar("");
         loginUser.setDeviceType(DeviceType.PC);

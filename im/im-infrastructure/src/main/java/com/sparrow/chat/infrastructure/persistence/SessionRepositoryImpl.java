@@ -33,6 +33,7 @@ import com.sparrow.messaging.protocol.ChatSession;
 import com.sparrow.messaging.protocol.ChatUser;
 import com.sparrow.messaging.protocol.enums.ChatType;
 import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.enums.DefaultUserCategory;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import com.sparrow.utility.CollectionsUtility;
@@ -80,7 +81,7 @@ public class SessionRepositoryImpl implements SessionRepository {
         }
         List<Long> userIdList = this.qunRepository.getUserIdList(session.getId());
         for (Long userId : userIdList) {
-            addNewSessionForUserId(session, ChatUser.longUserId(userId, LoginUser.CATEGORY_REGISTER));
+            addNewSessionForUserId(session, ChatUser.longUserId(userId, DefaultUserCategory.REGISTER.getIdentity()));
         }
     }
 
