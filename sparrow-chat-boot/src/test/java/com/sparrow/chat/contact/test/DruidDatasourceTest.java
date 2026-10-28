@@ -2,7 +2,7 @@ package com.sparrow.chat.contact.test;
 
 import com.sparrow.chat.boot.ApplicationBoot;
 import com.sparrow.chat.contact.service.SecretService;
-import com.sparrow.spring.starter.test.SparrowTestExecutionListener;
+import com.sparrow.spring.test.SparrowTestExecutionListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

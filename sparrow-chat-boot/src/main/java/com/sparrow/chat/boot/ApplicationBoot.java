@@ -18,11 +18,14 @@ limitations under the License.
 package com.sparrow.chat.boot;
 
 import com.sparrow.chat.boot.config.EnableChatApp;
-import com.sparrow.chat.domain.netty.WebSocketServer;
+import com.sparrow.chat.domain.service.MessageService;
+import com.sparrow.chat.infrastructure.mq.ContactMQPublisher;
 import com.sparrow.container.Container;
 import com.sparrow.container.ContainerBuilder;
 import com.sparrow.core.spi.ApplicationContext;
 import com.sparrow.file.config.EnableFileApp;
+import com.sparrow.messaging.infrastructure.service.netty.WebSocketServer;
+import com.sparrow.messaging.starter.EnableMessage;
 import com.sparrow.passport.config.EnablePassport;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -36,6 +39,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 @EnablePassport
 @EnableFileApp
 @EnableChatApp
+@EnableMessage
 @Slf4j
 public class ApplicationBoot {
     public static void main(String[] args) {
@@ -57,8 +61,8 @@ public class ApplicationBoot {
         springApplication.addListeners(new ApplicationListener<ContextRefreshedEvent>() {
             @Override
             public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-//                contextRefreshedEvent.getApplicationContext().getBean(ContactMQPublisher.class).start();
-//                contextRefreshedEvent.getApplicationContext().getBean(MessageService.class).startSyncSessionMeta();
+                contextRefreshedEvent.getApplicationContext().getBean(ContactMQPublisher.class).start();
+                contextRefreshedEvent.getApplicationContext().getBean(MessageService.class).startSyncSessionMeta();
                 log.info("application startup at {}", contextRefreshedEvent.getTimestamp());
                 try {
                     log.info("start web socket server");

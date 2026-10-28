@@ -28,5 +28,10 @@
             <groupId>com.sparrowzoo</groupId>
             <artifactId>authenticator-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.sparrowzoo.messaging</groupId>
+            <artifactId>messaging-starter</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>

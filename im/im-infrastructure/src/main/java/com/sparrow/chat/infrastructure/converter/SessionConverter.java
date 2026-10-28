@@ -18,14 +18,14 @@ limitations under the License.
 package com.sparrow.chat.infrastructure.converter;
 
 import com.sparrow.chat.dao.sparrow.query.session.SessionDBQuery;
-import com.sparrow.chat.domain.bo.ChatSession;
-import com.sparrow.chat.domain.bo.ChatUser;
+import com.sparrow.messaging.protocol.ChatSession;
+import com.sparrow.messaging.protocol.ChatUser;
 import com.sparrow.chat.im.po.Session;
 import com.sparrow.chat.im.po.SessionMeta;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.dto.SessionMetaDTO;
 import com.sparrow.chat.protocol.query.SessionQuery;
-import com.sparrow.core.Pair;
+import com.sparrow.protocol.Pair;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.enums.StatusRecord;

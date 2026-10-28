@@ -8,7 +8,7 @@ import com.sparrow.chat.contact.protocol.qun.QunModifyParam;
 import com.sparrow.chat.contact.service.QunService;
 import com.sparrow.context.SessionContext;
 import com.sparrow.protocol.BusinessException;
-import com.sparrow.spring.starter.test.SparrowTestExecutionListener;
+import com.sparrow.spring.test.SparrowTestExecutionListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +16,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ApplicationBoot.class})

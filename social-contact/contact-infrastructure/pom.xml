@@ -11,6 +11,11 @@
     <artifactId>contact-infrastructure</artifactId>
     <dependencies>
         <dependency>
+            <groupId>com.sparrowzoo.messaging</groupId>
+            <artifactId>messaging-starter</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>com.sparrowzoo.chat</groupId>
             <artifactId>contact-dao-api</artifactId>
         </dependency>

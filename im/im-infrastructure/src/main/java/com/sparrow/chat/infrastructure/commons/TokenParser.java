@@ -20,7 +20,7 @@ package com.sparrow.chat.infrastructure.commons;
 import com.sparrow.authenticator.DefaultLoginUser;
 import com.sparrow.authenticator.enums.AuthenticatorError;
 import com.sparrow.core.spi.JsonFactory;
-import com.sparrow.enums.HttpMethod;
+import com.sparrow.protocol.enums.HttpMethod;
 import com.sparrow.json.Json;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;

@@ -18,7 +18,7 @@ limitations under the License.
 package com.sparrow.chat.protocol.dto;
 
 import com.sparrow.chat.contact.protocol.dto.QunDTO;
-import com.sparrow.chat.protocol.constant.Chat;
+import com.sparrow.messaging.protocol.enums.ChatType;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import lombok.Data;
 
@@ -36,7 +36,7 @@ public class HistoryMessageWrap {
     public Set<String> qunIds() {
         Set<String> keys = new HashSet<>();
         for (MessageDTO messageDTO : this.historyMessages) {
-            if (messageDTO.getChatType() == Chat.CHAT_TYPE_1_2_N) {
+            if (ChatType.isGroup(messageDTO.getChatType())) {
                 keys.add(messageDTO.getSessionKey());
             }
         }

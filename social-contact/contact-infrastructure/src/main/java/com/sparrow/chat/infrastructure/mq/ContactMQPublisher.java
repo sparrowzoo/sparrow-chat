@@ -22,29 +22,26 @@ import com.sparrow.chat.contact.protocol.event.QunMemberEvent;
 import com.sparrow.chat.contact.repository.QunRepository;
 import com.sparrow.concurrent.SparrowThreadFactory;
 import com.sparrow.core.spi.JsonFactory;
-import com.sparrow.mq.EventHandlerMappingContainer;
-import com.sparrow.mq.MQEvent;
-import com.sparrow.mq.MQPublisher;
+import com.sparrow.messaging.domain.service.pub.sub.mapping.PubSubMappingContainer;
+import com.sparrow.messaging.protocol.Event;
+import com.sparrow.messaging.protocol.api.Publisher;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.SmartInitializingSingleton;
 
 import java.util.List;
 import java.util.concurrent.*;
 
 @Named
 @Slf4j
-public class ContactMQPublisher implements MQPublisher, InitializingBean {
+public class ContactMQPublisher implements Publisher, SmartInitializingSingleton {
     @Inject
     private QunRepository qunRepository;
-
-    private ExecutorService qunMemberSyncExecutorService;
-
+    private ExecutorService executorService;
     private ScheduledExecutorService scheduledExecutorService;
-
     @Inject
-    private EventHandlerMappingContainer queueHandlerMappingContainer;
+    private PubSubMappingContainer pubSubMappingContainer;
 
     /**
      * 可以考虑发事务消息
@@ -52,22 +49,14 @@ public class ContactMQPublisher implements MQPublisher, InitializingBean {
      * @param event
      */
     @Override
-    public void publish(MQEvent event) {
-        qunMemberSyncExecutorService.execute(() -> {
+    public void publish(Event event) {
+        executorService.execute(() -> {
             try {
-                queueHandlerMappingContainer.get(event.getClass().getName()).handle(event);
+                pubSubMappingContainer.get(event.getClass().getName()).subscribe(event);
             } catch (Throwable e) {
                 log.error("qun member sync error {}", JsonFactory.getProvider().toString(event), e);
             }
         });
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.qunMemberSyncExecutorService = new ThreadPoolExecutor(1, 1, 10, TimeUnit.MINUTES, new ArrayBlockingQueue<>(128), new SparrowThreadFactory.Builder().daemon(true).namingPattern("qun-sync-thread-%d").build(), new ThreadPoolExecutor.DiscardOldestPolicy());
-        this.scheduledExecutorService = new ScheduledThreadPoolExecutor(1,
-                new SparrowThreadFactory.Builder().namingPattern("qun-member-all-sync-%d").daemon(true).build());
-
     }
 
     public void start() {
@@ -84,5 +73,13 @@ public class ContactMQPublisher implements MQPublisher, InitializingBean {
                 }
             }
         }, 0, 5, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public void afterSingletonsInstantiated() {
+        this.executorService = new ThreadPoolExecutor(1, 1, 10, TimeUnit.MINUTES, new ArrayBlockingQueue<>(128), new SparrowThreadFactory.Builder().daemon(true).namingPattern("qun-sync-thread-%d").build(), new ThreadPoolExecutor.DiscardOldestPolicy());
+        this.scheduledExecutorService = new ScheduledThreadPoolExecutor(1,
+                new SparrowThreadFactory.Builder().namingPattern("qun-member-all-sync-%d").daemon(true).build());
+
     }
 }

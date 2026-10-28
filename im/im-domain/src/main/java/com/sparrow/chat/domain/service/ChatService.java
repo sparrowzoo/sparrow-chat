@@ -19,13 +19,9 @@ package com.sparrow.chat.domain.service;
 
 import com.sparrow.authenticator.AuthenticatorConfigReader;
 import com.sparrow.authenticator.enums.AuthenticatorError;
-import com.sparrow.chat.domain.bo.CancelProtocol;
-import com.sparrow.chat.domain.bo.ChatSession;
-import com.sparrow.chat.domain.bo.ChatUser;
-import com.sparrow.chat.domain.bo.Protocol;
-import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.repository.*;
 import com.sparrow.chat.protocol.dto.*;
+import com.sparrow.chat.protocol.im.CancelProtocol;
 import com.sparrow.chat.protocol.params.SessionReadParams;
 import com.sparrow.chat.protocol.query.ChatUserQuery;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
@@ -34,6 +30,11 @@ import com.sparrow.chat.protocol.query.SessionQuery;
 import com.sparrow.context.SessionContext;
 import com.sparrow.core.spi.ApplicationContext;
 import com.sparrow.exception.Asserts;
+import com.sparrow.messaging.domain.service.ClientConnection;
+import com.sparrow.messaging.domain.service.ConnectionRegistry;
+import com.sparrow.messaging.protocol.ChatSession;
+import com.sparrow.messaging.protocol.ChatUser;
+import com.sparrow.messaging.protocol.Protocol;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.protocol.constant.SparrowError;
@@ -59,6 +60,8 @@ public class ChatService {
     private QunRepository qunRepository;
     @Inject
     private SessionMateRepository sessionMateRepository;
+    @Inject
+    private ConnectionRegistry connectionRegistry;
 
 
     public List<ContactStatusDTO> getContactsStatus(Long userId, List<ChatUserQuery> userQueries) {
@@ -71,25 +74,24 @@ public class ChatService {
         }
 
         List<ContactStatusDTO> contacts = new ArrayList<>();
-        UserContainer userContainer = UserContainer.getContainer();
         for (ChatUserQuery userQuery : userQueries) {
-            boolean online = UserContainer.getContainer().online(ChatUser.convertFromQuery(userQuery));
-            if (!online) {
+            ClientConnection connection = this.connectionRegistry.getRecentlyConnection(userQuery.toChatUser());
+            if (connection == null) {
                 continue;
             }
             ContactStatusDTO contactStatus = new ContactStatusDTO();
             contactStatus.setOnline(true);
             contactStatus.setId(userQuery.getId());
             contactStatus.setCategory(userQuery.getCategory());
-            contactStatus.setLastActiveTime(userContainer.getLastActiveTime(ChatUser.convertFromQuery(userQuery)));
+            contactStatus.setLastActiveTime(connection.getLastAccessTime());
             contacts.add(contactStatus);
         }
         return contacts;
     }
 
-    public void saveMessage(Protocol protocol, Long ip) {
+    public void saveMessage(Protocol protocol) {
         //将消息保存至session 每个消息只存留一份，只保留最近100条
-        this.messageRepository.saveMessage(protocol, ip);
+        this.messageRepository.saveMessage(protocol);
         this.sessionRepository.saveSession(protocol.getChatSession(), protocol.getSender());
     }
 
@@ -105,7 +107,7 @@ public class ChatService {
         CancelProtocol cancelProtocol = new CancelProtocol(messageCancel.getSessionKey(), messageCancel.getClientSendTime());
         //将会话的消息移除
         this.messageRepository.cancel(messageCancel, sender);
-        List<Channel> channels = UserContainer.getContainer().getChannels(chatSession, sender);
+        List<Channel> channels = null; //UserContainer.getContainer().getChannels(chatSession, sender);
         for (Channel channel : channels) {
             if (channel == null || !channel.isOpen() || !channel.isActive()) {
                 continue;

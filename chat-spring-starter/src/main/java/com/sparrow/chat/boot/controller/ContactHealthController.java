@@ -17,17 +17,17 @@ limitations under the License.
 
 package com.sparrow.chat.boot.controller;
 
-import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.datasource.DataSourceValidChecker;
+import com.sparrow.messaging.domain.service.ClientConnection;
+import com.sparrow.messaging.domain.service.ConnectionRegistry;
 import com.sparrow.passport.api.UserProfileAppService;
-import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
+import com.sparrow.protocol.enums.DeviceType;
 import com.sparrow.spring.config.SparrowConfig;
 import com.sparrow.spring.filter.monitor.Monitor;
 import com.sparrow.spring.filter.monitor.MonitorResult;
 import com.sparrow.support.checker.ConnectionValidCheckerAdapter;
 import com.sparrow.utility.StringUtility;
-import io.netty.channel.Channel;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +40,6 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -57,6 +55,9 @@ public class ContactHealthController {
     private UserProfileAppService userProfileAppService;
     @Autowired
     private SparrowConfig config;
+
+    @Autowired
+    private ConnectionRegistry connectionRegistry;
 
     @GetMapping("/")
     public void index(HttpServletResponse response) throws IOException {
@@ -89,18 +90,18 @@ public class ContactHealthController {
         return monitorResult;
     }
 
-    private Map<String, String> getOnlineUserChannel() throws BusinessException {
-        UserContainer userContainer = UserContainer.getContainer();
-        Map<String, Channel> userChannel = userContainer.getChannelMap();
-        Set<Long> userIds = userChannel.keySet().stream().map(Long::parseLong).collect(Collectors.toSet());
+    private Map<String, Map<DeviceType, String>> getOnlineUserChannel() throws BusinessException {
+        Map<String, Map<DeviceType, ClientConnection>> userChannel = this.connectionRegistry.getAll();
+        Map<String, Map<DeviceType, String>> status = new HashMap<>();
 
-        Map<String, String> onlineUserChannel = new HashMap<>();
-        Map<Long, UserProfileDTO> userProfileDTOMap = this.userProfileAppService.getUserMap(userIds);
-
-        for (String userId : userContainer.getChannelMap().keySet()) {
-            UserProfileDTO userProfileDTO = userProfileDTOMap.get(Long.parseLong(userId));
-            onlineUserChannel.put(userProfileDTO.getUserName(), userChannel.get(userId).toString());
+        for (String userId : userChannel.keySet()) {
+            Map<DeviceType, ClientConnection> clientConnectionMap = userChannel.get(userId);
+            status.computeIfAbsent(userId, _ -> new HashMap<>());
+            for (DeviceType deviceType : clientConnectionMap.keySet()) {
+                ClientConnection connection = userChannel.get(userId).get(deviceType);
+                status.get(userId).put(deviceType, connection.loginUser().getHost());
+            }
         }
-        return onlineUserChannel;
+        return status;
     }
 }

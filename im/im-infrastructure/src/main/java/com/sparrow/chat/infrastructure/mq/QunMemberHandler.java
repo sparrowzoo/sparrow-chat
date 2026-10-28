@@ -20,14 +20,14 @@ package com.sparrow.chat.infrastructure.mq;
 import com.sparrow.chat.contact.QunServiceApi;
 import com.sparrow.chat.contact.protocol.event.QunMemberEvent;
 import com.sparrow.chat.domain.repository.QunRepository;
-import com.sparrow.spring.mq.AbstractSpringMQHandler;
+import com.sparrow.messaging.infrastructure.service.spring.AbstractSpringSubscriber;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import java.util.List;
 
 @Named
-public class QunMemberHandler extends AbstractSpringMQHandler<QunMemberEvent> {
+public class QunMemberHandler extends AbstractSpringSubscriber<QunMemberEvent> {
     @Inject
     private QunServiceApi qunService;
 
@@ -35,7 +35,7 @@ public class QunMemberHandler extends AbstractSpringMQHandler<QunMemberEvent> {
     private QunRepository qunRepository;
 
     @Override
-    public void handle(QunMemberEvent qunMemberEvent) throws Throwable {
+    public void subscribe(QunMemberEvent qunMemberEvent) throws Throwable {
         List<Long> members = this.qunService.getMemberById(qunMemberEvent.getQunId());
         this.qunRepository.syncQunMember(qunMemberEvent.getQunId(), members);
     }

@@ -19,8 +19,6 @@ package com.sparrow.chat.infrastructure.persistence;
 
 import com.sparrow.chat.dao.sparrow.SessionDao;
 import com.sparrow.chat.dao.sparrow.SessionMetaDao;
-import com.sparrow.chat.domain.bo.ChatSession;
-import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.domain.repository.MessageRepository;
 import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.chat.domain.repository.SessionRepository;
@@ -31,6 +29,9 @@ import com.sparrow.chat.infrastructure.converter.SessionConverter;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.params.SessionReadParams;
 import com.sparrow.context.SessionContext;
+import com.sparrow.messaging.protocol.ChatSession;
+import com.sparrow.messaging.protocol.ChatUser;
+import com.sparrow.messaging.protocol.enums.ChatType;
 import com.sparrow.protocol.LoginUser;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
@@ -44,8 +45,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_1;
 
 @Component
 @Slf4j
@@ -74,7 +73,7 @@ public class SessionRepositoryImpl implements SessionRepository {
         this.addNewSessionForUserId(session, currentUser);
         this.read(new SessionReadParams(session.key()));
         //1 to 1 推送
-        if (session.getChatType() == CHAT_TYPE_1_2_1) {
+        if (ChatType.isOne2One(session.getChatType())) {
             ChatUser oppositeUser = session.getOppositeUser(currentUser);
             addNewSessionForUserId(session, oppositeUser);
             return;

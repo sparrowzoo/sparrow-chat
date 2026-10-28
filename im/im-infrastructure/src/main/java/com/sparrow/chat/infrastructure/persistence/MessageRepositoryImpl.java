@@ -22,9 +22,6 @@ import com.sparrow.authenticator.enums.AuthenticatorError;
 import com.sparrow.chat.contact.protocol.dto.QunDTO;
 import com.sparrow.chat.dao.sparrow.MessageDao;
 import com.sparrow.chat.dao.sparrow.query.session.MessageDBQuery;
-import com.sparrow.chat.domain.bo.ChatUser;
-import com.sparrow.chat.domain.bo.MessageKey;
-import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.domain.repository.MessageRepository;
 import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.chat.im.po.Message;
@@ -39,6 +36,9 @@ import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.core.spi.JsonFactory;
 import com.sparrow.exception.Asserts;
 import com.sparrow.json.Json;
+import com.sparrow.messaging.protocol.ChatUser;
+import com.sparrow.messaging.protocol.MessageUniqueIdentify;
+import com.sparrow.messaging.protocol.Protocol;
 import com.sparrow.passport.api.UserProfileAppService;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.constant.SparrowError;
@@ -80,7 +80,7 @@ public class MessageRepositoryImpl implements MessageRepository {
         Asserts.isTrue(sender == null, AuthenticatorError.USER_NOT_LOGIN);
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(messageCancel.getSessionKey());
         String redisKey = PlaceHolderParser.parse(RedisKey.SESSION_MESSAGE_KEY, propertyAccessor);
-        String msgKey = new MessageKey(sender, messageCancel.getClientSendTime()).key();
+        String msgKey = new MessageUniqueIdentify(sender, messageCancel.getClientSendTime()).key();
         String msg = (String) redisTemplate.opsForHash().get(redisKey, msgKey);
         MessageDTO message = this.json.parse(msg, MessageDTO.class);
         Asserts.isTrue(message == null, SparrowError.GLOBAL_REQUEST_ID_NOT_EXIST);
@@ -109,13 +109,13 @@ public class MessageRepositoryImpl implements MessageRepository {
     }
 
     @Override
-    public void saveMessage(Protocol protocol, Long ip) {
+    public void saveMessage(Protocol protocol) {
         MessageDTO message = this.messageConverter.convertMessage(protocol);
-        this.messageDao.insert(this.messageConverter.convertPo(protocol, ip));
+        this.messageDao.insert(this.messageConverter.convertPo(protocol));
         PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildBySessionKey(protocol.getChatSession().key());
         String messageKey = PlaceHolderParser.parse(RedisKey.SESSION_MESSAGE_KEY, propertyAccessor);
         String lkey = MESSAGE_ZSET_PRFIX + messageKey;
-        MessageKey msgKey = new MessageKey(protocol.getSender(), protocol.getClientSendTime());
+        MessageUniqueIdentify msgKey = new MessageUniqueIdentify(protocol.getSender(), protocol.getClientSendTime());
         redisTemplate.opsForZSet().add(lkey, msgKey.key(), System.currentTimeMillis());
         redisTemplate.opsForHash().put(messageKey, msgKey.key(), this.json.toString(message));
         if (redisTemplate.opsForHash().size(messageKey) > MAX_MSG_OF_SESSION) {

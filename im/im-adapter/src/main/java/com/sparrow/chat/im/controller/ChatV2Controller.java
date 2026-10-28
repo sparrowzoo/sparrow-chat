@@ -20,8 +20,6 @@ package com.sparrow.chat.im.controller;
 import com.sparrow.authenticator.Authenticator;
 import com.sparrow.authenticator.HostAuthenticationToken;
 import com.sparrow.authenticator.token.BearerToken;
-import com.sparrow.chat.domain.bo.ChatUser;
-import com.sparrow.chat.domain.netty.UserContainer;
 import com.sparrow.chat.domain.service.ChatService;
 import com.sparrow.chat.domain.service.MessageService;
 import com.sparrow.chat.domain.service.UserLoginService;
@@ -35,14 +33,18 @@ import com.sparrow.chat.protocol.query.MessageCancelQuery;
 import com.sparrow.chat.protocol.query.MessageQuery;
 import com.sparrow.chat.protocol.query.SessionQuery;
 import com.sparrow.context.SessionContext;
+import com.sparrow.messaging.domain.service.ClientConnection;
+import com.sparrow.messaging.domain.service.ConnectionRegistry;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.ClientInformation;
 import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.enums.DeviceType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/chat/v2")
@@ -59,6 +61,9 @@ public class ChatV2Controller {
 
     @Autowired
     private UserLoginService loginService;
+
+    @Autowired
+    private ConnectionRegistry connectionRegistry;
 
     @PostMapping("/parse-token.json")
     public LoginUser parseToken(String token) throws BusinessException {
@@ -84,8 +89,8 @@ public class ChatV2Controller {
     }
 
     @PostMapping("/is-online.json")
-    public Boolean online(ChatUserQuery chatUser) {
-        return UserContainer.getContainer().online(ChatUser.convertFromQuery(chatUser));
+    public Map<DeviceType, ClientConnection> online(ChatUserQuery chatUser) {
+        return this.connectionRegistry.findConnections(chatUser.toChatUser());
     }
 
 

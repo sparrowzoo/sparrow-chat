@@ -6,7 +6,7 @@ import com.sparrow.passport.domain.DomainRegistry;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.enums.StatusRecord;
-import com.sparrow.spring.starter.test.SparrowTestExecutionListener;
+import com.sparrow.spring.test.SparrowTestExecutionListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

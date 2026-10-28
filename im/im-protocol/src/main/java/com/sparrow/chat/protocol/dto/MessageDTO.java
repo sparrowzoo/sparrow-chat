@@ -27,7 +27,7 @@ public class MessageDTO implements POJO {
     private String sessionKey;
     private Integer chatType;
     /**
-     * 消息类型
+     * 业务消息类型 ID，参见 com.sparrow.chat.protocol.enums.MessageType。
      */
     private int messageType;
     /**
@@ -39,7 +39,7 @@ public class MessageDTO implements POJO {
      */
     private ChatUserQuery receiver;
     /**
-     * 消息内容
+     * 消息正文，可承载文本、HTML 或 JSON，由业务消息类型约定结构。
      */
     private String content;
     /**

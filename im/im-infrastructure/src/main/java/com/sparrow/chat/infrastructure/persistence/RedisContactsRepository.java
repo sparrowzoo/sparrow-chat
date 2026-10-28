@@ -22,6 +22,7 @@ import com.sparrow.chat.domain.repository.ContactRepository;
 import com.sparrow.chat.domain.repository.QunRepository;
 import com.sparrow.chat.infrastructure.commons.PropertyAccessBuilder;
 import com.sparrow.chat.infrastructure.commons.RedisKey;
+import com.sparrow.messaging.protocol.enums.ChatType;
 import com.sparrow.support.PlaceHolderParser;
 import com.sparrow.support.PropertyAccessor;
 import com.sparrow.utility.CollectionsUtility;
@@ -38,9 +39,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_1;
-import static com.sparrow.chat.protocol.constant.Chat.CHAT_TYPE_1_2_N;
-
 @Component
 public class RedisContactsRepository implements ContactRepository {
     private static Logger logger = LoggerFactory.getLogger(RedisContactsRepository.class);
@@ -49,11 +47,12 @@ public class RedisContactsRepository implements ContactRepository {
 
     @Inject
     private QunRepository qunRepository;
+
     public Boolean existQunByUserId(Long userId, String qunId) {
         if (qunId == null) {
             return false;
         }
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, CHAT_TYPE_1_2_N);
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, ChatType.GROUP.getIdentity().byteValue());
         String userQunKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         Double score = this.redisTemplate.opsForZSet().score(userQunKey, qunId);
         return score != null;
@@ -61,7 +60,7 @@ public class RedisContactsRepository implements ContactRepository {
 
     @Override
     public Map<String, QunDTO> getQunsByUserId(Long userId) {
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, CHAT_TYPE_1_2_N);
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, ChatType.GROUP.getIdentity().byteValue());
         String userQunKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         Set<String> qunIds = this.redisTemplate.opsForZSet().range(userQunKey, 0, Integer.MAX_VALUE);
         return this.qunRepository.getQunMap(qunIds);
@@ -69,7 +68,7 @@ public class RedisContactsRepository implements ContactRepository {
 
     @Override
     public Map<Long, Long> getFriendsByUserId(Long userId) {
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, CHAT_TYPE_1_2_1);
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, ChatType.ONE_2_ONE.getIdentity().byteValue());
         String user121ContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         //好友列表
         Set<ZSetOperations.TypedTuple<String>> users = this.redisTemplate.opsForZSet().rangeWithScores(user121ContactKey, 0, -1);
@@ -90,7 +89,7 @@ public class RedisContactsRepository implements ContactRepository {
 
     @Override
     public void addFriend(Long userId, Long friendId, Long addTime) {
-        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, CHAT_TYPE_1_2_1);
+        PropertyAccessor propertyAccessor = PropertyAccessBuilder.buildContacts(userId, ChatType.ONE_2_ONE.getIdentity().byteValue());
         String user121ContactKey = PlaceHolderParser.parse(RedisKey.USER_CONTACTS, propertyAccessor);
         this.redisTemplate.opsForZSet().add(user121ContactKey, friendId, addTime);
     }

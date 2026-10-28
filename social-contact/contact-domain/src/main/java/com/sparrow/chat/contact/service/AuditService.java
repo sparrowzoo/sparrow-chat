@@ -34,7 +34,7 @@ import com.sparrow.chat.contact.repository.ContactRepository;
 import com.sparrow.chat.contact.repository.QunRepository;
 import com.sparrow.context.SessionContext;
 import com.sparrow.exception.Asserts;
-import com.sparrow.mq.MQPublisher;
+import com.sparrow.messaging.domain.service.pub.sub.PublishStrategy;
 import com.sparrow.passport.api.UserProfileAppService;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
@@ -66,7 +66,7 @@ public class AuditService {
     private QunRepository qunRepository;
 
     @Inject
-    private MQPublisher mqPublisher;
+    private PublishStrategy publishStrategy;
 
     public Long applyFriend(FriendApplyParam friendApplyParam) throws BusinessException {
         Asserts.isTrue(StringUtility.isNullOrEmpty(friendApplyParam.getFriendSecretIdentify()), ContactError.APPLY_FRIEND_CANNOT_BE_NULL);
@@ -129,9 +129,8 @@ public class AuditService {
         this.auditRepository.auditFriend(auditBO, friendAuditParam);
         if (friendAuditParam.getAgree()) {
             this.contactRepository.addContact(auditBO);
-            this.mqPublisher.publish(new ContactEvent(loginUser.getUserId(), auditBO.getApplyUserId(), auditBO.getApplyTime()));
+            this.publishStrategy.publish(new ContactEvent(loginUser.getUserId(), auditBO.getApplyUserId(), auditBO.getApplyTime()));
         }
-
     }
 
     public void auditQunApply(QunAuditParam qunAuditParam) throws Throwable {
@@ -144,7 +143,7 @@ public class AuditService {
         this.auditRepository.auditQun(auditBO, qunAuditParam);
         if (qunAuditParam.getIsAgree()) {
             this.qunRepository.joinQun(auditBO);
-            this.mqPublisher.publish(new QunMemberEvent(existQun.getId(), auditBO.getApplyUserId()));
+            this.publishStrategy.publish(new QunMemberEvent(existQun.getId(), auditBO.getApplyUserId()));
         }
     }
 }

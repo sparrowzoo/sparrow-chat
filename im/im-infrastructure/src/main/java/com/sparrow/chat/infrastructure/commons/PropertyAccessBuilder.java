@@ -17,7 +17,7 @@ limitations under the License.
 
 package com.sparrow.chat.infrastructure.commons;
 
-import com.sparrow.chat.domain.bo.ChatUser;
+import com.sparrow.messaging.protocol.ChatUser;
 import com.sparrow.support.PropertyAccessor;
 
 public class PropertyAccessBuilder {

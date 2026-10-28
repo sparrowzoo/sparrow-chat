@@ -22,6 +22,7 @@ import com.sparrow.authenticator.Authenticator;
 import com.sparrow.authenticator.DefaultLoginUser;
 import com.sparrow.protocol.BusinessException;
 import com.sparrow.protocol.LoginUser;
+import com.sparrow.protocol.enums.DeviceType;
 import com.sparrow.servlet.ServletContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,6 +44,7 @@ public class UserLoginService {
         loginUser.setCategory(LoginUser.CATEGORY_REGISTER);
         loginUser.setNickName(loginUser.getUserName());
         loginUser.setAvatar("");
+        loginUser.setDeviceType(DeviceType.PC);
         loginUser.setDays(1D);
         loginUser.setHost(springServletContainer.getClientIp());
         loginUser.setExpireAt(System.currentTimeMillis() + 3600 * 1000 * 24);

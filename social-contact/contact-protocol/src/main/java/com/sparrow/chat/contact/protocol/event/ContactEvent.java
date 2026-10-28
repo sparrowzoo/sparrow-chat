@@ -17,16 +17,15 @@ limitations under the License.
 
 package com.sparrow.chat.contact.protocol.event;
 
-import com.sparrow.mq.MQEvent;
 import lombok.Data;
 
 @Data
-public class ContactEvent implements MQEvent {
+public class ContactEvent extends RoutableContactEvent {
     public ContactEvent(Long userId) {
         this.userId = userId;
     }
 
-    public ContactEvent(Long userId,Long friendId,Long addTime) {
+    public ContactEvent(Long userId, Long friendId, Long addTime) {
         this.userId = userId;
         this.friendId = friendId;
         this.addTime = addTime;

@@ -17,13 +17,13 @@ limitations under the License.
 
 package com.sparrow.chat.domain.repository;
 
-import com.sparrow.chat.domain.bo.ChatUser;
-import com.sparrow.chat.domain.bo.Protocol;
 import com.sparrow.chat.protocol.dto.HistoryMessageWrap;
 import com.sparrow.chat.protocol.dto.MessageDTO;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.query.MessageCancelQuery;
 import com.sparrow.chat.protocol.query.MessageQuery;
+import com.sparrow.messaging.protocol.ChatUser;
+import com.sparrow.messaging.protocol.Protocol;
 import com.sparrow.protocol.BusinessException;
 
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.List;
 public interface MessageRepository {
     void cancel(MessageCancelQuery messageCancel, ChatUser sender) throws BusinessException;
 
-    void saveMessage(Protocol message,Long ip);
+    void saveMessage(Protocol message);
 
     List<MessageDTO> getMessageBySession(String session);
 

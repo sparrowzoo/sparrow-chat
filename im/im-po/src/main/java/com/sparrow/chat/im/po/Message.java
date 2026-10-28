@@ -34,8 +34,8 @@ public class Message implements POJO {
     /**
      * 消息类型
      * <p>
-     * TEXT_MESSAGE = 0
-     * IMAGE_MESSAGE = 1
+     * 业务消息类型 ID，与 MessageType 的稳定 ID 一致：TEXT=0、IMAGE=1。
+     * 类型供前端解释和渲染正文，不决定正文的字符编码。
      */
     @Column(name = "message_type", columnDefinition = "tinyint(2) not null default 0 comment '消息类型 0-文本 1-图片'")
     private Integer messageType;
@@ -88,4 +88,7 @@ public class Message implements POJO {
 
     @Column(name = "ip", columnDefinition = "int UNSIGNED not null default 0 comment 'ip地址'")
     private Long ip;
+
+    @Column(name = "device_type", columnDefinition = "int  not null default 0 comment '设备类型'")
+    private Integer deviceType;
 }

@@ -17,7 +17,6 @@ limitations under the License.
 
 package com.sparrow.chat.contact.protocol.event;
 
-import com.sparrow.mq.MQEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,9 +24,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class QunMemberEvent implements MQEvent {
+public class QunMemberEvent extends RoutableContactEvent {
     private Long qunId;
-
     private Long memberId;
-
 }

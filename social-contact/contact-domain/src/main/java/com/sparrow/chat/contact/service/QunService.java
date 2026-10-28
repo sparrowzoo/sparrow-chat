@@ -29,7 +29,7 @@ import com.sparrow.chat.contact.repository.AuditRepository;
 import com.sparrow.chat.contact.repository.QunRepository;
 import com.sparrow.context.SessionContext;
 import com.sparrow.exception.Asserts;
-import com.sparrow.mq.MQPublisher;
+import com.sparrow.messaging.domain.service.pub.sub.PublishStrategy;
 import com.sparrow.passport.api.UserProfileAppService;
 import com.sparrow.passport.protocol.dto.UserProfileDTO;
 import com.sparrow.protocol.BusinessException;
@@ -52,7 +52,7 @@ public class QunService {
     private InviteFriendSecurity inviteFriendSecurity;
 
     @Inject
-    private MQPublisher mqPublisher;
+    private PublishStrategy publishStrategy;
 
     @Inject
     private AuditRepository auditRepository;
@@ -111,7 +111,7 @@ public class QunService {
         Boolean isMember = this.qunRepository.isMember(qunId, loginUser.getUserId());
         Asserts.isTrue(!isMember, ContactError.QUN_ID_IS_EMPTY);
         this.qunRepository.removeMember(new RemoveMemberOfQunParam(qunId, loginUser.getUserId()));
-        mqPublisher.publish(new QunMemberEvent(existQun.getId(), loginUser.getUserId()));
+        publishStrategy.publish(new QunMemberEvent(existQun.getId(), loginUser.getUserId()));
     }
 
     public void removeMember(RemoveMemberOfQunParam removeMemberOfQunParam) throws Throwable {
@@ -120,7 +120,7 @@ public class QunService {
         LoginUser loginUser = SessionContext.getLoginUser();
         Asserts.isTrue(!existQun.getOwnerId().equals(loginUser.getUserId()), ContactError.QUN_OWNER_IS_NOT_MATCH);
         this.qunRepository.removeMember(removeMemberOfQunParam);
-        mqPublisher.publish(new QunMemberEvent(existQun.getId(), removeMemberOfQunParam.getMemberId()));
+        publishStrategy.publish(new QunMemberEvent(existQun.getId(), removeMemberOfQunParam.getMemberId()));
     }
 
     public void dissolve(Long qunId) throws BusinessException {

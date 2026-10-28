@@ -16,8 +16,9 @@
             <artifactId>sparrow-protocol</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.sparrowzoo</groupId>
-            <artifactId>sparrow-protocol-mq</artifactId>
+            <groupId>com.sparrowzoo.messaging</groupId>
+            <artifactId>messaging-starter</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

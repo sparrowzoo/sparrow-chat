@@ -4,7 +4,7 @@ import com.sparrow.chat.boot.ApplicationBoot;
 import com.sparrow.core.spi.ApplicationContext;
 import com.sparrow.email.EmailSender;
 import com.sparrow.protocol.BusinessException;
-import com.sparrow.spring.starter.test.SparrowTestExecutionListener;
+import com.sparrow.spring.test.SparrowTestExecutionListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

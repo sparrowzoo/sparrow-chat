@@ -1,7 +1,7 @@
 package com.sparrow.chat.chat.user;
 
-import com.sparrow.chat.domain.bo.ChatSession;
-import com.sparrow.chat.domain.bo.ChatUser;
+import com.sparrow.messaging.protocol.ChatSession;
+import com.sparrow.messaging.protocol.ChatUser;
 
 public class ChatSessionTest {
     public static void main(String[] args) {

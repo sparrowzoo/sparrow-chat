@@ -15,6 +15,7 @@
         <file_version>1.0.0-SNAPSHOT</file_version>
         <passport_version>1.0.0-SNAPSHOT</passport_version>
         <chat_version>1.0.0-SNAPSHOT</chat_version>
+        <messaging_version>1.0.0-SNAPSHOT</messaging_version>
     </properties>
 
     <dependencyManagement>
@@ -130,6 +131,12 @@
                 <groupId>com.sparrowzoo.chat</groupId>
                 <version>${chat_version}</version>
                 <artifactId>chat-spring-starter</artifactId>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sparrowzoo.messaging</groupId>
+                <artifactId>messaging-starter</artifactId>
+                <version>${messaging_version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -17,10 +17,10 @@ limitations under the License.
 
 package com.sparrow.chat.domain.repository;
 
-import com.sparrow.chat.domain.bo.ChatSession;
-import com.sparrow.chat.domain.bo.ChatUser;
 import com.sparrow.chat.protocol.dto.SessionDTO;
 import com.sparrow.chat.protocol.params.SessionReadParams;
+import com.sparrow.messaging.protocol.ChatSession;
+import com.sparrow.messaging.protocol.ChatUser;
 
 import java.util.List;
 

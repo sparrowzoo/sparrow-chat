@@ -21,14 +21,14 @@ import com.sparrow.chat.contact.ContactServiceApi;
 import com.sparrow.chat.contact.protocol.dto.FriendDetailDTO;
 import com.sparrow.chat.contact.protocol.event.ContactEvent;
 import com.sparrow.chat.domain.repository.ContactRepository;
-import com.sparrow.spring.mq.AbstractSpringMQHandler;
+import com.sparrow.messaging.infrastructure.service.spring.AbstractSpringSubscriber;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import java.util.List;
 
 @Named
-public class ContanctHandler extends AbstractSpringMQHandler<ContactEvent> {
+public class ContanctHandler extends AbstractSpringSubscriber<ContactEvent> {
     @Inject
     private ContactServiceApi contactServiceApi;
 
@@ -36,10 +36,10 @@ public class ContanctHandler extends AbstractSpringMQHandler<ContactEvent> {
     private ContactRepository contactRepository;
 
     @Override
-    public void handle(ContactEvent contactEvent) throws Throwable {
+    public void subscribe(ContactEvent contactEvent) throws Throwable {
         List<FriendDetailDTO> members = this.contactServiceApi.getFriends(contactEvent.getUserId());
         for (FriendDetailDTO member : members) {
-            this.contactRepository.addFriend(contactEvent.getUserId(), member.getFriendId(),member.getAddTime());
+            this.contactRepository.addFriend(contactEvent.getUserId(), member.getFriendId(), member.getAddTime());
         }
     }
 }

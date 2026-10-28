@@ -17,7 +17,18 @@ limitations under the License.
 
 package com.sparrow.chat.protocol.query;
 
+
+import com.sparrow.messaging.protocol.ChatUser;
+
 public class ChatUserQuery {
+    public ChatUser toChatUser() {
+        return ChatUser.stringUserId(this.id, this.category);
+    }
+
+    public static ChatUserQuery fromChatUser(ChatUser chatUser) {
+        return new ChatUserQuery(chatUser.getId(), chatUser.getCategory());
+    }
+
     public ChatUserQuery() {
     }
 
